@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+enum PayMethod: string
+{
+    case Delivery = 'Delivery';
+    case Credit_Card = 'Credit_Card';
+    case Pick_Up = 'Pick_UP';
+}
