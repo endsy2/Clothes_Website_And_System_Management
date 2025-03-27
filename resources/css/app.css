@@ -1,13 +1,25 @@
-@import 'tailwindcss';
-@import "tailwindcss";
+/* @import 'tailwindcss'; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @source "../views";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views.blade.php'; 
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@theme {
+/* @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+} */
+/* @font-face {
+    font-family: 'JetBrains Mono';
+    src: url(https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap);
 }
+@font-face {
+    font-family: 'test';
+    src:url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Montserrat+Underline:ital,wght@0,100..900;1,100..900&family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap')
+} */

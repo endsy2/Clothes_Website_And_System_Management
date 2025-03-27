@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Product::class);
             $table->foreignIdFor(\App\Models\Discount::class);
             $table->string('size');
+            $table->string('color');
             $table->float('price');
             $table->integer('stock');
             $table->timestamps();

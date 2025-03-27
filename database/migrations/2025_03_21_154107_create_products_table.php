@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->string('description');
             $table->foreignIdFor(\App\Models\Category::class);
             $table->foreignIdFor(\App\Models\Brand::class);

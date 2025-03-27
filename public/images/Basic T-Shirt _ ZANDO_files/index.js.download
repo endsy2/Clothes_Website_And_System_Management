@@ -1,0 +1,458 @@
+(() => {
+var E = Object.defineProperty;
+var M = (r, e, t) => e in r ? E(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var o = (r, e, t) => M(r, typeof e != "symbol" ? e + "" : e, t);
+const A = "wss://websdk.uxcam.com", p = "0.1", k = `uxcam:${p}:session:key`, b = `uxcam:${p}:session:time`, v = `uxcam:${p}:session:seq`, C = `uxcam:${p}:session:lasttime`, u = `uxcam:${p}:deviceid`, U = `uxcam:${p}:appkey`, $ = `uxcam:${p}:tmp_changes`, T = `uxcam:${p}:load_counter`, q = ["WebSockets", "CompressionStream", "Blob", "MutationObserver", "URL", "Proxy", "CSSStyleSheet", "CSSStyleSheet.insertRule", "CSSStyleSheet.deleteRule", "history", "Promise", "TransformStream"], R = (r, e, t) => {
+  const s = window.location.hostname, i = "." + s.split(".").slice(-2).join("."), n = /* @__PURE__ */ new Date();
+  n.setTime(n.getTime() + t * 24 * 60 * 60 * 1e3);
+  try {
+    if (document.cookie = `${r}=${e};expires=${n.toUTCString()};domain=${i};path=/`, x(r) !== e) {
+      document.cookie = `${r}=${e};expires=${n.toUTCString()};domain=${s};path=/`;
+      return;
+    }
+  } catch {
+    document.cookie = `${r}=${e};expires=${n.toUTCString()};domain=${s};path=/`;
+  }
+}, x = (r) => {
+  var s;
+  const t = `; ${document.cookie}`.split(`; ${r}=`);
+  if (t.length === 2)
+    return (s = t.pop()) == null ? void 0 : s.split(";").shift();
+}, _ = () => {
+  const r = x(u), e = localStorage.getItem(u), t = sessionStorage.getItem(u);
+  return r ? (e || localStorage.setItem(u, r), t || sessionStorage.setItem(u, r), r) : e ? (r || R(u, e, 365), t || sessionStorage.setItem(u, e), e) : t ? (r || R(u, t, 365), e || localStorage.setItem(u, t), t) : null;
+}, L = (r) => {
+  R(u, r, 365), localStorage.setItem(u, r), sessionStorage.setItem(u, r);
+}, a = class a {
+  constructor(e, t) {
+    o(this, "socket", null);
+    o(this, "changesBucket", []);
+    o(this, "binaryBucket", []);
+    o(this, "globalBucket", []);
+    o(this, "recordingStopped", !1);
+    o(this, "lastSeq", 0);
+    o(this, "deviceId", null);
+    o(this, "sessionId", null);
+    o(this, "collector", null);
+    o(this, "sessionTime", 0);
+    o(this, "wsURL");
+    o(this, "appKey");
+    o(this, "debug");
+    o(this, "min");
+    o(this, "appVersion", "unknown");
+    o(this, "initialised", !1);
+    o(this, "temporaryBucket", []);
+    o(this, "socketLoadedPromise", null);
+    o(this, "staticRequestIdleCallback", (e, t = !1) => {
+      if (t) {
+        e();
+        return;
+      }
+      window.requestIdleCallback ? window.requestIdleCallback(e) : setTimeout(e, 100);
+    });
+    o(this, "getTemporaryChanges", () => {
+      const e = sessionStorage.getItem($);
+      return e ? JSON.parse(e) : [];
+    });
+    o(this, "saveTemporaryChange", (e) => {
+      const t = this.getTemporaryChanges();
+      Array.isArray(e) ? t.push(...e) : t.push(e), sessionStorage.setItem($, JSON.stringify(t));
+    });
+    o(this, "clearTemporaryChanges", () => {
+      sessionStorage.removeItem($);
+    });
+    // will generate a hex string of length
+    o(this, "generateId", (e) => {
+      const t = [], s = "abcdef0123456789", i = s.length;
+      for (let n = 0; n < e; n++)
+        t.push(s.charAt(Math.floor(Math.random() * i)));
+      return t.join("");
+    });
+    o(this, "clearSession", () => {
+      sessionStorage.removeItem(k), sessionStorage.removeItem(b), sessionStorage.removeItem(v), sessionStorage.removeItem(C), sessionStorage.removeItem(U), sessionStorage.removeItem(T), sessionStorage.removeItem($);
+    });
+    o(this, "onNewSessionTime", (e) => {
+      this.sessionTime = e;
+    });
+    o(this, "getSession", () => {
+      const e = sessionStorage.getItem(C);
+      let t = !!e;
+      if (e) {
+        const y = parseInt(e), h = (/* @__PURE__ */ new Date()).getTime() - y, g = sessionStorage.getItem(U), I = g && g !== this.appKey;
+        (h > 10 * 60 * 1e3 || I) && (this.clearSession(), t = !1);
+      }
+      const s = sessionStorage.getItem(k), i = sessionStorage.getItem(b), n = sessionStorage.getItem(v), c = sessionStorage.getItem(T), m = s || a.generateUUID(), S = i ? new Date(parseInt(i)).getTime() : null, d = n ? parseInt(n) + 500 : 0;
+      s || (sessionStorage.setItem(k, m), S && sessionStorage.setItem(b, S.toString()), sessionStorage.setItem(v, d.toString()), sessionStorage.setItem(U, this.appKey));
+      let w = 0;
+      c ? (w = parseInt(c), sessionStorage.setItem(T, (w + 1).toString())) : sessionStorage.setItem(T, "0");
+      let f = _();
+      return f || (f = this.generateId(16), L(f)), this.deviceId = f, {
+        sessionId: m,
+        startTime: S,
+        seq: d,
+        reconnected: t,
+        deviceId: f,
+        counter: w
+      };
+    });
+    o(this, "loadPolyfills", async () => {
+      const e = a.getSupportedAPIs(), t = [];
+      if (e.includes("WebSockets")) {
+        if (!e.includes("Promise")) {
+          const s = await import("./index.nY_nEAjq.js");
+          window.Promise = s.default;
+        }
+        e.includes("CompressionStream") || t.push(
+          // eslint-disable-next-line no-async-promise-executor
+          new Promise(async (s) => {
+            if (!e.includes("TransformStream")) {
+              const n = await import("./polyfill.BioLh7M_.js").then((c) => c.p);
+              Object.assign(window, n);
+            }
+            const {
+              makeCompressionStream: i
+            } = await import("./ponyfill.w3Kkl7Ap.js");
+            window.CompressionStream = i(window.TransformStream), s();
+          })
+        ), await Promise.all(t);
+      }
+    });
+    o(this, "__pingInterval", null);
+    o(this, "__processInterval", null);
+    o(this, "processBinaryBucket", () => {
+      if (!this.binaryBucket.length)
+        return;
+      const {
+        sessionId: e
+      } = this, t = this.binaryBucket.slice();
+      this.binaryBucket = [], Promise.all(
+        t.map(async (s) => {
+          const i = await new Blob(s).arrayBuffer();
+          return new Uint8Array(i);
+        })
+      ).then(async (s) => {
+        await this.socketLoadedPromise;
+        const i = s.length;
+        for (let n = 0; n < i; n++)
+          this.socket.emit("session_data", {
+            sid: e,
+            data: s[n]
+          });
+      });
+    });
+    o(this, "init", async () => {
+      if (console.debug("UXCam Web SDK Initialised"), a.allAPIsMet() || await new Promise((l) => {
+        this.staticRequestIdleCallback(() => {
+          this.loadPolyfills().then(l);
+        });
+      }), !a.allAPIsMet()) {
+        const l = a.getSupportedAPIs(), h = q.filter((g) => !l.includes(g));
+        this.sendLog(`APIs not supported: ${h.join(",")}`);
+        return;
+      }
+      const [
+        e,
+        t
+      ] = await new Promise((l) => {
+        this.staticRequestIdleCallback(() => {
+          Promise.all([
+            import("./index.Bx2ehl_7.js"),
+            import("./DomCollector.DzYFmKE6.js")
+          ]).then(([h, g]) => {
+            l([h, g]);
+          });
+        });
+      }), {
+        sessionId: s,
+        startTime: i,
+        seq: n,
+        reconnected: c,
+        deviceId: m,
+        counter: S
+      } = this.getSession();
+      this.sessionId = s, this.lastSeq = n, this.deviceId = m, i && (this.sessionTime = i);
+      const d = e.io, { getDeviceData: w } = t, f = t.default;
+      if (this.socket = d(
+        this.wsURL,
+        {
+          autoConnect: !0,
+          transports: ["websocket"],
+          query: {
+            appKey: this.appKey,
+            sessId: s,
+            reconnected: i ? 1 : 0
+          }
+        }
+      ), this.socketLoadedPromise = new Promise((l) => {
+        console.debug("WebSDK connecting");
+        const h = () => {
+          console.debug("WebSDK connected"), this.socket.off("connect", h), l();
+        };
+        this.socket.on("connect", h), this.socket.send("conn");
+      }), this.socket.on("kill", this.handleKilled), c || this.socketLoadedPromise.then(() => {
+        this.socket.emit("session_init", {
+          sessionId: s,
+          deviceId: m,
+          appKey: this.appKey,
+          deviceTime: a.getISODateTimeNow(),
+          deviceData: w({
+            appVersion: this.appVersion ? String(this.appVersion) : "unknown"
+          })
+        });
+      }), this.scheduledAbort) {
+        this.socketLoadedPromise.then(() => {
+          this.socket.emit("session_abort", s);
+        }), this.deleteSess();
+        return;
+      }
+      this.__processInterval = setInterval(() => {
+        this.processBinaryBucket();
+      }, 200);
+      const y = async () => {
+        const { recordingStopped: l } = this, h = l ? this.changesBucket.slice().filter((g) => {
+          const I = g, P = g;
+          switch (I.type) {
+            case "EVENT":
+            case "USER_PROPERTY":
+              return !0;
+            default:
+              switch (P.ct) {
+                case "20":
+                case "19":
+                  return !0;
+                default:
+                  return !1;
+              }
+          }
+        }) : this.changesBucket.slice();
+        if (h.length || l) {
+          if (this.changesBucket = [], l) {
+            this.saveTemporaryChange(h);
+            return;
+          }
+          const I = (await new Promise((B) => {
+            this.staticRequestIdleCallback(() => B(new Blob([JSON.stringify(h)])));
+          })).stream(), P = [];
+          I.pipeThrough(
+            new CompressionStream("gzip")
+          ).pipeTo(
+            new WritableStream({
+              write: (B) => {
+                P.push(B);
+              }
+            })
+          ).then(() => {
+            this.binaryBucket.push(P), setTimeout(y, 200);
+          });
+          return;
+        }
+        this.staticRequestIdleCallback(y);
+      };
+      y(), window.addEventListener("beforeunload", () => {
+        this.recordingStopped = !0, this.saveSess();
+      }), this.collector = new f({
+        onChange: this.onChange,
+        onSeqUpdate: this.onSeqUpdate,
+        onNewStartTime: this.onNewSessionTime,
+        startTime: i,
+        seq: n,
+        min: this.min,
+        sendLog: this.sendLog,
+        // for debugging
+        sessionCounter: S,
+        abort: this.abort,
+        appKey: this.appKey
+      }, this.occlusionOptions), this.saveSess(), window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_RELOAD && this.event("uxc_page_refresh", {}), this.processTemporaryBucket();
+    });
+    o(this, "processTemporaryBucket", () => {
+      const e = this.globalBucket.slice();
+      this.globalBucket = [], e.forEach((s) => {
+        switch (s[0]) {
+          case "event": {
+            this.event(s[1], s[2]);
+            break;
+          }
+          case "setUserIdentity": {
+            this.setUserIdentity(s[1]);
+            break;
+          }
+          case "setUserProperties": {
+            this.setUserProperties(s[1]);
+            break;
+          }
+          case "setUserProperty": {
+            this.setUserProperty(s[1], s[2]);
+            break;
+          }
+          case "abort": {
+            this.abort();
+            break;
+          }
+        }
+      }), this.temporaryBucket.forEach((s) => {
+        const i = s, n = s;
+        i.ct ? (i.ct === "20" && this.event(i.n, i.p), i.ct === "19" && this.setUserProperty(i.k, i.v)) : (n.type === "EVENT" && this.event(n.name, n.properties), n.type === "USER_PROPERTY" && this.setUserProperty(n.key, n.value));
+      }), this.temporaryBucket = [];
+      const t = this.getTemporaryChanges();
+      t.length && (t.forEach((s) => {
+        this.onChange(s);
+      }), this.clearTemporaryChanges());
+    });
+    o(this, "saveSess", () => {
+      sessionStorage.setItem(v, this.lastSeq.toString()), sessionStorage.setItem(C, (/* @__PURE__ */ new Date()).getTime().toString()), sessionStorage.setItem(b, this.sessionTime.toString()), sessionStorage.setItem(k, this.sessionId), L(this.deviceId);
+    });
+    o(this, "deleteSess", () => {
+      sessionStorage.removeItem(k), sessionStorage.removeItem(b), sessionStorage.removeItem(v), sessionStorage.removeItem(C), sessionStorage.removeItem(U), sessionStorage.removeItem(T);
+    });
+    o(this, "saveSessTimout", null);
+    o(this, "onSeqUpdate", (e) => {
+      this.lastSeq = e, this.saveSessTimout && clearTimeout(this.saveSessTimout), this.saveSessTimout = setTimeout(() => {
+        this.saveSess();
+      }, 500);
+    });
+    o(this, "sendLog", (e) => {
+      const s = `https://${this.wsURL.replace("wss://", "").replace("ws://", "")}/logs`, i = {
+        message: `[FE Error]: ${e}`,
+        url: window.location.href
+      };
+      fetch(s, {
+        method: "POST",
+        body: JSON.stringify(i),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+    });
+    o(this, "occlusionOptions", {
+      url: a.defaultOccludeUrlMapping,
+      queryParams: a.defaultOccludeQueryParams
+    });
+    o(this, "onChange", (e) => {
+      if (this.recordingStopped) {
+        const t = e, s = e;
+        switch (t.type) {
+          case "EVENT":
+          case "USER_PROPERTY": {
+            this.saveTemporaryChange(e);
+            return;
+          }
+          default:
+            switch (s.ct) {
+              case "20":
+              case "19": {
+                this.saveTemporaryChange(e);
+                return;
+              }
+              default:
+                return;
+            }
+        }
+      }
+      this.debug && console.log(e), this.changesBucket.push(e);
+    });
+    o(this, "scheduledAbort", !1);
+    o(this, "handleKilled", () => {
+      this.abort(!1);
+    });
+    o(this, "abort", (e = !0) => {
+      var t;
+      e && ((t = this.socketLoadedPromise) == null || t.then(() => {
+        var s;
+        (s = this.socket) == null || s.emit("session_abort", this.sessionId);
+      })), this.scheduledAbort = !0, this.deleteSess(), this.__pingInterval && clearInterval(this.__pingInterval), this.__processInterval && clearInterval(this.__processInterval), this.collector && this.collector.destroy(), setTimeout(() => {
+        var s;
+        (s = this.socket) == null || s.disconnect();
+      }, 1e3);
+    });
+    o(this, "event", (e, t) => {
+      if (this.collector) {
+        this.collector.handleEvent(e, t);
+        return;
+      }
+      const s = this.min ? {
+        ct: "20",
+        n: e,
+        p: t,
+        t: 0,
+        s: 0
+      } : {
+        type: "EVENT",
+        name: e,
+        properties: t,
+        time: 0,
+        seq: 0
+      };
+      this.temporaryBucket.push(s);
+    });
+    o(this, "setUserIdentity", (e) => {
+      this.setUserProperty("kUXCam_UserIdentity", e);
+    });
+    o(this, "setUserProperty", (e, t) => {
+      if (this.collector) {
+        this.collector.setUserProperty(e, t);
+        return;
+      }
+      const s = this.min ? {
+        ct: "19",
+        k: e,
+        v: t,
+        t: 0,
+        s: 0
+      } : {
+        type: "USER_PROPERTY",
+        key: e,
+        value: t,
+        time: 0,
+        seq: 0
+      };
+      this.temporaryBucket.push(s);
+    });
+    o(this, "setUserProperties", (e) => {
+      const t = Object.keys(e);
+      for (let s = 0; s < t.length; s++)
+        this.setUserProperty(t[s], e[t[s]]);
+    });
+    var m, S, d;
+    const s = (t == null ? void 0 : t.wsURL) || A, i = (t == null ? void 0 : t.debug) || !1, n = (t == null ? void 0 : t.min) !== void 0 ? !!t.min : !0;
+    if (this.occlusionOptions.url = a.safeUrlOcclusion(((m = t == null ? void 0 : t.occlusion) == null ? void 0 : m.url) || a.defaultOccludeUrlMapping), this.occlusionOptions.queryParams = ((S = t == null ? void 0 : t.occlusion) == null ? void 0 : S.queryParams) || a.defaultOccludeQueryParams, this.appVersion = (t == null ? void 0 : t.appVersion) || "unknown", this.globalBucket = ((d = window.uxc) == null ? void 0 : d.__t) || [], this.debug = i, this.wsURL = s, this.appKey = e, this.min = n, window.uxc_initialised)
+      return;
+    if (window.uxc = this, window.uxc_initialised = !0, !e) {
+      this.sendLog("App Key is required"), console.warn("App Key is required");
+      return;
+    }
+    if (document.readyState === "complete") {
+      this.init();
+      return;
+    }
+    const c = () => {
+      document.readyState === "complete" && (document.removeEventListener("readystatechange", c), this.init());
+    };
+    document.addEventListener("readystatechange", c);
+  }
+};
+o(a, "allAPIsMet", () => {
+  const e = a.getSupportedAPIs();
+  return q.every((t) => e.includes(t));
+}), o(a, "getSupportedAPIs", () => {
+  const e = [];
+  return window.WebSocket && e.push("WebSockets"), window.CompressionStream && e.push("CompressionStream"), window.Blob && e.push("Blob"), window.MutationObserver && e.push("MutationObserver"), window.URL && e.push("URL"), window.Proxy && e.push("Proxy"), window.CSSStyleSheet && e.push("CSSStyleSheet"), window.CSSStyleSheet && typeof window.CSSStyleSheet.prototype.insertRule == "function" && e.push("CSSStyleSheet.insertRule"), window.CSSStyleSheet && typeof window.CSSStyleSheet.prototype.deleteRule == "function" && e.push("CSSStyleSheet.deleteRule"), window.history && e.push("history"), window.Promise && e.push("Promise"), window.TransformStream && e.push("TransformStream"), e;
+}), o(a, "getISODateTimeNow", () => {
+  const e = /* @__PURE__ */ new Date(), t = (d) => (d < 10 ? "0" : "") + d, s = e.getTimezoneOffset(), i = Math.floor(Math.abs(s / 60)), n = Math.abs(s % 60), c = `${i < 10 ? "0" : ""}${i}:${n < 10 ? "0" : ""}${n}`, m = s > 0 ? "-" : "+";
+  return `${e.getFullYear() + "-" + t(e.getMonth() + 1) + "-" + t(e.getDate()) + " " + t(e.getHours()) + ":" + t(e.getMinutes()) + ":" + t(e.getSeconds())} GMT${m}${c}`;
+}), o(a, "generateUUID", () => {
+  const e = () => Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
+  return `${e()}${e()}-${e()}-${e()}-${e()}-${e()}${e()}${e()}`;
+}), o(a, "defaultOccludeUrlMapping", (e) => e), o(a, "defaultOccludeQueryParams", []), o(a, "safeUrlOcclusion", (e) => (t) => {
+  try {
+    return e(t);
+  } catch (s) {
+    return console.error(s), t;
+  }
+});
+let O = a;
+if (typeof window < "u" && !(window != null && window.uxc_initialised)) {
+  const e = window.uxc;
+  new O(e.__ak, e.__o);
+}
+//# sourceMappingURL=index.js.map
+})()

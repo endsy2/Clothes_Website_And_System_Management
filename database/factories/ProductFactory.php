@@ -21,7 +21,8 @@ class ProductFactory extends Factory
         return [
             'category_id' => Category::factory(),
             'brand_id' => Brand::factory(),
-            'description' => fake()->sentence(6)
+            'description' => fake()->sentence(6),
+            'name' => fake()->sentence(3),
         ];
     }
 }

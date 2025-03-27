@@ -23,7 +23,8 @@ class ProductVariantFactory extends Factory
             'discount_id' => Discount::factory(),
             'size' => fake()->numberBetween(20, 50),
             'price' => fake()->numberBetween(100, 1000),
-            'stock' => fake()->numberBetween(10, 300)
+            'stock' => fake()->numberBetween(10, 300),
+            'color' => fake()->colorName(),
         ];
     }
 }

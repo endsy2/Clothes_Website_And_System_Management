@@ -16,3 +16,4 @@ Route::get('/about', function () {
 Route::get('/product/{id}', function ($id) {
     return view('product', ['id' => $id]);
 });
+Route::get('/products', [ProductController::class, 'index']);

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductImageFactory extends Factory
@@ -20,7 +21,7 @@ class ProductImageFactory extends Factory
             : 'default.jpg'; // Fallback in case the folder is empty
 
         return [
-            'product_variant_id' => \App\Models\ProductVariant::factory(),
+            'product_variant_id' => ProductVariant::factory(),
             'images' => 'images/' . $imagePath, // Save only the relative path
         ];
     }

@@ -2,19 +2,17 @@
 
 namespace Database\Seeders;
 
-use Database\Factories\ProductImageFactory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
-namespace Database\Seeders;
-
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
 
 class ProductImageSeeder extends Seeder
 {
     public function run(): void
     {
-        ProductImage::factory()->count(100)->create(); // ✅ Correct usage
+
+
+        // Seed ProductImages related to ProductVariants
+        ProductImage::factory(100)->create(); // Create 200 ProductImages
     }
 }
