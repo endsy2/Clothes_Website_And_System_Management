@@ -9,6 +9,12 @@ class Product extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'description',
+        'category_id',  // Assuming you are using category_id to store the relationship
+        'brand_id',
+    ];
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');

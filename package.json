@@ -14,5 +14,10 @@
         "postcss": "^8.5.3",
         "tailwindcss": "^3.4.17",
         "vite": "^6.0.11"
+    },
+    "dependencies": {
+        "react-slick": "^0.30.3",
+        "slick-carousel": "^1.8.1",
+        "swiper": "^11.2.6"
     }
 }

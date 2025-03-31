@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariant;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -54,6 +57,11 @@ class ProductController extends Controller
         $products = $query->paginate(10); // Paginate the products
         return response()->json($products);
     }
+    public function show()
+    {
+        $products = Product::with(['category', 'brand', 'productVariant.productImages'])->paginate(10);
+        return response()->json($products);
+    }
 
 
     // Method to get a specific product by ID
@@ -66,64 +74,126 @@ class ProductController extends Controller
         return response()->json($product);
     }
     public function update(Request $request, $id) {}
-    public function destroy($id) {}
+    public function destroy($id)
+    {
+        try {
+            // Find the product
+            $product = Product::findOrFail($id);
+
+            // Get all product variants
+            $productVariants = $product->productVariant;
+
+            // Delete product images first
+            foreach ($productVariants as $variant) {
+                foreach ($variant->productImages as $image) {
+                    $image->delete();
+                }
+            }
+
+            // Delete product variants
+            foreach ($productVariants as $variant) {
+                $variant->delete();
+            }
+
+            // Delete the product itself
+            $product->delete();
+
+            return response()->json(['message' => 'Product deleted successfully'], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function store(Request $request)
     {
-        // Validate the input data
-        $validatedData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'category_name' => ['required', 'string'],
-            'brand_name' => ['required', 'string'],
-            'product_images' => ['required', 'array'],
-            'product_images.*' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'size' => ['required', 'string'],
-            'price' => ['required', 'numeric'],
-            'color' => ['required', 'string'],
-            'stock' => ['required', 'integer'],
-        ]);
-
-        // Find Category and Brand by Name
-        $category = Category::where('category_name', $request->input('category_name'))->first();
-        $brand = Brand::where('brand_name', $request->input('brand_name'))->first();
-
-        // Check if Category and Brand exist
-        if (!$category) {
-            return response()->json(['error' => 'Category not found'], 404);
-        }
-
-        if (!$brand) {
-            return response()->json(['error' => 'Brand not found'], 404);
-        }
-
-        // Save the product to the database
-        $product = Product::create([
-            'name' => $validatedData['name'],
-            'description' => $validatedData['description'],
-            'category_id' => $category->id, // Store category_id, not category_name
-            'brand_id' => $brand->id, // Store brand_id, not brand_name
-        ]);
-
-        // Create the product variant
-        $product_variant = $product->productVariant()->create([
-            'price' => $validatedData['price'],
-            'stock' => $validatedData['stock'],
-            'size' => $validatedData['size'], // Save size as a JSON string
-            'color' => $validatedData['color'] // Save color as a JSON string
-        ]);
-
-        // Handle the image uploads
-        foreach ($validatedData['product_images'] as $image) {
-            $imagePath = $image->store('product_images', 'public'); // Save image to 'product_images' folder
-            $product_variant->productImages()->create([
-                'image_url' => $imagePath,
+        try {
+            // Validate the input data
+            $validatedData = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'description' => ['required', 'string'],
+                'category_name' => ['required', 'string'],
+                'brand_name' => ['required', 'string'],
+                'size' => ['required', 'string'],
+                'price' => ['required', 'numeric'],
+                'color' => ['required', 'string'],
+                'stock' => ['required', 'integer'],
             ]);
-        }
 
-        // Return a success response with product details
-        return response()->json([
-            'message' => 'Product created successfully',
-            'product' => $product
-        ], 201); // 201 = Created
+            // Check if the 'images' file is provided
+            if (!$request->hasFile('images')) {
+                return response()->json([
+                    'error' => 'No files uploaded',
+                ], 400);
+            }
+
+            // Retrieve the uploaded files
+            $files = $request->file('images');
+
+            // Ensure files are an array
+            if (!is_array($files)) {
+                $files = [$files];  // Convert single file to array
+            }
+
+            // Initialize an array to store file paths
+            $imagePaths = [];
+
+            // Process the uploaded files
+            foreach ($files as $file) {
+                if ($file->isValid()) {
+                    // Store file and get the path
+                    $path = $file->store('product_images', 'public');
+                    $imagePaths[] = Storage::url($path);  // Return full URL for stored file
+                } else {
+                    return response()->json([
+                        'error' => 'File upload failed for one or more files.',
+                        'file' => $file->getClientOriginalName(),
+                    ], 400);
+                }
+            }
+
+            // Find Category and Brand by Name
+            $category = Category::where('category_name', $validatedData['category_name'])->first();
+            $brand = Brand::where('brand_name', $validatedData['brand_name'])->first();
+
+            // Check if Category and Brand exist
+            if (!$category) {
+                return response()->json(['error' => 'Category not found'], 404);
+            }
+            if (!$brand) {
+                return response()->json(['error' => 'Brand not found'], 404);
+            }
+
+            // Save the product
+            $product = Product::create([
+                'name' => $validatedData['name'],
+                'description' => $validatedData['description'],
+                'category_id' => $category->id,
+                'brand_id' => $brand->id,
+            ]);
+
+            // Create the product variant
+            $productVariant = $product->productVariant()->create([
+                'price' => $validatedData['price'],
+                'stock' => $validatedData['stock'],
+                'size' => $validatedData['size'],
+                'color' => $validatedData['color'],
+            ]);
+
+            // Handle image uploads and store images in the database
+            foreach ($imagePaths as $imagePath) {
+                // Save image URL to database
+                $productVariant->productImages()->create([
+                    'images' => $imagePath,
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'Product created successfully',
+                'product' => $product,
+                'images' => $imagePaths,
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 }

@@ -27,4 +27,18 @@ class ProductVariantFactory extends Factory
             'color' => fake()->colorName(),
         ];
     }
+
+    /**
+     * Create a state where discount_id is null (unverified).
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function unverified(): static
+    {
+        return $this->state(function (array $states) {
+            return [
+                'discount_id' => null,
+            ];
+        });
+    }
 }

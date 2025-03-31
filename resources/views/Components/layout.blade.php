@@ -24,7 +24,19 @@ $ContactUs=[
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- jQuery (Required for Slick) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Slick Carousel -->
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/js/app.js'])
+
 
 
 </head>
@@ -33,7 +45,7 @@ $ContactUs=[
     <nav class="flex justify-between items-center z-10">
         <div>
 
-            <div class="flex space-x-24">
+            <div class="flex space-x-16 px-5">
                 @foreach($navLinks as $navLink)
                 <x-nav-link href="{{ $navLink['href'] }}" :active="request()->is($navLink['href'])">
                     {{ $navLink['name'] }}
@@ -70,6 +82,7 @@ $ContactUs=[
             @endguest
         </div>
     </nav>
+
     <main>
 
         <div>
@@ -120,3 +133,33 @@ $ContactUs=[
 </body>
 
 </html>
+
+<script>
+    $(document).ready(function() {
+        $('.brand-slider').slick({
+            dots: true, // Show pagination dots
+            infinite: true, // Infinite scrolling
+            speed: 500, // Transition speed
+            slidesToShow: 4, // Show 4 slides at once
+            slidesToScroll: 1, // Scroll one slide at a time
+            autoplay: true, // Auto-slide enabled
+            autoplaySpeed: 2000, // 2 seconds per slide
+            arrows: true, // Enable navigation arrows
+            prevArrow: '<button type="button" class="slick-prev">&#10094;</button>',
+            nextArrow: '<button type="button" class="slick-next">&#10095;</button>',
+            responsive: [{
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 2 // Show 2 slides on tablets
+                    }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 1 // Show 1 slide on mobile
+                    }
+                }
+            ]
+        });
+    });
+</script>

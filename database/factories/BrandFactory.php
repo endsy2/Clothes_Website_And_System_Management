@@ -17,7 +17,7 @@ class BrandFactory extends Factory
     public function definition(): array
     {
         $brands = ['Nike', 'Adidas', 'Puma', 'Levi’s', 'Uniqlo', 'Zara', 'H&M', 'Gucci', 'Supreme'];
-        $imageFiles = glob(public_path('images') . '/*.{jpg,jpeg,png,gif,webp}', GLOB_BRACE);
+        $imageFiles = glob(public_path('brands') . '/*.{jpg,jpeg,png,gif,webp}', GLOB_BRACE);
 
         // Pick a random image if the folder is not empty, else use a default placeholder
         $imagePath = !empty($imageFiles)
@@ -25,7 +25,7 @@ class BrandFactory extends Factory
             : 'default.jpg'; // Fallback in case the folder is empty
         return [
             'brand_name' => fake()->randomElement($brands),
-            'images' => 'brands/' . $imagePath
+            'image' => 'brands/' . $imagePath
         ];
     }
 }

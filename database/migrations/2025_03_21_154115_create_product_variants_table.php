@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Product::class);
-            $table->foreignIdFor(\App\Models\Discount::class);
+            $table->foreignIdFor(\App\Models\Discount::class)->nullable(true);
             $table->string('size');
             $table->string('color');
             $table->float('price');
