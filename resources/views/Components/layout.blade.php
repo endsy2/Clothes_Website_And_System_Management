@@ -137,13 +137,38 @@ $ContactUs=[
 <script>
     $(document).ready(function() {
         $('.brand-slider').slick({
-            dots: true, // Show pagination dots
+            // dots: true, 
             infinite: true, // Infinite scrolling
             speed: 500, // Transition speed
             slidesToShow: 4, // Show 4 slides at once
             slidesToScroll: 1, // Scroll one slide at a time
             autoplay: true, // Auto-slide enabled
-            autoplaySpeed: 2000, // 2 seconds per slide
+            autoplaySpeed: 3000, // 2 seconds per slide
+            arrows: true, // Enable navigation arrows
+            prevArrow: '<button type="button" class="slick-prev">&#10094;</button>',
+            nextArrow: '<button type="button" class="slick-next">&#10095;</button>',
+            responsive: [{
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 2 // Show 2 slides on tablets
+                    }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 1 // Show 1 slide on mobile
+                    }
+                }
+            ]
+        });
+        $('.product-slider').slick({
+            // dots: true, 
+            infinite: true, // Infinite scrolling
+            speed: 500, // Transition speed
+            slidesToShow: 4, // Show 4 slides at once
+            slidesToScroll: 4, // Scroll one slide at a time
+            autoplay: true, // Auto-slide enabled
+            autoplaySpeed: 3000, // 2 seconds per slide
             arrows: true, // Enable navigation arrows
             prevArrow: '<button type="button" class="slick-prev">&#10094;</button>',
             nextArrow: '<button type="button" class="slick-next">&#10095;</button>',

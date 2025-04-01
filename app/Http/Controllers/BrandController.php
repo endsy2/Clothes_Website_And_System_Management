@@ -56,7 +56,7 @@ class BrandController extends Controller
     public function show()
     {
         $brands = Brand::paginate(10); // This returns a LengthAwarePaginator instance
-        return $brands;
+        return response()->json($brands);
     }
 
 

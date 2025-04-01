@@ -28,24 +28,26 @@ $category_data=[
 
     <!-- Brand Section -->
     <!--HTML CODE-->
+    <div>
+        <h2 class="font-semibold text-2xl pt-5">Trend Brand</h2>
 
-    <h2 class="font-semibold text-2xl pt-5">Trend Brand</h2>
-
-    <p class="font-semibold text-lg  text-right"><a href="">More View</a></p>
-
+        <p class="font-semibold text-lg  text-right"><a href="">More View</a></p>
+    </div>
     <div class=" w-full max-w-full mx-auto pt-5 ">
         <!-- Slick Slider -->
         <div class="brand-slider">
-            @foreach ($brands as $brand)
+            @foreach ($brands['data'] as $brand)
             <a class="" href="">
                 <!-- Add padding for spacing -->
                 <div
-                    class="bg-white rounded-2xl flex flex-col justify-center items-center py-3  shadow-lg hover:shadow-2xl transition duration-300">
-                    <img src="{{ asset('/' . $brand->image) }}" alt="{{ $brand->brand_name }}"
+                    class="bg-white rounded-2xl flex flex-col justify-center items-center py-3 shadow-lg hover:shadow-2xl transition duration-300">
+                    <img src="{{ asset('/' . $brand['image']) }}" alt="{{ $brand['brand_name'] }}"
                         class="w-40 h-40 object-contain rounded-lg">
                 </div>
             </a>
             @endforeach
+
+
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-36 gap-y-10 mt-20">
@@ -55,8 +57,29 @@ $category_data=[
             @endforeach
         </div>
     </div>
-    <div class="grid  grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-36 gap-y-10 mt-20">
-        <h2 class="font-semibold text-2xl">Discount</h2>
+    <!-- discount slider -->
+    <div class="mt-8">
+        <h2 class="font-semibold text-2xl pt-5">Discount</h2>
+
+        <p class="font-semibold text-lg  text-right"><a href="">More View</a></p>
+    </div>
+    <div class=" w-full max-w-full mx-auto pt-5 h-96 ">
+        <!-- Slick Slider -->
+
+        <div class="product-slider flex flex-wrap gap-6 justify-center h-full">
+            @foreach ($discounts as $discount)
+            @if (!empty($discount['product_variant']))
+            @php
+            $product = $discount['product_variant'][0]; // Get the first product variant
+            @endphp
+
+            <x-card-product :name="$discount['name']"
+                :product_image="$product['product_images'][0]['images'] ?? 'default-image.jpg'"
+                :price="$product['price']" :discount="$product['discount']['discount']" />
+            @endif
+            @endforeach
+        </div>
+
 
     </div>
 
