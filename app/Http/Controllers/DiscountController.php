@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Discount;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use Exception;
 use Illuminate\Http\Request;
+
+use function Pest\Laravel\get;
 
 class DiscountController extends Controller
 {
@@ -14,19 +17,30 @@ class DiscountController extends Controller
      */
     public function index()
     {
-        // Get paginated product variants with related product, image, and discount
-        $products_variant_row = ProductVariant::whereNotNull('discount_id')->paginate(10);
+        try {
+            // Step 1: Get only product variant IDs that have a discount
+            $products_variant_row = ProductVariant::whereNotNull('discount_id')->paginate(20);
+            $product_ids = $products_variant_row->pluck('product_id')->unique()->toArray();
 
-        // Collect product IDs from the paginated product variants
-        $product_ids = $products_variant_row->pluck('product_id')->unique()->toArray();
+            // Step 2: Load products with only the product variants that have discounts
+            $products = Product::with([
+                'brand',
+                'category',
+                'productVariant' => function ($query) {
+                    $query->whereNotNull('discount_id')
+                        ->with(['productImages', 'discount']);
+                }
+            ])
+                ->whereIn('id', $product_ids)
+                ->get();
 
-        // Fetch products using the product_ids
-        $products = Product::with('brand', 'category', 'productVariant.productImages', 'productVariant.discount')
-            ->whereIn('id', $product_ids)
-            ->get(); // Use `get()` instead of `findOrFail()` to handle multiple products
-
-        // Return the products as a JSON response
-        return response()->json($products);
+            return response()->json($products);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while fetching products.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 
@@ -39,7 +53,7 @@ class DiscountController extends Controller
     {
         //
     }
-
+           
     /**
      * Display the specified resource.
      */

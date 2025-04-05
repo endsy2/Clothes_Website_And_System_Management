@@ -1,0 +1,4 @@
+@props(['details'])
+<div>
+
+</div>

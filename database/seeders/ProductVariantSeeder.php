@@ -11,8 +11,8 @@ class ProductVariantSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
-        ProductVariant::factory(100)->unverified()->create();
-    }
+    // public function run(): void
+    // {
+    //     ProductVariant::factory(100)->unverified()->create();
+    // }
 }

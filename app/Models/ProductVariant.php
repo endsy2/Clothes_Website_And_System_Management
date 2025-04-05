@@ -9,13 +9,13 @@ class ProductVariant extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductVariantFactory> */
     use HasFactory;
-    protected $fillable = ['product_id', 'size', 'color', 'stock', 'price'];
+    protected $fillable = ['product_id', 'discount_id', 'size', 'color', 'stock', 'price'];
 
     public function orderItems()
     {
         return $this->hasMany(OrderItems::class);
     }
-    public function products()
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }

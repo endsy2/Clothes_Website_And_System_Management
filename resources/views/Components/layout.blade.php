@@ -90,7 +90,7 @@ $ContactUs=[
         </div>
     </main>
     <footer>
-        <section class="flex justify-between items-start mt-10">
+        <section class="flex justify-between items-start mt-28">
             <div>
                 <img src={{ asset('logo.svg') }} alt="">
             </div>

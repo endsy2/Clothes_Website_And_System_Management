@@ -35,9 +35,9 @@ class ProductVariantFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(function (array $states) {
+        return $this->state(function (array $attributes) {
             return [
-                'discount_id' => null,
+                'discount_id' => fake()->boolean(50) ? null : Discount::query()->inRandomOrder()->value('id'),
             ];
         });
     }

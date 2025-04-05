@@ -13,6 +13,6 @@ class ProductImageSeeder extends Seeder
 
 
         // Seed ProductImages related to ProductVariants
-        ProductImage::factory(100)->create(); // Create 200 ProductImages
+        // ProductImage::factory(500)->create(); // Create 200 ProductImages
     }
 }

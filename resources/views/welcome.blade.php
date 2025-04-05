@@ -73,18 +73,30 @@ $category_data=[
             $product = $discount['product_variant'][0]; // Get the first product variant
             @endphp
 
-            <x-card-product :name="$discount['name']"
-                :product_image="$product['product_images'][0]['images'] ?? 'default-image.jpg'"
-                :price="$product['price']" :discount="$product['discount']['discount']" />
+            <x-card-product :name="$discount['name'] ?? 'No Discount'"
+                :product_image="isset($product['product_images'][0]['images']) ? $product['product_images'][0]['images'] : 'default-image.jpg'"
+                :price="$product['price'] ?? 0" :discount="$product['discount']['discount'] ?? 0" />
+
             @endif
             @endforeach
         </div>
+    </div>
+    <div class="mt-8">
+        <h2 class="font-semibold text-2xl pt-5">Product</h2>
 
-
+        <p class="font-semibold text-lg  text-right"><a href="">More View</a></p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full gap-y-5 gap-x-6 mt-5">
+        @foreach ($products as $product )
+        @php
+        $productVariant=$product['product_variant'][0];
+        @endphp
+        <x-card-product :name="$product['name']" :price="$productVariant['price']"
+            :product_image="$productVariant['product_images'][0]['images'] ?? 'default-image.jpg'"
+            :discount="$productVariant['discount']['discount'] ?? 'null'" />
+        @endforeach
     </div>
 
     <!-- Additional Content Section (you can fill this later) -->
-    <div class="h-[1000px]">
-        <!-- Add more content here -->
-    </div>
+
 </x-layout>

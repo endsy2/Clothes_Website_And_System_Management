@@ -1,3 +1,3 @@
-<div>
-    hi
-</div>
+<x-layout>
+    @dd($details)
+</x-layout>

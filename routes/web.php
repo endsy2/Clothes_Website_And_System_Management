@@ -11,24 +11,18 @@ Route::prefix("/")->group(function () {
         $brands = (new BrandController())->show()->getData(true);
         $products = (new ProductController())->show()->getData(true);
         $discounts = (new DiscountController())->index()->getData(true);
-        $product = (new ProductController())->show()->getData(true);
+        // $product = (new ProductController())->show()->getData(true);
         // dd($brands);
         // dd($products);
-        return view('welcome', ['brands' => $brands, 'products' => $products, 'discounts' => $discounts]);
-        // return dd($discounts);
+        return view('welcome', ['brands' => $brands, 'products' => $products['data'], 'discounts' => $discounts]);
+        // return dd($products['data']);
     });
     Route::get('detail', function (Request $request) {
-        $productController = app(ProductController::class);
+        $products = (new ProductController())->show()->getData(true);
+        $details = (new ProductController())->productById($request)->getData(true);
 
-        // Call index() and show() correctly
-        $detailResponse = $productController->index($request);
-        $productResponse = $productController->show();
-
-        // Convert JSON response to array
-        $details = json_decode($detailResponse->getContent(), true);
-        $products = json_decode($productResponse->getContent(), true);
-
-        return view('productDetail', ['details' => $details, 'products' => $products]);
+        // return view('productDetail', ['details' => $details, 'products' => $products]);
+        return dd($products, $details);
     });
 });
 
