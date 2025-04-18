@@ -12,6 +12,7 @@ use PhpParser\Node\Stmt\TryCatch;
 // })->middleware('auth:sanctum');
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
+    Route::get('/show', [ProductController::class, 'show']);
     Route::get('/{id}', [ProductController::class, 'productById']);
     Route::post('/store', [ProductController::class, 'store']);
     Route::delete('/delete/{id}', [ProductController::class, 'destroy']);

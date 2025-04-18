@@ -9,6 +9,7 @@ class ProductVariant extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductVariantFactory> */
     use HasFactory;
+    protected $hidden = ['discount_id'];
     protected $fillable = ['product_id', 'discount_id', 'size', 'color', 'stock', 'price'];
 
     public function orderItems()

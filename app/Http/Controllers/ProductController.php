@@ -20,7 +20,7 @@ class ProductController extends Controller
         $name = $request->query('name');
         $category = $request->query('category');
         $brand = $request->query('brand');
-
+        $type = $request->query('type');
 
         // Create a base query to fetch products with relationships
         $query = Product::with(['category', 'brand', 'productVariant.productImages']);
@@ -53,6 +53,10 @@ class ProductController extends Controller
                 return response()->json(['message' => 'Brand not found'], 404);
             }
         }
+        if ($type) {
+            $products = $query->where('productType', $type)->simplePaginate(); // Use get() for multiple products
+            return response()->json($products['data']);
+        }
 
         // If no query parameter is provided, paginate the results
         $products = $query->paginate(10); // Paginate the products
@@ -70,7 +74,7 @@ class ProductController extends Controller
     public function productById($id)
     {
         // Find product by ID, throw an exception if not found
-        $product = Product::with(['category', 'brand', 'productVariant.productImages'])
+        $product = Product::with(['category', 'brand', 'productVariant.discount', 'productVariant.productImages',])
             ->findOrFail($id);
         // Return the product as a JSON response
         return response()->json($product);
