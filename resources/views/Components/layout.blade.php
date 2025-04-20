@@ -67,6 +67,7 @@ $icons=[
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 
 <body class="md:px-16 lg:px-36 xl:px-72 py-5">
@@ -92,7 +93,25 @@ $icons=[
                             d="M21 21l-5.197-5.197M15.803 15.803A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
                 </span>
-                <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border rounded-lg w-full ring-0 ">
+                <!-- Trigger Input -->
+                <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border rounded-lg w-full ring-0"
+                    onclick="toggleSearchPopup()" />
+
+                <!-- Search Popup -->
+                <div id="searchPopup"
+                    class="fixed top-0 left-0 w-full bg-white shadow-lg p-4 z-50 transform -translate-y-full transition-transform duration-300 ease-out">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">Search Products</h2>
+                            <button onclick="toggleSearchPopup()"
+                                class="text-gray-500 hover:text-black">&times;</button>
+                        </div>
+                        <input id="popupSearchInput" type="text" placeholder="Type to search..."
+                            class="w-full px-4 py-2 border rounded-md" />
+                        <div id="popupSearchResults" class="mt-4 space-y-2"></div>
+                    </div>
+                </div>
+
             </div>
 
             @foreach($icons as $icon)

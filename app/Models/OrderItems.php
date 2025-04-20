@@ -20,4 +20,18 @@ class OrderItems extends Model
     {
         return $this->belongsTo(ProductVariant::class);
     }
+    protected static function booted()
+    {
+        static::saved(function ($item) {
+            $item->order->updateAmount();
+        });
+
+        static::deleted(function ($item) {
+            $item->order->updateAmount();
+        });
+
+        static::created(function ($item) {
+            $item->order->updateAmount();
+        });
+    }
 }

@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Discount;
+use App\Models\Order;
+use App\Models\OrderItems;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -279,6 +282,39 @@ class ProductController extends Controller
             ], 201);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+    public function trendProduct()
+    {
+        try {
+            $products = OrderItems::select('product_variant_id', DB::raw('SUM(quantity) as total_sold'))
+                ->groupBy('product_variant_id')
+                ->orderByDesc('total_sold')
+                ->with('productVariant.product', 'productVariant.productImages')
+                ->take(70) // get only the top 10
+                ->get();
+
+            return response()->json([
+                'message' => 'Trending products retrieved successfully',
+                'products' => $products,
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+    public function searchProduct()
+    {
+        try {
+            $keyword = request('keyword');
+
+            $products = Product::with(['productVariant.productImages', 'category', 'brand'])
+                ->where('name', 'like', "%{$keyword}%")
+                ->limit(5)
+                ->get();
+
+            return response()->json($products);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'An error occurred while searching for products.'], 500);
         }
     }
 }

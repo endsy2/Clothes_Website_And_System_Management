@@ -18,4 +18,12 @@ class Order extends Model
     {
         return $this->hasMany(OrderItems::class);
     }
+    public function updateAmount()
+    {
+        $total = $this->orderItems->sum(function ($item) {
+            return ($item->amount - $item->discount) * $item->quantity;
+        });
+
+        $this->update(['amount' => $total]);
+    }
 }

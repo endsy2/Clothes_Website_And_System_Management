@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->foreignId('customer_id');
             $table->enum('pay_method', array_column(PayMethod::cases(), 'value'))->default(PayMethod::Delivery->value);
             $table->enum('state', array_column(State::cases(), 'value'))->default(State::Not_Paid->value);
+            $table->float('amount')->default(0);
             $table->timestamps();
         });
     }

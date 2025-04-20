@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Models\Product;
@@ -24,31 +26,31 @@ Route::prefix("/")->group(function () {
         $product = (new ProductController())->productById($request['id'])->getData(true);
         return view('user.productDetail', ['product' => $product, 'relatedProducts' => $relatedProducts['data']]);
     });
-    Route::get('/login', [UserController::class, 'login'])->name('login');
-    Route::get('/register', [UserController::class, 'register'])->name('register');
+    Route::get('/login', [CustomerController::class, 'login'])->name('login');
+    Route::get('/register', [CustomerController::class, 'store'])->name('register');
     Route::get('/productSort', function (Request $request) {
         $title = $request->query('type') ?? 'Default';
         $products = (new ProductController())->index($request)->getData(true);
         return view('user.productSort', ['products' => $products['data'], 'title' => $title]);
     });
+    Route::get('/search-products', [ProductController::class, 'searchProduct']);
     // Route::get('/productSort', [ProductController::class, 'index'])->name('productSort');
 });
 Route::prefix('/admin')->group(function () {
     Route::get('/dashboard', function (Request $request) {
-        $chart_options = [
-            'chart_title' => 'Products by Month',
-            'report_type' => 'group_by_date',
-            'model' => Product::class,
-            'group_by_field' => 'created_at',
-            'group_by_period' => 'month',
-            'chart_type' => 'bar',
-            'chart_color' => '70, 130, 180', // optional
-        ];
 
-        $chart1 = new LaravelChart($chart_options);
-
-        return view('admin.dashboard', compact('chart1'));
+        $countCustomer = (new CustomerController())->count()->getData(true);
+        $countOrder = (new OrderController())->count()->getData(true);
+        $totalRevenue = (new OrderController())->totalRevenues()->getData(true);
+        $trendProduct = (new ProductController())->trendProduct()->getData(true);
+        return view('admin.dashboard', [
+            'countCustomer' => $countCustomer,
+            'countOrder' => $countOrder,
+            'totalRevenue' => $totalRevenue,
+            'trendProduct' => $trendProduct
+        ]);
     });
+
     Route::get('/product', function (Request $request) {
         $product = new ProductController()->index($request)->getData(true);
         return view('admin.product');
