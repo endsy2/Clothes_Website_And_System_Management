@@ -1,4 +1,0 @@
-@props(['details'])
-<div>
-
-</div>

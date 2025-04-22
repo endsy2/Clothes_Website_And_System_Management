@@ -16,20 +16,7 @@ $ContactUs = [
 ['text' => '+123456789', 'icon' => asset('/icon/phone-svgrepo-com.svg')],
 ['text' => 'Telegram', 'icon' => asset('/icon/telegram-svgrepo-com.svg')],
 ];
-$icons=[
-['icon'=>'<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-    stroke="currentColor" class="size-6">
-    <path stroke-linecap="round" stroke-linejoin="round"
-        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-</svg>'],
-['icon'=>'<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-    stroke="currentColor" class="size-6">
-    <path stroke-linecap="round" stroke-linejoin="round"
-        d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-</svg>']
 
-
-]
 @endphp
 
 <!-- Optional: Add this in your <head> to control fade animation -->
@@ -59,6 +46,8 @@ $icons=[
 <html>
 
 <head>
+    <title>Clothing</title>
+    <link rel="icon" href="{{ asset('logo.svg') }}" type="image/x-icon" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -70,7 +59,7 @@ $icons=[
 
 </head>
 
-<body class="md:px-16 lg:px-36 xl:px-72 py-5">
+<body class="lg:px-0 xl:px-0 2xl:px-72 py-5">
     <nav class="flex justify-between items-center z-10">
         <div>
             <div class="flex space-x-16 px-5">
@@ -113,15 +102,52 @@ $icons=[
                 </div>
 
             </div>
+            <div class="flex items-center justify-center gap-10">
+                <!-- Favorite Button -->
+                <button id="add-to-favorite-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                    </svg>
+                </button>
 
-            @foreach($icons as $icon)
-            <div class="flex items-center justify-center  gap-10">
+                <!-- Add to Cart -->
+                <button class="add-to-cart-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                    </svg>
+                </button>
+            </div>
 
-                {!! $icon['icon'] !!}
 
-                @endforeach
+            <!-- This will be shown/hidden -->
+            <!-- Cart Tab -->
+            <!-- Overlay for blur background -->
+            <div id="cart-overlay" class="fixed inset-0 z-40 bg-black/10 backdrop-blur-sm hidden"></div>
+
+            <!-- Cart tab -->
+            <div id="cart-tab"
+                class="fixed right-0 top-0 w-full sm:w-1/3 md:w-1/4 lg:w-1/5 h-full bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col py-6 border-l border-gray-300">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">🛒 Cart</h2>
+                    <button id="close-cart-btn" class="text-gray-500 hover:text-red-500 text-xl">&times;</button>
+                </div>
+                <div id="cart-items" class="flex flex-col gap-4 overflow-y-auto max-h-[70vh]"></div>
+                <div class="absolute bottom-0 p-4 w-full">
+                    <form id="checkoutForm">
+                        <button id="checkoutBtn" type="submit"
+                            class="w-full bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
+                            Proceed to Checkout</button>
+                    </form>
+
+                </div>
 
             </div>
+
+
             <div class="space-x-10">
                 @auth
                 <button class="text-xl">LogOut</button>
@@ -187,55 +213,3 @@ $icons=[
         </section>
     </footer>
 </body>
-
-<script>
-    const swiper = new Swiper('.product-slider', {
-        spaceBetween: 10,
-        slidesPerView: 4,
-        slidesPerGroup: 4,
-        speed: 900,
-        loop: true,
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        navigation: {
-            nextEl: '.custom-swiper-button-next',
-            prevEl: '.custom-swiper-button-prev',
-        },
-        breakpoints: {
-            0: {
-                slidesPerView: 1,
-            },
-            480: {
-                slidesPerView: 1,
-            },
-            768: {
-                slidesPerView: 2,
-            },
-            1024: {
-                slidesPerView: 3,
-            },
-            1280: {
-                slidesPerView: 4,
-            },
-        },
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const loader = document.getElementById('page-loader');
-        const content = document.getElementById('main-content');
-
-        // Set delay for 2.5 seconds (2000ms - 3000ms)
-        setTimeout(() => {
-            loader.classList.add('fade-out'); // Start fade-out animation
-
-            // Wait for fade-out to finish then hide completely
-            setTimeout(() => {
-                loader.style.display = 'none'; // Hide loader
-                content.classList.remove('hidden'); // Show main content
-                content.style.opacity = 1; // Make content visible
-            }, 400); // Wait for fade-out animation to finish
-        }, 1000); // 2.5 seconds delay
-    });
-</script>

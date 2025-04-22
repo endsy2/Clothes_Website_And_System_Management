@@ -1,3 +1,4 @@
+@vite(['resources/css/app.css', 'resources/js/app.js','resources/js/addToCart.js'])
 <x-layout>
     <div class="max-w-7xl mx-auto p-6 mt-10">
         <div class="flex flex-col md:flex-row gap-10">
@@ -96,8 +97,9 @@
 
                 {{-- Add to Cart --}}
                 <div class="flex flex-col gap-4">
-                    <button
-                        class="w-full mt-4 px-6 py-3 bg-slate-950 text-white rounded-xl font-semibold hover:bg-slate-700 transition text-lg">
+                    <button id="add-to-cart-btn"
+                        class="add-to-cart-btn w-full mt-4 px-6 py-3 bg-slate-950 text-white rounded-xl font-semibold hover:bg-slate-700 transition text-lg"
+                        onclick="addToCartBtn()">
                         Add to Cart
                     </button>
                     <button
@@ -136,26 +138,29 @@
         const gallery = document.getElementById('gallery');
         const price = document.getElementById('price');
         const stock = document.getElementById('stock');
+        let selectedColor;
+        let filtered;
+        let selectedVariant;
+        let finalPrice;
 
         function updateDetail(variant) {
             mainImage.src = '/' + variant.product_images[0].images;
-            const discount = parseFloat(variant.discount.discount || 0);
+            const discount = variant.discount ? parseFloat(variant.discount.discount || 0) : 0;
             const originalPrice = parseFloat(variant.price || 0);
-            const finalPrice = discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
-
+            finalPrice = discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
             if (discount > 0) {
                 price.innerHTML = `
-            <span class="text-gray-500 line-through text-base mr-2">$${originalPrice.toFixed(2)}</span>
-            <span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full shadow-sm text-base">
-                $${finalPrice.toFixed(2)}
-            </span>
-        `;
+                <span class="text-gray-500 line-through text-base mr-2">$${originalPrice.toFixed(2)}</span>
+                <span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full shadow-sm text-base">
+                    $${finalPrice.toFixed(2)}
+                </span>
+            `;
             } else {
                 price.innerHTML = `
-            <span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full shadow-sm text-base">
-                $${originalPrice.toFixed(2)}
-            </span>
-        `;
+                <span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full shadow-sm text-base">
+                    $${originalPrice.toFixed(2)}
+                </span>
+            `;
             }
 
             stock.textContent = variant.stock;
@@ -172,9 +177,8 @@
             });
         }
 
-
         function renderSizeButtons(color) {
-            const filtered = productVariants.filter(v => v.color === color);
+            filtered = productVariants.filter(v => v.color === color);
             sizeContainer.innerHTML = '';
 
             filtered.forEach(variant => {
@@ -189,6 +193,7 @@
                         'text-white'));
                     btn.classList.add('bg-black', 'text-white');
                     updateDetail(variant);
+                    selectedVariant = variant; // ✅ fix: correct variable name
                 });
 
                 sizeContainer.appendChild(btn);
@@ -207,24 +212,44 @@
             }
         });
 
-
-        // Color selection with proper ring effect (black ring)
+        // Color selection
         colorBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                const selectedColor = btn.dataset.color;
+                selectedColor = btn.dataset.color;
                 renderSizeButtons(selectedColor);
 
-                // Remove ring from all color buttons
                 colorBtns.forEach(b => b.classList.remove('ring-2', 'ring-black'));
-
-                // Add black ring to active button
                 btn.classList.add('ring-2', 'ring-black');
             });
         });
 
-
         // Initialize
         renderSizeButtons(productVariants[0]?.color);
         if (colorBtns[0]) colorBtns[0].classList.add('ring-2', 'ring-black');
+
+        // Add to Cart
+        function addToCartBtn() {
+            if (!selectedVariant) {
+                alert('Please select a size first!');
+                return;
+            }
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingProduct = cart.findIndex(item => item.productVariantsId === selectedVariant.id);
+
+
+            if (existingProduct !== -1) {
+                cart[existingProduct].quantity += 1;
+            } else {
+                cart.push({
+                    id: selectedVariant.product_id,
+                    productVariantsId: selectedVariant.id,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            console.log(selectedVariant);
+
+        }
     </script>
+
 </x-layout>

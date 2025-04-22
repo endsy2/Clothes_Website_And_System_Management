@@ -74,14 +74,49 @@ class ProductController extends Controller
 
 
     // Method to get a specific product by ID
-    public function productById($id)
+    public function productByProductIdPrductVariantID($id, $productVariantId = null)
     {
-        // Find product by ID, throw an exception if not found
-        $product = Product::with(['category', 'brand', 'productVariant.discount', 'productVariant.productImages',])
-            ->findOrFail($id);
-        // Return the product as a JSON response
+        // Check if productId is missing
+        if (!$id) {
+            return response()->json(['error' => 'Product ID is required'], 400);
+        }
+
+        // If variant ID is provided, return variant with product
+        if ($productVariantId) {
+            $variant = ProductVariant::with([
+                'productImages',
+                'product.category',
+                'product.brand',
+                'product.productVariant.discount',
+                'discount',
+            ])
+                ->where('product_id', $id)
+                ->where('id', $productVariantId)
+                ->first();
+
+            if (!$variant) {
+                return response()->json(['error' => 'Product variant not found'], 404);
+            }
+
+            return response()->json($variant);
+        }
+
+        // Otherwise, return full product data
+        $product = Product::with([
+            'category',
+            'brand',
+            'productVariant.discount',
+            'productVariant.productImages',
+        ])->find($id);
+
+
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
         return response()->json($product);
     }
+
     public function update(Request $request, $id)
     {
         try {
@@ -158,9 +193,6 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
-
-
 
     public function destroy($id)
     {
@@ -315,6 +347,28 @@ class ProductController extends Controller
             return response()->json($products);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while searching for products.'], 500);
+        }
+    }
+    public function addToCart()
+    {
+        try {
+            return view("user.add-to-cart");
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => "something went wrong",
+                'error' => ($e->getMessage()),
+            ]);
+        }
+    }
+    public function addToFavorite()
+    {
+        try {
+            return view("user.add-to-favorite");
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => "something went wrong",
+                'error' => ($e->getMessage()),
+            ]);
         }
     }
 }
