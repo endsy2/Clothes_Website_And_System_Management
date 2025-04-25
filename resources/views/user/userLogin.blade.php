@@ -12,16 +12,19 @@
                 <p class="text-gray-600 mt-1">Sign in for a faster checkout experience</p>
             </div>
 
-            <form action="" class="flex flex-col gap-5 w-full max-w-md">
-                <input type="email" placeholder="Email Address*" class="py-3 px-4 border border-gray-300 rounded-md "
-                    required>
+            <form method="POST" action="/login" class="flex flex-col gap-5 w-full max-w-md">
+                @csrf
+                <!-- <input type="email" placeholder="Email Address*" class="py-3 px-4 border border-gray-300 rounded-md "
+                    required> -->
+                <x-form name="email" type="email" placeholder="Email Address" class="py-3 px-4  border border-gray-300"
+                    required />
 
-                <input type="password" placeholder="Password*" class="py-3 px-4 border border-gray-300 rounded-md "
-                    required>
-
+                <x-form name="password" type="password" placeholder="Password"
+                    class="py-3 px-4 border border-gray-300 rounded-md " required />
                 <input type="submit" value="Sign In"
                     class="bg-black text-white py-3 rounded-md font-medium hover:bg-gray-900 transition cursor-pointer">
-
+                <x-error-form name="email" />
+                <x-error-form name="password" />
                 <a href="#" class="text-sm text-blue-500 hover:underline text-center">Forgot Password?</a>
             </form>
         </div>

@@ -1,9 +1,9 @@
 @php
 $navLinks = [
-['href' => '/productSort/?type:Men', 'name' => 'Men'],
-['href' => '/productSort/?type:Women', 'name' => 'Women'],
-['href' => '/productSort/?type:Child', 'name' => 'Child'],
-['href' => '/productSort/?product:Discount', 'name' => 'Discount'],
+['href' => '/productSort/?type=Men', 'name' => 'Men'],
+['href' => '/productSort/?type=Women', 'name' => 'Women'],
+['href' => '/productSort/?type=Child', 'name' => 'Child'],
+['href' => '/productSort/?product=Discount', 'name' => 'Discount'],
 ];
 $FollowUs = [
 ['href' => 'https://www.facebook.com/', 'name' => 'Facebook', 'icon' => asset('/icon/facebook-svgrepo-com.svg')],
@@ -32,13 +32,35 @@ $ContactUs = [
         }
     }
 
-    /* Additional styles for smooth loader and content transition */
-    #page-loader {
+    #page-loader,
+    #main-content {
         transition: opacity 0.4s ease-out;
     }
 
-    #main-content {
-        transition: opacity 0.4s ease-out;
+    nav,
+    footer {
+        background-color: #f9fafb;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-link {
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        transform: scale(1.05);
+        color: #128B9E;
+    }
+
+    .search-popup {
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    footer h3 {
+        margin-bottom: 0.5rem;
     }
 </style>
 
@@ -59,7 +81,7 @@ $ContactUs = [
 
 </head>
 
-<body class="lg:px-0 xl:px-0 2xl:px-72 py-5">
+<body class="lg:px-0 xl:px-0 2xl:px-72 py-5 bg-gray-50 text-gray-800">
     <nav class="flex justify-between items-center z-10">
         <div>
             <div class="flex space-x-16 px-5">
@@ -70,18 +92,19 @@ $ContactUs = [
                 @endforeach
             </div>
         </div>
-        <div class="flex items-center justify-center   ">
-            <a href="/"><img src={{ asset('logo.svg') }} alt=""></a>
+        <div class="flex-grow flex justify-center">
+            <a href="/"><img src="{{ asset('logo.svg') }}" alt="Logo" /></a>
         </div>
+        <!--  -->
         <div class="flex gap-5">
             <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <!-- <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none"
                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M21 21l-5.197-5.197M15.803 15.803A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
-                </span>
+                </span> -->
                 <!-- Trigger Input -->
                 <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border rounded-lg w-full ring-0"
                     onclick="toggleSearchPopup()" />
@@ -104,13 +127,13 @@ $ContactUs = [
             </div>
             <div class="flex items-center justify-center gap-10">
                 <!-- Favorite Button -->
-                <button id="add-to-favorite-btn">
+                <a id="add-to-favorite-btn" href="/add-to-favorite">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                     </svg>
-                </button>
+                </a>
 
                 <!-- Add to Cart -->
                 <button class="add-to-cart-btn">
@@ -131,17 +154,19 @@ $ContactUs = [
             <!-- Cart tab -->
             <div id="cart-tab"
                 class="fixed right-0 top-0 w-full sm:w-1/3 md:w-1/4 lg:w-1/5 h-full bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col py-6 border-l border-gray-300">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-gray-800">🛒 Cart</h2>
+                <div class="flex justify-between items-center mb-4 border-b border-gray-300 px-4 py-2">
+                    <h2 class="text-xl font-semibold text-gray-800">Cart</h2>
                     <button id="close-cart-btn" class="text-gray-500 hover:text-red-500 text-xl">&times;</button>
                 </div>
                 <div id="cart-items" class="flex flex-col gap-4 overflow-y-auto max-h-[70vh]"></div>
                 <div class="absolute bottom-0 p-4 w-full">
-                    <form id="checkoutForm">
-                        <button id="checkoutBtn" type="submit"
-                            class="w-full bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
-                            Proceed to Checkout</button>
-                    </form>
+
+                    <a href="/checkout"
+                        class="block w-full bg-black text-white text-center px-4 py-2 rounded hover:bg-gray-800">
+                        Proceed to Checkout
+                    </a>
+
+
 
                 </div>
 
@@ -150,7 +175,13 @@ $ContactUs = [
 
             <div class="space-x-10">
                 @auth
-                <button class="text-xl">LogOut</button>
+                <!-- <div class="flex jusitfy-center items-center "> -->
+                <form action="/logout" method="POST">
+                    @csrf
+                    <button type="submit"
+                        class="ml-10 text-xl text-white bg-slate-950 px-5 py-2 rounded-lg hover:shadow-sm">Logout</button>
+                </form>
+                <!-- </div> -->
                 @endauth
                 @guest
                 <button class="text-xl text-slate-950 bg-gray-100 px-5 py-2 rounded-lg hover:shadow-xl"><a
@@ -212,4 +243,9 @@ $ContactUs = [
             </div>
         </section>
     </footer>
+    <script>
+        window.addEventListener('beforeunload', (event) => {
+            localStorage.removeItem('showCart');
+        })
+    </script>
 </body>

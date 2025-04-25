@@ -19,51 +19,58 @@ class ProductController extends Controller
     // Method to handle displaying products with optional filters
     public function index(Request $request,)
     {
-        // Get query parameters
-        $name = $request->query('name');
-        $category = $request->query('category');
-        $brand = $request->query('brand');
-        $type = $request->query('type');
+        try {
+            // Get query parameters
+            $name = $request->query('name');
+            $category = $request->query('category');
+            $brand = $request->query('brand');
+            $type = $request->query('type');
 
-        // Create a base query to fetch products with relationships
-        $query = Product::with(['category', 'brand', 'productVariant.productImages']);
+            // Create a base query to fetch products with relationships
+            $query = Product::with(['category', 'brand', 'productVariant.productImages']);
 
-        // If 'name' query parameter is provided, filter products by name
+            // If 'name' query parameter is provided, filter products by name
 
-        if ($name) {
-            $products = $query->where('name', 'like', '%' . $name . '%')->get(); // Use get() for multiple products
+            if ($name) {
+                $products = $query->where('name', 'like', '%' . $name . '%')->get(); // Use get() for multiple products
+                return response()->json($products);
+            }
+
+            // If 'category' query parameter is provided, filter by category
+            if ($category) {
+                $categoryModel = Category::where('category_name', $category)->first(); // Look up category by name
+                if ($categoryModel) {
+                    $products = $query->where('category_id', $categoryModel->id)->get(); // Use get() for multiple products
+                    return response()->json($products);
+                } else {
+                    return response()->json(['message' => 'Category not found'], 404);
+                }
+            }
+
+            // If 'brand' query parameter is provided, filter by brand
+            if ($brand) {
+                $brandModel = Brand::where('brand_name', $brand)->first(); // Look up brand by name
+                if ($brandModel) {
+                    $products = $query->where('brand_id', $brandModel->id)->get(); // Use get() for multiple products
+                    return response()->json($products);
+                } else {
+                    return response()->json(['message' => 'Brand not found'], 404);
+                }
+            }
+            if ($type) {
+                $products = $query->where('productType', $type)->simplePaginate(); // Use get() for multiple products
+                return response()->json($products['data']);
+            }
+
+            // If no query parameter is provided, paginate the results
+            $products = $query->paginate(10); // Paginate the products
             return response()->json($products);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'An error occurred while fetching products.',
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        // If 'category' query parameter is provided, filter by category
-        if ($category) {
-            $categoryModel = Category::where('category_name', $category)->first(); // Look up category by name
-            if ($categoryModel) {
-                $products = $query->where('category_id', $categoryModel->id)->get(); // Use get() for multiple products
-                return response()->json($products);
-            } else {
-                return response()->json(['message' => 'Category not found'], 404);
-            }
-        }
-
-        // If 'brand' query parameter is provided, filter by brand
-        if ($brand) {
-            $brandModel = Brand::where('brand_name', $brand)->first(); // Look up brand by name
-            if ($brandModel) {
-                $products = $query->where('brand_id', $brandModel->id)->get(); // Use get() for multiple products
-                return response()->json($products);
-            } else {
-                return response()->json(['message' => 'Brand not found'], 404);
-            }
-        }
-        if ($type) {
-            $products = $query->where('productType', $type)->simplePaginate(); // Use get() for multiple products
-            return response()->json($products['data']);
-        }
-
-        // If no query parameter is provided, paginate the results
-        $products = $query->paginate(10); // Paginate the products
-        return response()->json($products);
         // return response()->json($name);
     }
     public function show()
@@ -322,8 +329,8 @@ class ProductController extends Controller
             $products = OrderItems::select('product_variant_id', DB::raw('SUM(quantity) as total_sold'))
                 ->groupBy('product_variant_id')
                 ->orderByDesc('total_sold')
-                ->with('productVariant.product', 'productVariant.productImages')
-                ->take(70) // get only the top 10
+                ->with('productVariant.product', 'productVariant.productImages', 'productVariant.product.category', 'productVariant.product.brand')
+                ->take(10) // get only the top 10
                 ->get();
 
             return response()->json([

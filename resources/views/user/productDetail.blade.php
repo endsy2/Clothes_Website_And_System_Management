@@ -1,4 +1,4 @@
-@vite(['resources/css/app.css', 'resources/js/app.js','resources/js/addToCart.js'])
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 <x-layout>
     <div class="max-w-7xl mx-auto p-6 mt-10">
         <div class="flex flex-col md:flex-row gap-10">
@@ -99,13 +99,32 @@
                 <div class="flex flex-col gap-4">
                     <button id="add-to-cart-btn"
                         class="add-to-cart-btn w-full mt-4 px-6 py-3 bg-slate-950 text-white rounded-xl font-semibold hover:bg-slate-700 transition text-lg"
-                        onclick="addToCartBtn()">
+                        onclick="addToCartBtn(product)">
                         Add to Cart
                     </button>
-                    <button
-                        class="w-full px-6 py-3 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 border transition text-lg">
+                    <button id="add-to-favorite-btn"
+                        class="add-to-favorite-btn w-full px-6 py-3 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 border transition text-lg flex items-center justify-center gap-2">
+
+                        {{-- Outline Heart (Not Favorited) --}}
+                        <svg id="heart-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            strokeWidth={1.5} stroke="currentColor" class="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                        </svg>
+
+
+                        {{-- Filled Heart (Favorited) --}}
+                        <svg id="heart-filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            fill="currentColor" class="w-6 h-6 hidden">
+                            <path
+                                d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                        </svg>
+
+
                         Add to Favorite
                     </button>
+
+
                 </div>
             </div>
         </div>
@@ -132,12 +151,14 @@
     {{-- JavaScript --}}
     <script>
         const productVariants = @json($product['product_variant']);
+        const productName = @json($product['name']);
         const colorBtns = document.querySelectorAll('.color-btn');
         const sizeContainer = document.getElementById('size-options');
         const mainImage = document.getElementById('main-image').querySelector('img');
         const gallery = document.getElementById('gallery');
         const price = document.getElementById('price');
         const stock = document.getElementById('stock');
+        const favoritebtn = document.querySelector('.add-to-favorite-btn');
         let selectedColor;
         let filtered;
         let selectedVariant;
@@ -193,16 +214,16 @@
                         'text-white'));
                     btn.classList.add('bg-black', 'text-white');
                     updateDetail(variant);
-                    selectedVariant = variant; // ✅ fix: correct variable name
+                    selectedVariant = variant;
                 });
 
                 sizeContainer.appendChild(btn);
             });
 
-            if (filtered[0]) {
-                updateDetail(filtered[0]);
-                sizeContainer.querySelector('button').click(); // Select first by default
-            }
+            setTimeout(() => {
+                const firstBtn = sizeContainer.querySelector('button');
+                if (firstBtn) firstBtn.click();
+            }, 0);
         }
 
         // Thumbnail click to update main image
@@ -228,27 +249,85 @@
         if (colorBtns[0]) colorBtns[0].classList.add('ring-2', 'ring-black');
 
         // Add to Cart
-        function addToCartBtn() {
+        document.getElementById('add-to-cart-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+
             if (!selectedVariant) {
                 alert('Please select a size first!');
                 return;
             }
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const existingProduct = cart.findIndex(item => item.productVariantsId === selectedVariant.id);
 
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const existingProduct = cart.findIndex(item => item.productVariantsId === selectedVariant.id);
 
             if (existingProduct !== -1) {
                 cart[existingProduct].quantity += 1;
             } else {
+                console.log('n', selectedVariant);
+
                 cart.push({
                     id: selectedVariant.product_id,
                     productVariantsId: selectedVariant.id,
+                    productName: productName,
+                    originalPrice: selectedVariant.price,
+                    discount: selectedVariant.discount?.discount || 0,
+                    image: selectedVariant.product_images[0].images,
+                    size: selectedVariant.size,
                     quantity: 1
                 });
             }
-            localStorage.setItem('cart', JSON.stringify(cart));
-            console.log(selectedVariant);
 
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+        });
+        favoritebtn.addEventListener("click", function(e) {
+            e.preventDefault();
+
+            if (!selectedVariant) {
+                alert('Please select a size first!');
+                return;
+            }
+
+            let favorite = JSON.parse(localStorage.getItem('favorite')) || [];
+
+            const exists = favorite.find(item => item.productVariantsId === selectedVariant.id);
+
+            if (exists) {
+                favorite = favorite.filter(item => item.productVariantsId !== selectedVariant.id);
+                localStorage.setItem('favorite', JSON.stringify(favorite));
+            } else {
+                favorite.push({
+                    id: selectedVariant.product_id,
+                    productVariantsId: selectedVariant.id,
+                    productName: productName,
+                    originalPrice: selectedVariant.price,
+                    discount: selectedVariant.discount?.discount || 0,
+                    image: selectedVariant.product_images[0].images,
+                    size: selectedVariant.size,
+                });
+                localStorage.setItem('favorite', JSON.stringify(favorite));
+
+            }
+
+            updateHeartIcon(selectedVariant.product_id); // <-- Update icon after change
+        });
+
+        const heartOutline = document.getElementById('heart-outline');
+        const heartFilled = document.getElementById('heart-filled');
+
+        function updateHeartIcon(product_id) {
+            const favorite = JSON.parse(localStorage.getItem('favorite')) || [];
+            const isFavorited = favorite.some(item => item.id === product_id);
+
+            if (isFavorited) {
+                heartOutline.classList.add('hidden');
+                heartFilled.classList.remove('hidden');
+            } else {
+                heartOutline.classList.remove('hidden');
+                heartFilled.classList.add('hidden');
+            }
         }
     </script>
 

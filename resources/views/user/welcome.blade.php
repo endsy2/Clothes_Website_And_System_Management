@@ -145,3 +145,9 @@ $category_data = [
         @endforeach
     </div>
 </x-layout>
+@if (session('success'))
+<script>
+    // console.log("Order placed successfully!");
+    localStorage.removeItem('cart');
+</script>
+@endif

@@ -19,10 +19,12 @@ document.getElementById('popupSearchInput').addEventListener('input', function (
             } else {
                 data.forEach(product => {
                     resultsContainer.innerHTML += `
-                        <div class="p-3 bg-gray-100 rounded shadow">
-                            <img src="public//${product.product_variant[0].product_images[0].images}" alt="${product.name}" class="w-16 h-16 rounded">
-                            <p class="font-semibold">${product.name}</p>
+                        <a href="/detail?id=${product.id}" >
+                        <div class="flex items-center gap-5 p-3 bg-gray-100 rounded shadow">
+                            <img src="${product.product_variant[0].product_images[0].images}" alt="${product.name}" class="w-16 h-16 rounded">
+                            <p class="font-semibold ">${product.name}</p>
                         </div>
+                        </a>
                     `;
                 });
             }

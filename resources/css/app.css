@@ -7,3 +7,7 @@
 @tailwind utilities;
 
 /* Swiper Container */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
