@@ -28,7 +28,7 @@
 
             <label class="inline-flex items-center gap-2 mt-4">
                 <input type="checkbox" required>
-                <span>I agree to PEDRO's Terms & Conditions and Privacy Policy.</span>
+                <span>I agree to Clothing's Terms & Conditions and Privacy Policy.</span>
             </label>
 
             <x-form-btn class="bg-black text-white py-3 rounded-md mt-4 hover:bg-gray-900 transition cursor-pointer">

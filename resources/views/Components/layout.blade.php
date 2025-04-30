@@ -243,9 +243,11 @@ $ContactUs = [
             </div>
         </section>
     </footer>
+    @if(session('success'))
     <script>
-        window.addEventListener('beforeunload', (event) => {
-            localStorage.removeItem('showCart');
-        })
+        console.log("Success Message:", @json(session('success')));
+        window.successMessage = @json(session('success'));
     </script>
+    @endif
+
 </body>

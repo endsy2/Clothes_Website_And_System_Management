@@ -17,7 +17,7 @@ $currentUrl = request()->path();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js','resources/js/adminLoading.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js','resources/js/adminLoading.js','resources/js/alert.js'])
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -62,7 +62,11 @@ $currentUrl = request()->path();
             </main>
         </div>
     </div>
-
+    @if(session('success'))
+    <script>
+        window.successMessage = @json(session('success'));
+    </script>
+    @endif
 
 </body>
 

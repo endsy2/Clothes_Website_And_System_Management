@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Discount;
-use App\Models\Order;
 use App\Models\OrderItems;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -13,6 +12,9 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use function PHPUnit\Framework\returnArgument;
+
+
 
 class ProductController extends Controller
 {
@@ -231,66 +233,67 @@ class ProductController extends Controller
         }
     }
 
+
+
     public function store(Request $request)
     {
         try {
-            // Validate the input data
+            // Validate
             $validatedData = $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'description' => ['required', 'string'],
                 'category_name' => ['required', 'string'],
                 'brand_name' => ['required', 'string'],
-                'size' => ['required', 'string'],
+                'size' => 'required|array|min:1',
+                'size.*' => 'in:S,M,L,XL,2XL',
                 'price' => ['required', 'numeric'],
-                'color' => ['required', 'string'],
-                'stock' => ['required', 'integer'],
+                'color' => ['required', 'array'],
+                'color.*' => ['required'],
+                'stock' => ['required', 'numeric'],
+                'discount' => ['nullable', 'string'],
             ]);
 
-            // Check if the 'images' file is provided
+            // Check Images
             if (!$request->hasFile('images')) {
-                return response()->json([
-                    'error' => 'No files uploaded',
-                ], 400);
+                return response()->json(['errors' => ['images' => 'No files uploaded']], 422);
             }
 
-            // Retrieve the uploaded files
             $files = $request->file('images');
-
-            // Ensure files are an array
             if (!is_array($files)) {
-                $files = [$files];  // Convert single file to array
+                $files = [$files];
             }
 
-            // Initialize an array to store file paths
             $imagePaths = [];
 
-            // Process the uploaded files
             foreach ($files as $file) {
                 if ($file->isValid()) {
-                    // Store file and get the path
-                    $path = $file->store('product_images', 'public');
-                    $imagePaths[] = Storage::url($path);  // Return full URL for stored file
+                    $path = $file->store('images', 'public');
+                    $imagePaths[] = Storage::url($path);
                 } else {
-                    return response()->json([
-                        'error' => 'File upload failed for one or more files.',
-                        'file' => $file->getClientOriginalName(),
-                    ], 400);
+                    return response()->json(['errors' => ['images' => 'One or more files failed to upload']], 422);
                 }
             }
 
-            // Find Category and Brand by Name
+            // Find Category and Brand
             $category = Category::where('category_name', $validatedData['category_name'])->first();
             $brand = Brand::where('brand_name', $validatedData['brand_name'])->first();
 
-            // Check if Category and Brand exist
             if (!$category) {
-                return response()->json(['error' => 'Category not found'], 404);
-            }
-            if (!$brand) {
-                return response()->json(['error' => 'Brand not found'], 404);
+                return response()->json(['errors' => ['category_name' => 'Category not found']], 422);
             }
 
-            // Save the product
+            if (!$brand) {
+                return response()->json(['errors' => ['brand_name' => 'Brand not found']], 422);
+            }
+
+            // Optional: Find Discount
+            $discountId = null;
+            if (!empty($validatedData['discount'])) {
+                $discount = Discount::where('discount_name', $validatedData['discount'])->first();
+                $discountId = $discount?->id; // PHP 8+ nullsafe operator
+            }
+
+            // Save Product
             $product = Product::create([
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'],
@@ -298,31 +301,33 @@ class ProductController extends Controller
                 'brand_id' => $brand->id,
             ]);
 
-            // Create the product variant
-            $productVariant = $product->productVariant()->create([
-                'price' => $validatedData['price'],
-                'stock' => $validatedData['stock'],
-                'size' => $validatedData['size'],
-                'color' => $validatedData['color'],
-            ]);
+            // Save Variants
+            foreach ($validatedData['size'] as $size) {
+                foreach ($validatedData['color'] as $color) {
+                    $productVariant = $product->productVariant()->create([
+                        'price' => $validatedData['price'],
+                        'stock' => $validatedData['stock'],
+                        'discount_id' => $discountId,
+                        'size' => $size,
+                        'color' => $color,
+                    ]);
 
-            // Handle image uploads and store images in the database
-            foreach ($imagePaths as $imagePath) {
-                // Save image URL to database
-                $productVariant->productImages()->create([
-                    'images' => $imagePath,
-                ]);
+                    foreach ($imagePaths as $imagePath) {
+                        $productVariant->productImages()->create([
+                            'images' => $imagePath,
+                        ]);
+                    }
+                }
             }
 
-            return response()->json([
-                'message' => 'Product created successfully',
-                'product' => $product,
-                'images' => $imagePaths,
-            ], 201);
+            return back()->with('success', 'Product created successfully!');
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return back()->with('error', 'Something went wrong!')->withInput();
         }
     }
+
+
+
     public function trendProduct()
     {
         try {

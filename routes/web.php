@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RegisterController;
+use Database\Seeders\ProductSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Route;
@@ -71,8 +73,11 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         ]);
     })->name('admin.dashboard');
     Route::get('/product', function (Request $request) {
-        $product = new ProductController()->index($request)->getData(true);
-        return view('admin.product');
+        $products = new ProductController()->index($request)->getData(true);
+        $discounts = new DiscountController()->discountName()->getData(true);
+        $brands = new BrandController()->showBrand()->getData(true);
+        $categories = new CategoryController()->show()->getData(true);
+        return view('admin.product', ['products' => $products, 'discounts' => $discounts, 'brands' => $brands, 'categories' => $categories]);
     })->name('admin.product');
     Route::get('/user', function (Request $request) {
         $product = new ProductController()->index($request)->getData(true);
@@ -91,6 +96,7 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         return view('admin.report');
     })->name('admin.report');
     Route::post('/logout', [LoginController::class, 'adminLogout'])->name('adminLogout');
+    Route::post('/add-product', [ProductController::class, 'store'])->name('add-product');
 });
 
 //admin:guest Route

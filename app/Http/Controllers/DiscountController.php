@@ -44,7 +44,18 @@ class DiscountController extends Controller
     }
 
 
-
+    public function discountName()
+    {
+        try {
+            $discounts = Discount::all();
+            return response()->json($discounts);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while fetching discounts.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -53,7 +64,7 @@ class DiscountController extends Controller
     {
         //
     }
-           
+
     /**
      * Display the specified resource.
      */
