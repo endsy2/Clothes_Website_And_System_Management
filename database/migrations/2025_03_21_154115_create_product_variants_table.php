@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Discount;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +15,12 @@ return new class extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Product::class);
-            $table->foreignIdFor(\App\Models\Discount::class)->nullable(true);
+
+            // Updated section
+            $table->foreignIdFor(Discount::class)
+                ->onDelete('set null')
+                ->nullable('true');
+
             $table->string('size');
             $table->string('color');
             $table->float('price');
@@ -22,6 +28,7 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

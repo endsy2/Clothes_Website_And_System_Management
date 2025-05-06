@@ -20,7 +20,8 @@ class CustomersFactory extends Factory
             'full_name' => fake()->name(),
             'email' => fake()->email(),
             'password' => fake()->password(6, 12),
-            'address' => fake()->address()
+            'address' => fake()->address(),
+            'phone_number' => fake()->phoneNumber()
         ];
     }
 }

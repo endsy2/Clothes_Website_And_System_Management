@@ -8,22 +8,26 @@ $titles=[
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
         // Chart 1: Area Chart
+        const AreaChart = @json($areaChart);
+
         google.charts.load('current', {
             packages: ['corechart']
         });
         google.charts.setOnLoadCallback(drawAreaChart);
 
         function drawAreaChart() {
-            const data = google.visualization.arrayToDataTable([
-                ['Year', 'Sales', 'Expenses'],
-                ['2013', 1000, 400],
-                ['2014', 1170, 460],
-                ['2015', 660, 1120],
-                ['2016', 1030, 540]
-            ]);
+            const chartData = [
+                ['Year', 'Income']
+            ];
+
+            AreaChart.forEach(item => {
+                chartData.push([item.year.toString(), item.total]);
+            });
+
+            const data = google.visualization.arrayToDataTable(chartData);
 
             const options = {
-                title: 'Company Performance',
+                title: 'Company Performance (Income per Year)',
                 hAxis: {
                     title: 'Year',
                     titleTextStyle: {
@@ -41,43 +45,43 @@ $titles=[
         }
 
         // Chart 2: Bar Chart
-        google.charts.setOnLoadCallback(drawBarChart);
+        // google.charts.setOnLoadCallback(drawBarChart);
 
-        function drawBarChart() {
-            const data = google.visualization.arrayToDataTable([
-                ["Element", "Density", {
-                    role: "style"
-                }],
-                ["Copper", 8.94, "#b87333"],
-                ["Silver", 10.49, "silver"],
-                ["Gold", 19.30, "gold"],
-                ["Platinum", 21.45, "color: #e5e4e2"]
-            ]);
+        // function drawBarChart() {
+        //     const data = google.visualization.arrayToDataTable([
+        //         ["Element", "Density", {
+        //             role: "style"
+        //         }],
+        //         ["Copper", 8.94, "#b87333"],
+        //         ["Silver", 10.49, "silver"],
+        //         ["Gold", 19.30, "gold"],
+        //         ["Platinum", 21.45, "color: #e5e4e2"]
+        //     ]);
 
-            const view = new google.visualization.DataView(data);
-            view.setColumns([0, 1, {
-                calc: "stringify",
-                sourceColumn: 1,
-                type: "string",
-                role: "annotation"
-            }, 2]);
+        //     const view = new google.visualization.DataView(data);
+        //     view.setColumns([0, 1, {
+        //         calc: "stringify",
+        //         sourceColumn: 1,
+        //         type: "string",
+        //         role: "annotation"
+        //     }, 2]);
 
-            const options = {
-                title: "Density of Precious Metals, in g/cm^3",
-                width: '100%',
-                height: 400,
-                bar: {
-                    groupWidth: "95%"
-                },
-                legend: {
-                    position: "none"
-                },
-                backgroundColor: '#f9fafb'
-            };
+        //     const options = {
+        //         title: "Density of Precious Metals, in g/cm^3",
+        //         width: '100%',
+        //         height: 400,
+        //         bar: {
+        //             groupWidth: "95%"
+        //         },
+        //         legend: {
+        //             position: "none"
+        //         },
+        //         backgroundColor: '#f9fafb'
+        //     };
 
-            const chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
-            chart.draw(view, options);
-        }
+        //     const chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+        //     chart.draw(view, options);
+        // }
     </script>
 </head>
 
@@ -112,13 +116,13 @@ $titles=[
             </x-admin-dashboard-cart>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 px-6 pb-10">
+        <div class=" gap-6 px-6 pb-10">
             <div class="bg-white shadow rounded-lg p-6">
                 <div id="chart_div" class="w-full h-[400px]"></div>
             </div>
-            <div class="bg-white shadow rounded-lg p-6">
+            <!-- <div class="bg-white shadow rounded-lg p-6">
                 <div id="columnchart_values" class="w-full h-[400px]"></div>
-            </div>
+            </div> -->
         </div>
         <div class="bg-white shadow rounded-lg p-6 mb-6">
             <h2 class="text-lg font-semibold text-gray-700 mb-4">Trending Products</h2>
@@ -140,11 +144,12 @@ $titles=[
                         $product = $productVariant['product'];
                         @endphp
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 text-gray-700">{{ $product['id'] }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $product['name'] }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $product['category']['category_name'] }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $product['brand']['brand_name'] }}</td>
-                            <td class="px-6 py-4 text-gray-700">${{ number_format($productVariant['price'], 2) }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $product['id']??null }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $product['name']??null }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $product['category']['category_name'] ??null}}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $product['brand']['brand_name'] ??null}}</td>
+                            <td class="px-6 py-4 text-gray-700">${{ number_format($productVariant['price']??null, 2) }}
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

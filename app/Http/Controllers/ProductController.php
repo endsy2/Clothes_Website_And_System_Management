@@ -11,6 +11,7 @@ use App\Models\ProductVariant;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use function PHPUnit\Framework\returnArgument;
 
@@ -129,76 +130,34 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            // Validate request data
-            $validatedData = $request->validate([
+            $validateData = $request->validate([
                 'name' => 'required|string',
-                'description' => 'nullable|string',
-                'category_name' => 'required|exists:categories,category_name',
-                'brand_name' => 'required|exists:brands,brand_name',
-                'discount_name' => 'nullable|exists:discounts,discount_name',
-                'price' => 'nullable|numeric',
-                'stock' => 'nullable|integer|min:0',
-                'color' => 'nullable|string',
-                'size' => 'nullable|string',
-                'product_id' => 'nullable|exists:products,id'
+                'description' => 'required|string',
+                'category_name' => 'required|string',
+                'brand_name' => 'required|string',
             ]);
+            $category = Category::where('category_name', $validateData['category_name'])->first();
+            $brand = Brand::where('brand_name', $validateData['brand_name'])->first();
 
-            // Find related rows using name instead of ID
-            $categoryRow = Category::where('category_name', $request->input('category_name'))->firstOrFail();
-            $brandRow = Brand::where('brand_name', $request->input('brand_name'))->firstOrFail();
-            $discountRow = Discount::where('discount_name', $request->input('discount_name'))->first();
-
-            // Debug to check if discount exists
-            if (!$discountRow) {
-                return response()->json(['error' => 'Discount not found!'], 400);
+            if (!$category) {
+                return response()->json(['errors' => ['category_name' => 'Category not found']], 422);
             }
-
-            // Prepare product data
+            if (!$brand) {
+                return response()->json(['errors' => ['brand_name' => 'Brand not found']], 422);
+            }
             $productData = [
-                'name' => $request->input('name'),
-                'description' => $request->input('description', ''),
-                'category_id' => $categoryRow->id,
-                'brand_id' => $brandRow->id
+                'name' => $validateData['name'],
+                'description' => $validateData['description'],
+                'category_id' => $category->id,
+                'brand_id' => $brand->id,
             ];
-
-            // Update product
             $product = Product::findOrFail($id);
             $product->update($productData);
-
-            // Find product variants
-            $productVariantQuery = ProductVariant::where('product_id', $id);
-
-            if ($request->filled('color') && $request->filled('size')) {
-                $productVariantQuery->where('color', $request->input('color'))
-                    ->where('size', $request->input('size'));
-            } elseif ($request->filled('color')) {
-                $productVariantQuery->where('color', $request->input('color'));
-            } elseif ($request->filled('size')) {
-                $productVariantQuery->where('size', $request->input('size'));
-            }
-
-            $productVariants = $productVariantQuery->get();
-
-            // Debug: Check if product variants exist
-            if ($productVariants->isEmpty()) {
-                return response()->json(['error' => 'No matching product variants found'], 400);
-            }
-
-            // Update each variant
-            foreach ($productVariants as $productVariant) {
-                $productVariant->update([
-                    'discount_id' => optional($discountRow)->id, // ✅ Ensures no null errors
-                    'price' => $request->input('price', 0),
-                    'stock' => $request->input('stock', 0),
-                ]);
-            }
-
+            return response()->json(['message' => 'Product updated successfully'], 200);
+        } catch (Exception $exception) {
             return response()->json([
-                'message' => 'Product updated successfully',
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
+                'error' => 'An error occurred while updating the product.',
+                'message' => $exception->getMessage(),
             ], 500);
         }
     }
@@ -381,6 +340,145 @@ class ProductController extends Controller
                 'message' => "something went wrong",
                 'error' => ($e->getMessage()),
             ]);
+        }
+    }
+    public function deleteOne(Request $request)
+    {
+        $id = $request->input('id');
+
+        // Retrieve the product and its relationships (product variants, product images, and order items)
+        $product = Product::with([
+            'productVariant.productImages',
+            'productVariant.orderItems',
+            'productVariant.orderItems.order'
+        ])->find($id);
+
+        // Check if the product exists
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        try {
+            // Begin the transaction
+            DB::beginTransaction();
+
+            // Log the product being deleted
+            Log::info("Attempting to delete product with ID: $id", ['product' => $product]);
+
+            // Loop through each product variant and delete associated data
+            foreach ($product->productVariant as $variant) {
+                // Delete associated order items
+                foreach ($variant->orderItems as $orderItem) {
+                    Log::info("Deleting order item ID: {$orderItem->id}");
+                    $orderItem->delete();
+                }
+
+                // Delete associated product images
+                foreach ($variant->productImages as $image) {
+                    Log::info("Deleting product image ID: {$image->id}");
+                    $image->delete();
+                }
+
+                // If variant has associated orders, delete them as well
+                foreach ($variant->orderItems as $orderItem) {
+                    if ($orderItem->order) {
+                        Log::info("Deleting order ID: {$orderItem->order->id}");
+                        $orderItem->order->delete();
+                    }
+                }
+
+                // Delete the variant itself
+                Log::info("Deleting product variant ID: {$variant->id}");
+                $variant->delete();
+            }
+
+            // Finally, delete the product
+            Log::info("Deleting product ID: $id");
+            $product->delete();
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return a success response
+            return response()->json([
+                'message' => 'Product deleted successfully'
+            ], 200);
+        } catch (Exception $e) {
+            // Rollback the transaction in case of an error
+            DB::rollBack();
+
+            // Log the error for debugging
+            Log::error("Error deleting product with ID: $id", ['error' => $e->getMessage()]);
+
+            // Return a failure response
+            return response()->json([
+                'message' => 'Failed to delete product',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteMany(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        // Attempt to find the products with the given IDs
+        $products = Product::with(['productVariant.productImages', 'productVariant.orderItems', 'productVariant.orderItems.order'])
+            ->whereIn('id', $ids)
+            ->get();
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No products found'], 404);
+        }
+
+        try {
+            // Begin transaction to ensure data integrity
+            DB::beginTransaction();
+
+            foreach ($products as $product) {
+                // Delete related records for each product
+                foreach ($product->productVariant as $variant) {
+                    // Delete order items and their associated orders
+                    foreach ($variant->orderItems as $orderItem) {
+                        // Log order deletion
+                        if ($orderItem->order) {
+                            Log::info("Deleting order ID: {$orderItem->order->id}");
+                            $orderItem->order->delete(); // Delete order first
+                        }
+
+                        // Log::info("Deleting order item ID: {$orderItem->id}");
+                        $orderItem->delete(); // Delete order item
+                    }
+
+                    // Delete associated product images
+                    foreach ($variant->productImages as $image) {
+                        Log::info("Deleting product image ID: {$image->id}");
+                        $image->delete(); // Delete image
+                    }
+
+                    // Delete the variant itself
+                    Log::info("Deleting product variant ID: {$variant->id}");
+                    $variant->delete();
+                }
+
+                // Delete the product itself
+                Log::info("Deleting product ID: {$product->id}");
+                $product->delete();
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            return response()->json([
+                'data' => $products,
+                'message' => 'Products deleted successfully'
+            ], 200);
+        } catch (Exception $e) {
+            // Rollback if something goes wrong
+            DB::rollback();
+
+            // Return detailed error message
+            Log::error("Error deleting products: " . $e->getMessage());
+            return response()->json(['message' => 'Failed to delete products', 'error' => $e->getMessage()], 500);
         }
     }
 }

@@ -22,25 +22,28 @@ class RegisterController extends Controller
             ], 500);
         }
     }
+
+
     public function store(Request $request)
     {
         try {
             // Validate customer input
             $attributes = $request->validate([
                 'full_name' => 'required|string|max:255',
-                'email' => 'required|email|unique:customers,email',  // Check against customers table
+                'email' => 'required|email|unique:customers,email',
                 'address' => 'required|string|max:255',
+                'phone_number' => 'required|string',
                 'password' => ['required', Password::min(6)->letters()->numbers()->mixedCase(), 'confirmed'],
             ]);
 
-            // Hash password before saving (optional, Laravel does it automatically)
-            $attributes['password'] = bcrypt($request->password);
+            // Hash password
+            $attributes['password'] = bcrypt($attributes['password']);
 
-            // Create customer
+            // Create customer with all attributes
             $customer = Customers::create($attributes);
 
             // Log in the customer
-            FacadesAuth::guard('customer')->login($customer);  // Use the correct guard for customers
+            FacadesAuth::guard('customer')->login($customer);
 
             return redirect('/')->with('success', 'Your account has been created');
         } catch (\Throwable $th) {
@@ -50,6 +53,7 @@ class RegisterController extends Controller
             ], 500);
         }
     }
+
     public function adminStore(Request $request)
     {
         try {

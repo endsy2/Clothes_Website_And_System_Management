@@ -14,6 +14,7 @@ class Customers extends Authenticatable
         'full_name',
         'email',
         'address',
+        'phone_number',
         'password',
     ];
 
@@ -27,8 +28,8 @@ class Customers extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function order()
+    public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'customer_id');
     }
 }

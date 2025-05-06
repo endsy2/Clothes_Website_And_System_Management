@@ -43,11 +43,10 @@ class DiscountController extends Controller
         }
     }
 
-
     public function discountName()
     {
         try {
-            $discounts = Discount::all();
+            $discounts = Discount::paginate(10);
             return response()->json($discounts);
         } catch (Exception $e) {
             return response()->json([
@@ -86,6 +85,18 @@ class DiscountController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $result = Discount::where('id', $id)->delete();
+            if ($result) {
+                return response()->json(['message' => 'Delete Success']);
+            } else {
+                return response()->json(['message' => 'Discount not found'], 404);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Delete Failed',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 }

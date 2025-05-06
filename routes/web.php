@@ -4,9 +4,11 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\GraphController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVariantsController;
 use App\Http\Controllers\RegisterController;
 use Database\Seeders\ProductSeeder;
 use Illuminate\Http\Request;
@@ -45,11 +47,10 @@ Route::prefix("/")->group(function () {
     Route::get('add-to-favorite', [ProductController::class, 'addToFavorite'])->name('add-to-favorite');
     Route::get('search-productsId-productVariantId/{productId}/{productVariantId?}', [ProductController::class, 'productByProductIdPrductVariantID']);
     Route::get('checkout', function (Request $request) {
-        // $cart = $request->input('cart');
-        // $productCart=(new ProductController())->productByProductIdPrductVariantID($request['id'],$request['productVariantId'])->getData(true);
         return view('user.checkout');
-    })->middleware('auth');
-    Route::post('checkout', [CustomerController::class, 'checkout'])->middleware('auth');
+    })->middleware('auth:customer');
+
+    Route::post('checkout', [CustomerController::class, 'checkout'])->middleware('auth:customer');
     Route::get('add-to-favorite', function (Request $request) {
         return view('user.add-to-favorite');
     });
@@ -65,11 +66,16 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         $countOrder = (new OrderController())->count()->getData(true);
         $totalRevenue = (new OrderController())->totalRevenues()->getData(true);
         $trendProduct = (new ProductController())->trendProduct()->getData(true);
+        $AreaChart = (new GraphController())->DashBoardGraphArea()->getData(true);
+        // $BarChart = (new GraphController())->DashBoardGraphBar()->getData(true);
+
+        // dd($BarChart);
         return view('admin.dashboard', [
             'countCustomer' => $countCustomer,
             'countOrder' => $countOrder,
             'totalRevenue' => $totalRevenue,
-            'trendProduct' => $trendProduct
+            'trendProduct' => $trendProduct,
+            'areaChart' => $AreaChart['data']
         ]);
     })->name('admin.dashboard');
     Route::get('/product', function (Request $request) {
@@ -80,23 +86,58 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         return view('admin.product', ['products' => $products, 'discounts' => $discounts, 'brands' => $brands, 'categories' => $categories]);
     })->name('admin.product');
     Route::get('/user', function (Request $request) {
-        $product = new ProductController()->index($request)->getData(true);
-        return view('admin.user');
+        // $product = new ProductController()->index($request)->getData(true);
+        $customers = new CustomerController()->index()->getData(true);
+
+        // dd($customers);
+        return view('admin.user', ['customers' => $customers]);
     })->name('admin.user');
+
+
+    Route::get('/user/{id}', function ($id, Request $request) {
+        $customer = new CustomerController()->show($id)->getData(true);
+        // dd($customer);
+        return view('admin.customerDetail', ['customers' => $customer]);
+    });
+
     Route::get('/order', function (Request $request) {
-        $product = new ProductController()->index($request)->getData(true);
-        return view('admin.order');
+        // $product = new ProductController()->index($request)->getData(true);
+        $orders = new OrderController()->index()->getData(true);
+        $areaChartCustomer = new GraphController()->OrderGraphAreaCustomer()->getData(true);
+        $areaChartSales = new GraphController()->OrderGraphAreaSales()->getData(true);
+
+
+        // dd($areaChartSales);
+        return view('admin.order', ['orders' => $orders, 'areaChartCustomer' => $areaChartCustomer, 'areaChartSales' => $areaChartSales]);
     });
     Route::get('/discount', function (Request $request) {
-        $product = new ProductController()->index($request)->getData(true);
-        return view('admin.discount');
+        // $product = new ProductController()->index($request)->getData(true);
+        $discounts = new DiscountController()->discountName()->getData(true);
+        // dd($discounts['data']);
+        return view('admin.discount', ['discounts' => $discounts]);
     })->name('admin.discount');
+    Route::delete("/discount/{id}", [DiscountController::class, 'destroy'])->name('deleteOneDiscount');
     Route::get('/report', function (Request $request) {
         $product = new ProductController()->index($request)->getData(true);
         return view('admin.report');
     })->name('admin.report');
     Route::post('/logout', [LoginController::class, 'adminLogout'])->name('adminLogout');
     Route::post('/add-product', [ProductController::class, 'store'])->name('add-product');
+    Route::delete('/delete-product-one', [ProductController::class, 'deleteOne'])->name('delete-product-one');
+    Route::delete('/delete-products-many', [ProductController::class, 'deleteMany'])->name('delete-product-many');
+    Route::get('/product/{id}', function (Request $request) {
+        $product     = (new ProductController())->productByProductIdPrductVariantID($request['id'])->getData(true);
+        return view('admin.productDetail', ['product' => $product]);
+    })->name('admin.product-detail');
+    Route::put("/product/{id}", [ProductController::class, 'update'])->name('admin.productupdate');
+    Route::delete("/order/{id}", [OrderController::class, 'destroy'])->name('admin.order.delete');
+    Route::get("/order/{id}", function (Request $request) {
+
+        $order = (new OrderController())->show($request['id'])->getData(true);
+        // dd($order);
+        return view('admin.orderDetail', ['orders' => $order]);
+    })->name('admin.order-detail');
+    Route::delete("/many-order", [OrderController::class, 'destroyMany'])->name('admin.order.deleteMany');
 });
 
 //admin:guest Route

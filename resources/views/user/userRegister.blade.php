@@ -17,6 +17,12 @@
                 placeholder="Address" required />
             <x-error-form name="address" />
 
+            <x-form name="phone_number" type="text" class="w-full border border-gray-300 rounded-md p-3"
+                placeholder="phone_number" required />
+            <x-error-form name="phone_number" />
+
+
+
 
             <x-form name="password" type="password" class="w-full border border-gray-300 rounded-md p-3"
                 placeholder="Password" required />

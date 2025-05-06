@@ -77,7 +77,8 @@ $ContactUs = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css',
+    'resources/js/app.js','resources/js/loading.js','resources/js/slider.js','resources/js/addToCartTab.js','resources/js/search.js'])
 
 </head>
 
@@ -174,20 +175,23 @@ $ContactUs = [
 
 
             <div class="space-x-10">
-                @auth
-                <!-- <div class="flex jusitfy-center items-center "> -->
+                @auth('customer')
                 <form action="/logout" method="POST">
                     @csrf
                     <button type="submit"
-                        class="ml-10 text-xl text-white bg-slate-950 px-5 py-2 rounded-lg hover:shadow-sm">Logout</button>
+                        class="ml-10 text-xl text-white bg-slate-950 px-5 py-2 rounded-lg hover:shadow-sm">
+                        Logout
+                    </button>
                 </form>
-                <!-- </div> -->
                 @endauth
-                @guest
-                <button class="text-xl text-slate-950 bg-gray-100 px-5 py-2 rounded-lg hover:shadow-xl"><a
-                        href="/login">Login</a></button>
-                <button class="text-xl text-white bg-slate-950 px-5 py-2 rounded-lg hover:shadow-sm"><a
-                        href="/register">Register</a></button>
+
+                @guest('customer')
+                <button class="text-xl text-slate-950 bg-gray-100 px-5 py-2 rounded-lg hover:shadow-xl">
+                    <a href="/login">Login</a>
+                </button>
+                <button class="text-xl text-white bg-slate-950 px-5 py-2 rounded-lg hover:shadow-sm">
+                    <a href="/register">Register</a>
+                </button>
                 @endguest
             </div>
     </nav>
@@ -203,7 +207,9 @@ $ContactUs = [
             {{ $slot }}
         </div>
     </main>
-
+    <script>
+        console.log(localStorage)
+    </script>
     <footer>
         <section class="flex justify-between items-start mt-28">
             <div>
@@ -243,11 +249,6 @@ $ContactUs = [
             </div>
         </section>
     </footer>
-    @if(session('success'))
-    <script>
-        console.log("Success Message:", @json(session('success')));
-        window.successMessage = @json(session('success'));
-    </script>
-    @endif
+
 
 </body>

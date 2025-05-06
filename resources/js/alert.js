@@ -11,7 +11,7 @@ function showSuccessAlert(message) {
         timer: 3000,
         toast: true,
         customClass: {
-            popup: 'bg-black text-black px-6 py-3 rounded shadow-lg', // Ensuring bg-black and text-white are applied
+            popup: 'bg-white text-black px-6 py-3 rounded shadow-lg', // Ensuring bg-black and text-white are applied
             title: 'text-sm font-semibold'
         }
     });

@@ -19,10 +19,17 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
+        $order = \App\Models\Order::factory()->create();
+        $productVariant = \App\Models\ProductVariant::factory()->create();
+
+        $quantity = $this->faker->numberBetween(1, 10);
+        $amount = $productVariant->price * $quantity;
+
         return [
-            'customer_id' => Customers::factory(),
-            'pay_method' => fake()->randomElement(array_column(PayMethod::cases(), 'value')),
-            'state' => fake()->randomElement(array_column(State::cases(), 'value')),
+            'order_id' => $order->id,
+            'product_variant_id' => $productVariant->id,
+            'quantity' => $quantity,
+            'amount' => $amount,
         ];
     }
 }

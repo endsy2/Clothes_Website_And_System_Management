@@ -6,6 +6,7 @@ use App\Models\Customers;
 use App\Models\Order;
 use App\Models\OrderItems;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,20 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {}
+    public function index()
+    {
+        try {
+            $customer = Customers::paginate(15);
+            return response()->json($customer);
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'message' => "something went wrong",
+                    "error" => $th
+                ]
+            );
+        }
+    }
     public function count()
     {
         try {
@@ -83,10 +97,22 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
+
+
     public function show(string $id)
     {
-        //
+        try {
+            $customer = Customers::with('orders')->findOrFail($id);
+
+            return response()->json($customer);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Customer not found.'], 404);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
+
+
 
     /**
      * Update the specified resource in storage.

@@ -1,4 +1,4 @@
-@vite(['resources/css/app.css', 'resources/js/app.js'])
+@vite(['resources/css/app.css', 'resources/js/app.js','resources/js/addToCartTab.js'])
 <x-layout>
     <div class="max-w-7xl mx-auto p-6 mt-10">
         <div class="flex flex-col md:flex-row gap-10">
