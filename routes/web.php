@@ -83,6 +83,7 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         $discounts = new DiscountController()->discountName()->getData(true);
         $brands = new BrandController()->showBrand()->getData(true);
         $categories = new CategoryController()->show()->getData(true);
+        // dd($discounts);
         return view('admin.product', ['products' => $products, 'discounts' => $discounts, 'brands' => $brands, 'categories' => $categories]);
     })->name('admin.product');
     Route::get('/user', function (Request $request) {

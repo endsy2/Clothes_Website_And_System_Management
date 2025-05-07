@@ -66,7 +66,7 @@ $titles = ['Id', 'name', 'category', 'brand', 'price'];
 
         <select name="discount" class="bg-white border border-gray-300 rounded px-2 py-1">
             <option value="">Select Discount</option>
-            @foreach ($discounts as $discount)
+            @foreach ($discounts['data'] as $discount)
             <option value="{{ $discount['discount_name'] }}" @if(old('discount')==$discount['discount_name']) selected
                 @endif>
                 {{ $discount['discount_name'] }}
