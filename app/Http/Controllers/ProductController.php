@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Discount;
 use App\Models\OrderItems;
 use App\Models\Product;
+use App\Models\ProductType;
 use App\Models\ProductVariant;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -95,6 +96,7 @@ class ProductController extends Controller
         if ($productVariantId) {
             $variant = ProductVariant::with([
                 'productImages',
+                'product.productType',
                 'product.category',
                 'product.brand',
                 'product.productVariant.discount',
@@ -115,6 +117,7 @@ class ProductController extends Controller
         $product = Product::with([
             'category',
             'brand',
+            'productType',
             'productVariant.discount',
             'productVariant.productImages',
         ])->find($id);
@@ -135,30 +138,37 @@ class ProductController extends Controller
                 'description' => 'required|string',
                 'category_name' => 'required|string',
                 'brand_name' => 'required|string',
+                'product_type_name' => 'required|string'
             ]);
+
             $category = Category::where('category_name', $validateData['category_name'])->first();
             $brand = Brand::where('brand_name', $validateData['brand_name'])->first();
+            $product_type = ProductType::where('product_type_name', $validateData['product_type_name'])->first();
 
             if (!$category) {
-                return response()->json(['errors' => ['category_name' => 'Category not found']], 422);
+                return redirect()->back()->withErrors(['category_name' => 'Category not found'])->withInput();
             }
             if (!$brand) {
-                return response()->json(['errors' => ['brand_name' => 'Brand not found']], 422);
+                return redirect()->back()->withErrors(['brand_name' => 'Brand not found'])->withInput();
             }
+            if (!$product_type) {
+                return redirect()->back()->withErrors(['product_type_name' => 'Product Type not found'])->withInput();
+            }
+
             $productData = [
                 'name' => $validateData['name'],
                 'description' => $validateData['description'],
+                'product_type_id' => $product_type->id,
                 'category_id' => $category->id,
                 'brand_id' => $brand->id,
             ];
+
             $product = Product::findOrFail($id);
             $product->update($productData);
-            return response()->json(['message' => 'Product updated successfully'], 200);
+
+            return redirect()->back()->with('success', 'Product updated successfully!');
         } catch (Exception $exception) {
-            return response()->json([
-                'error' => 'An error occurred while updating the product.',
-                'message' => $exception->getMessage(),
-            ], 500);
+            return redirect()->back()->with('error', 'An error occurred: ' . $exception->getMessage());
         }
     }
 
@@ -480,5 +490,15 @@ class ProductController extends Controller
             Log::error("Error deleting products: " . $e->getMessage());
             return response()->json(['message' => 'Failed to delete products', 'error' => $e->getMessage()], 500);
         }
+    }
+    public function insertProductView(Request $request)
+    {
+
+        $discounts = new DiscountController()->discountName()->getData(true);
+        $brands = new BrandController()->showBrand()->getData(true);
+        $categories = new CategoryController()->show()->getData(true);
+        $productTypes = new ProductTypeController()->show()->getData(true);
+
+        return view('admin.insertProduct', ['discounts' => $discounts, 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
     }
 }

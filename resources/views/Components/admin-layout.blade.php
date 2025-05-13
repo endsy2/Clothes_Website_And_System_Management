@@ -1,7 +1,11 @@
 @php
 $links = [
 ['href' => '/admin/dashboard', 'name' => 'Dashboard'],
-['href' => '/admin/product', 'name' => 'Product'],
+['href' => '/admin/product', 'name' => 'Product','sub'=>[['href' => 'product', 'name' =>
+'Product'],['name'=>"Insert
+Product",'href'=>'insertProduct'],['name'=>'Insert Product Variant','href'=>'insertProductVariant'],['name'=>'Insert
+Product Brand','href'=>'productBrand'],['name'=>'Insert Category','href'=>'insertCategory'],['name'=>'Insert Product
+Type','href'=>'insertProductType']]],
 ['href' => '/admin/order', 'name' => 'Order'],
 ['href' => '/admin/user', 'name' => 'Customer'],
 ['href' => '/admin/discount', 'name' => 'Discount'],
@@ -32,15 +36,40 @@ $currentUrl = request()->path();
                 Admin Panel
             </div>
 
-            <nav class="flex-1 px-4 py-6 space-y-2">
+            <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
                 @foreach ($links as $link)
                 @php
-                $isActive = request()->is(ltrim($link['href'], '/'));
+                $hasSub = isset($link['sub']);
+                $isMainActive = request()->is(ltrim($link['href'], '/'));
                 @endphp
-                <a href="{{ $link['href'] }}" class="block px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
-                        {{ $isActive ? 'bg-black text-white' : 'hover:bg-gray-100 text-gray-700' }}">
+
+                @if ($hasSub)
+                <div class="space-y-1">
+                    <button type="button" class="w-full flex justify-between items-center px-4 py-2 rounded-lg font-medium transition
+                    {{ $isMainActive ? 'bg-black text-white' : 'hover:bg-gray-100 text-gray-700' }}"
+                        onclick="toggleSubmenu(this)">
+                        <span>{{ $link['name'] }}</span>
+                        <svg class="w-4 h-4 transform transition-transform duration-300" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+
+                    <div class="pl-6 space-y-1 hidden">
+                        @foreach ($link['sub'] as $sub)
+                        <a href="/admin/{{ $sub['href'] }}"
+                            class="block px-3 py-1 rounded-md transition hover:bg-gray-200 text-gray-700">
+                            {{ $sub['name'] }}
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+                @else
+                <a href="{{ $link['href'] }}" class="block px-4 py-2 rounded-lg font-medium text-sm transition
+               {{ $isMainActive ? 'bg-black text-white' : 'hover:bg-gray-100 text-gray-700' }}">
                     {{ $link['name'] }}
                 </a>
+                @endif
                 @endforeach
             </nav>
 
@@ -81,9 +110,18 @@ $currentUrl = request()->path();
 </body>
 
 </html>
+
 <script>
     const sidebar = document.getElementById('sidebar');
     const hambar = document.getElementById('hambar');
 
-    const
+    function toggleSubmenu(button) {
+        const submenu = button.nextElementSibling;
+        const arrow = button.querySelector('svg');
+
+        // Toggle the 'hidden' class to show or hide the submenu
+        submenu.classList.toggle('hidden');
+        // Toggle the rotation of the arrow when clicked
+        arrow.classList.toggle('rotate-90');
+    }
 </script>

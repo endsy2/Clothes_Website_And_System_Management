@@ -24,6 +24,10 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class, 'brand_id');
     }
+    public function productType()
+    {
+        return $this->belongsTo(ProductType::class, 'product_type_id');
+    }
     public function productVariant()
     {
         return $this->hasMany(ProductVariant::class);

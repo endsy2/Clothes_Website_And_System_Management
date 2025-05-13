@@ -1,3 +1,7 @@
+@php
+$sizebtns=['S','M','L','XL','2XL'];
+@endphp
+
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 <x-admin-layout>
     <div class="max-w-7xl mx-auto p-6 mt-10">
@@ -100,276 +104,564 @@
                     </button>
 
 
-                    <button class="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-500">Edit Product
+                    <button id="edit-product-variant-btn"
+                        class="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-500">Edit Product
                         Variant</button>
-                    <button class="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-500">Delete Product
+                    <button id="delete-product-variant-btn"
+                        class="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-500">Delete Product
                         Variant</button>
                 </div>
-                {{-- Edit Product Form --}}
-                <div id="edit-product-form" class="mt-6 p-6 border rounded-lg bg-gray-100 hidden">
-                    <h2 class="text-xl font-semibold mb-4">Edit Product Information</h2>
-                    <form action="{{ route('admin.productupdate', $product['id']) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-
-                        <div class="mb-4">
-                            <label class="block font-medium text-gray-700">Product Name</label>
-                            <input type="text" name="name" value="{{ $product['name'] }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="block font-medium text-gray-700">Description</label>
-                            <textarea name="description"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">{{ $product['description'] }}</textarea>
-                        </div>
-
-                        {{-- Add more fields as needed like brand, category, etc. --}}
-
-                        <div class="flex justify-end gap-3">
-                            <button type="submit"
-                                class="px-4 py-2 bg-[#128B9E] text-white rounded-md hover:bg-[#0f6f80]">Save</button>
-                            <button type="button" id="cancel-edit-btn"
-                                class="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400">Cancel</button>
-                        </div>
-                    </form>
-                </div>
 
 
-                {{-- Add to Cart --}}
-                <div class="flex flex-col gap-4">
-                    <!-- <button id="add-to-cart-btn"
-                        class="add-to-cart-btn w-full mt-4 px-6 py-3 bg-slate-950 text-white rounded-xl font-semibold hover:bg-slate-700 transition text-lg"
-                        onclick="addToCartBtn(product)">
-                        Add to Cart
-                    </button> -->
-                    <!-- <button id="add-to-favorite-btn"
-                        class="add-to-favorite-btn w-full px-6 py-3 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 border transition text-lg flex items-center justify-center gap-2">
 
-                        {{-- Outline Heart (Not Favorited) --}}
-                        <svg id="heart-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            strokeWidth={1.5} stroke="currentColor" class="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round"
-                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                        </svg>
-
-
-                        {{-- Filled Heart (Favorited) --}}
-                        <svg id="heart-filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                            fill="currentColor" class="w-6 h-6 hidden">
-                            <path
-                                d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-                        </svg>
-
-
-                        Add to Favorite
-                    </button> -->
-
-
-                </div>
             </div>
         </div>
 
         {{-- Related Products --}}
+        <!-- Overlay with backdrop blur effect -->
+
+
+        <div id="edit-product-form-overlay"
+            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+            <div id="edit-product-form"
+                class="bg-white rounded-2xl p-8 w-full max-w-xl relative shadow-2xl transform transition-all duration-300">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Product</h2>
+
+                <form action="{{ route('admin.productupdate', $product['id']) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="mb-6">
+                        <label for="product-name" class="block text-lg font-medium text-gray-700">Product
+                            Name</label>
+                        <input type="text" name="name" value="{{ $product['name'] }}" id="product-name"
+                            class="mt-1 block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none transition">
+                    </div>
+                    <!-- Brand Dropdown -->
+                    <div class="mb-6">
+                        <label for="brand_name" class="block text-sm font-semibold text-gray-700 mb-2">Brands</label>
+                        <select name="brand_name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
+                            <option value="">{{ $product['brand']['brand_name']}}</option>
+                            @foreach ($brands as $brand)
+                            <option value="{{ $brand['brand_name'] }}">{{ $brand['brand_name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Category Dropdown -->
+                    <div class="mb-6">
+                        <label for="category_name"
+                            class="block text-sm font-semibold text-gray-700 mb-2">Categorys</label>
+                        <select name="category_name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
+                            <option value="">{{ $product['category']['category_name']}}</option>
+                            @foreach ($categorys as $category)
+                            <option value="{{ $category['category_name'] }}">{{ $category['category_name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Product type Dropdown -->
+                    <div class="mb-6">
+                        <label for="product_type_name" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Product Types
+                        </label>
+                        <select name="product_type_name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
+                            <option value="{{ $product['product_type']['product_type_name'] ?? '' }}">
+                                {{ $product['product_type']['product_type_name'] ?? 'Select product type' }}
+                            </option>
+                            @foreach ($productTypes as $productType)
+                            <option value="{{ $productType['product_type_name'] }}">
+                                {{ $productType['product_type_name'] }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-6">
+                        <label for="product-description"
+                            class="block text-sm font-semibold text-gray-700 mb-2">Description:</label>
+                        <textarea name="description" id="product-description" rows="4"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none resize-none">{{ $product['description'] }}</textarea>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-end gap-3">
+                        <button type="button" id="cancel-edit-product-btn"
+                            class="px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-5 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{-- edit product variant --}}
+        <!-- Overlay with backdrop blur effect -->
+        <div id="edit-product-variant-form-overlay"
+            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+            <div id="edit-product-variant-form"
+                class="bg-white rounded-2xl p-8 w-full max-w-xl relative shadow-2xl transform transition-all duration-300">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Product</h2>
+
+                <form id="variant-form" method="POST">
+                    @csrf
+                    @method('PUT')
+
+
+                    <!-- Size Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2"> Size</label>
+                        <div id="size-options" class="flex flex-wrap gap-2">
+                            @foreach ($sizebtns as $sizebtn)
+                            <button type="button"
+                                class="size-btn px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-200 transition"
+                                onclick="selectSizeBtn(this)">
+                                {{ $sizebtn }}
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+
+
+                    <!-- price -->
+                    <div class="mb-6">
+                        <label for="price" class="block text-lg font-medium text-gray-700">
+                            Price</label>
+                        <input type="text" name="number" id="product-variant-price-input"
+                            class="mt-1 block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none transition">
+
+                    </div>
+                    <!-- stock -->
+                    <div class="mb-6">
+                        <label for="stock" class="block text-lg font-medium text-gray-700">
+                            Stock</label>
+                        <input type="text" name="number" id="product-variant-stock-input"
+                            class="mt-1 block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none transition">
+
+                    </div>
+                    <!-- Discount Dropdown -->
+                    <div class="mb-6">
+                        <label for="discount_name"
+                            class="block text-sm font-semibold text-gray-700 mb-1">Discount</label>
+                        <select name="discount_name" required
+                            class="w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none text-sm">
+                            <option value="">
+                                {{ $product['product_variant'][0]['discount']['discount_name'] ?? 'No discount' }}
+                            </option>
+                            @foreach ($discounts as $discount)
+                            <option value="{{ $discount['name'] }}">{{ $discount['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="color" class="block text-lg font-medium text-gray-700 mb-2">
+                            Color
+                        </label>
+                        <div class="flex items-center space-x-4">
+                            <!-- Color input container -->
+                            <input type="color" name="color" id="product-variant-color-input"
+                                class="w-12 h-12 rounded-full border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none transition-all ease-in-out duration-150" />
+                            <!-- Display the selected color with label -->
+                            <span id="color-display" class="text-sm text-gray-600">#000000</span>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label for="image" class="block text-lg font-medium text-gray-700 mb-2">
+                            Images
+                        </label>
+                        <div class="flex items-center space-x-4">
+                            <!-- Image input container -->
+                            <input type="file" name="images[]" id="product-variant-image-input"
+                                class="w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:outline-none transition-all ease-in-out duration-150"
+                                accept="image/*" multiple />
+
+                            <!-- Display the selected images count with label -->
+                            <span id="image-display" class="text-sm text-gray-600">No images selected</span>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-end gap-3">
+                        <button type="button" id="cancel-edit-product-variant-btn"
+                            class="px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                            Cancel
+                        </button>
+                        <button type="submit" onclick="updateFormAction()"
+                            class="px-5 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition">
+                            Save
+                        </button>
+                    </div>
+                </form>
+                @if (session('success'))
+                <div class="bg-green-200 text-green-800 px-4 py-2 rounded">
+                    {{ session('success') }}
+                </div>
+                @endif
+
+                @if (session('error'))
+                <div class="bg-red-200 text-red-800 px-4 py-2 rounded">
+                    {{ session('error') }}
+                </div>
+                @endif
+
+                @if ($errors->any())
+                <ul class="bg-red-100 text-red-700 px-4 py-2 rounded">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                @endif
+
+            </div>
+        </div>
+
+
+
 
     </div>
 
     {{-- JavaScript --}}
     <script>
-    const productVariants = @json($product['product_variant']);
-    const productName = @json($product['name']);
-    const colorBtns = document.querySelectorAll('.color-btn');
-    const sizeContainer = document.getElementById('size-options');
-    const mainImage = document.getElementById('main-image').querySelector('img');
-    const gallery = document.getElementById('gallery');
-    const price = document.getElementById('price');
-    const stock = document.getElementById('stock');
-    const favoritebtn = document.querySelector('.add-to-favorite-btn');
-    let selectedColor;
-    let filtered;
-    let selectedVariant;
-    let finalPrice;
+        // Get the file input and the display span
+        const imageInput = document.getElementById('product-variant-image-input');
+        const imageDisplay = document.getElementById('image-display');
 
-    function updateDetail(variant) {
-        mainImage.src = '/' + variant.product_images[0].images;
-        const discount = variant.discount ? parseFloat(variant.discount.discount || 0) : 0;
-        const originalPrice = parseFloat(variant.price || 0);
-        finalPrice = discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
-        if (discount > 0) {
-            price.innerHTML = `
+        // Event listener to update the display text when user selects files
+        imageInput.addEventListener('change', function(e) {
+            const files = e.target.files;
+            console.log(files);
+            if (files.length > 0) {
+                imageDisplay.textContent = `${files.length} image(s) selected`;
+            } else {
+                imageDisplay.textContent = 'No images selected';
+            }
+
+
+        });
+        // Display selected color code next to the color input
+        document.getElementById('product-variant-color-input').addEventListener('input', function(e) {
+            document.getElementById('color-display').textContent = e.target.value.toUpperCase();
+        });
+        // Show the Edit Product Form Modal
+        document.getElementById('edit-product-btn').addEventListener('click', () => {
+            const formOverlay = document.getElementById('edit-product-form-overlay');
+            const form = document.getElementById('edit-product-form');
+
+            // Show the overlay and modal with smooth scaling animation
+            formOverlay.classList.remove('hidden');
+            form.classList.remove('scale-95');
+            form.classList.add('scale-100');
+
+            // Smooth scroll to the form
+            window.scrollTo({
+                top: form.offsetTop - 100,
+                behavior: 'smooth'
+            });
+        });
+
+        document.getElementById('cancel-edit-product-btn').addEventListener('click', () => {
+            const formOverlay = document.getElementById('edit-product-form-overlay');
+            const form = document.getElementById('edit-product-form');
+
+            // Hide the form with smooth exit animation
+            form.classList.remove('scale-100');
+            form.classList.add('scale-95');
+
+            setTimeout(() => {
+                formOverlay.classList.add('hidden');
+            }, 300); // Delay to allow smooth scaling out transition
+        });
+        // Show the Edit Product Variant Form Modal
+        document.getElementById('edit-product-variant-btn').addEventListener('click', () => {
+            const formOverlay = document.getElementById('edit-product-variant-form-overlay');
+            const form = document.getElementById('edit-product-variant-form');
+
+            // Show the overlay and modal with smooth scaling animation
+            formOverlay.classList.remove('hidden');
+            form.classList.remove('scale-95');
+            form.classList.add('scale-100');
+
+            // Smooth scroll to the form
+            window.scrollTo({
+                top: form.offsetTop - 100,
+                behavior: 'smooth'
+            });
+        });
+
+        document.getElementById('cancel-edit-product-variant-btn').addEventListener('click', () => {
+            const formOverlay = document.getElementById('edit-product-variant-form-overlay');
+            const form = document.getElementById('edit-product-variant-form');
+
+            // Hide the form with smooth exit animation
+            form.classList.remove('scale-100');
+            form.classList.add('scale-95');
+
+            setTimeout(() => {
+                formOverlay.classList.add('hidden');
+            }, 300); // Delay to allow smooth scaling out transition
+        });
+
+
+        // });
+        const productVariants = @json($product['product_variant']);
+        const productName = @json($product['name']);
+        const colorBtns = document.querySelectorAll('.color-btn');
+        const sizeContainer = document.getElementById('size-options');
+        const mainImage = document.getElementById('main-image').querySelector('img');
+        const gallery = document.getElementById('gallery');
+        const price = document.getElementById('price');
+        const stock = document.getElementById('stock');
+        const favoritebtn = document.querySelector('.add-to-favorite-btn');
+        let selectedColor;
+        let filtered;
+        let selectedVariant;
+        let finalPrice;
+
+        function updateDetail(variant) {
+            mainImage.src = '/' + variant.product_images[0].images;
+            const discount = variant.discount ? parseFloat(variant.discount.discount || 0) : 0;
+            const originalPrice = parseFloat(variant.price || 0);
+            finalPrice = discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
+            if (discount > 0) {
+                price.innerHTML = `
                 <span class="text-gray-500 line-through text-base mr-2">$${originalPrice.toFixed(2)}</span>
                 <span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full shadow-sm text-base">
                     $${finalPrice.toFixed(2)}
                 </span>
             `;
-        } else {
-            price.innerHTML = `
+            } else {
+                price.innerHTML = `
                 <span class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full shadow-sm text-base">
                     $${originalPrice.toFixed(2)}
                 </span>
             `;
+            }
+
+            stock.textContent = variant.stock;
+
+            // Update gallery
+            gallery.innerHTML = '';
+            variant.product_images.forEach(img => {
+                const thumb = document.createElement('img');
+                thumb.src = '/' + img.images;
+                thumb.className =
+                    'w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-black transition';
+                thumb.dataset.img = '/' + img.images;
+                gallery.appendChild(thumb);
+            });
         }
 
-        stock.textContent = variant.stock;
 
-        // Update gallery
-        gallery.innerHTML = '';
-        variant.product_images.forEach(img => {
-            const thumb = document.createElement('img');
-            thumb.src = '/' + img.images;
-            thumb.className =
-                'w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-black transition';
-            thumb.dataset.img = '/' + img.images;
-            gallery.appendChild(thumb);
+
+        function renderSizeButtons(color) {
+            filtered = productVariants.filter(v => v.color === color);
+            sizeContainer.innerHTML = '';
+
+            filtered.forEach(variant => {
+                const btn = document.createElement('button');
+                btn.className =
+                    'size-btn px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100 hover:text-black transition';
+                btn.textContent = variant.size;
+                btn.dataset.variant = JSON.stringify(variant);
+
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('bg-black',
+                        'text-white'));
+                    btn.classList.add('bg-black', 'text-white');
+                    updateDetail(variant);
+                    selectedVariant = variant;
+                    document.getElementById('product-variant-price-input').value = selectedVariant.price
+                    document.getElementById('product-variant-stock-input').value = selectedVariant.stock
+                    document.getElementById('product-variant-color-input').value = selectedVariant.color
+                    document.getElementById('color-display').textContent = selectedVariant.color
+                        .toUpperCase();
+                    document.getElementById('')
+                });
+
+                sizeContainer.appendChild(btn);
+            });
+
+            setTimeout(() => {
+                const firstBtn = sizeContainer.querySelector('button');
+                if (firstBtn) firstBtn.click();
+            }, 0);
+        }
+
+        function updateFormAction() {
+            let url = `/admin/productVariant/${selectedVariant.id}`;
+
+            // // If you need to pass query parameters too
+            // if (otherParam !== null) {
+            //     url += `?type=${encodeURIComponent(otherParam)}`;
+            // }
+
+            document.getElementById('variant-form').action = url;
+        }
+
+        // Thumbnail click to update main image
+        gallery.addEventListener('click', (e) => {
+            if (e.target.tagName === 'IMG' && e.target.dataset.img) {
+                mainImage.src = e.target.dataset.img;
+            }
         });
-    }
 
-    function renderSizeButtons(color) {
-        filtered = productVariants.filter(v => v.color === color);
-        sizeContainer.innerHTML = '';
-
-        filtered.forEach(variant => {
-            const btn = document.createElement('button');
-            btn.className =
-                'size-btn px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100 transition';
-            btn.textContent = variant.size;
-            btn.dataset.variant = JSON.stringify(variant);
-
+        // Color selection
+        colorBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('bg-black',
-                    'text-white'));
-                btn.classList.add('bg-black', 'text-white');
-                updateDetail(variant);
-                selectedVariant = variant;
-            });
+                selectedColor = btn.dataset.color;
+                renderSizeButtons(selectedColor);
 
-            sizeContainer.appendChild(btn);
+                colorBtns.forEach(b => b.classList.remove('ring-2', 'ring-black'));
+                btn.classList.add('ring-2', 'ring-black');
+            });
         });
 
-        setTimeout(() => {
-            const firstBtn = sizeContainer.querySelector('button');
-            if (firstBtn) firstBtn.click();
-        }, 0);
-    }
+        // Initialize
+        renderSizeButtons(productVariants[0]?.color);
+        if (colorBtns[0]) colorBtns[0].classList.add('ring-2', 'ring-black');
 
-    // Thumbnail click to update main image
-    gallery.addEventListener('click', (e) => {
-        if (e.target.tagName === 'IMG' && e.target.dataset.img) {
-            mainImage.src = e.target.dataset.img;
-        }
-    });
+        // Add to Cart
+        document.getElementById('add-to-cart-btn').addEventListener('click', function(e) {
+            e.preventDefault();
 
-    // Color selection
-    colorBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            selectedColor = btn.dataset.color;
-            renderSizeButtons(selectedColor);
 
-            colorBtns.forEach(b => b.classList.remove('ring-2', 'ring-black'));
-            btn.classList.add('ring-2', 'ring-black');
+            if (!selectedVariant) {
+                alert('Please select a size first!');
+                return;
+            }
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const existingProduct = cart.findIndex(item => item.productVariantsId === selectedVariant.id);
+
+            if (existingProduct !== -1) {
+                cart[existingProduct].quantity += 1;
+            } else {
+                console.log('n', selectedVariant);
+
+                cart.push({
+                    id: selectedVariant.product_id,
+                    productVariantsId: selectedVariant.id,
+                    productName: productName,
+                    originalPrice: selectedVariant.price,
+                    discount: selectedVariant.discount?.discount || 0,
+                    image: selectedVariant.product_images[0].images,
+                    size: selectedVariant.size,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+
         });
-    });
+        favoritebtn.addEventListener("click", function(e) {
+            e.preventDefault();
 
-    // Initialize
-    renderSizeButtons(productVariants[0]?.color);
-    if (colorBtns[0]) colorBtns[0].classList.add('ring-2', 'ring-black');
+            if (!selectedVariant) {
+                alert('Please select a size first!');
+                return;
+            }
 
-    // Add to Cart
-    document.getElementById('add-to-cart-btn').addEventListener('click', function(e) {
-        e.preventDefault();
+            let favorite = JSON.parse(localStorage.getItem('favorite')) || [];
 
+            const exists = favorite.find(item => item.productVariantsId === selectedVariant.id);
 
-        if (!selectedVariant) {
-            alert('Please select a size first!');
-            return;
-        }
+            if (exists) {
+                favorite = favorite.filter(item => item.productVariantsId !== selectedVariant.id);
+                localStorage.setItem('favorite', JSON.stringify(favorite));
+            } else {
+                favorite.push({
+                    id: selectedVariant.product_id,
+                    productVariantsId: selectedVariant.id,
+                    productName: productName,
+                    originalPrice: selectedVariant.price,
+                    discount: selectedVariant.discount?.discount || 0,
+                    image: selectedVariant.product_images[0].images,
+                    size: selectedVariant.size,
+                });
+                localStorage.setItem('favorite', JSON.stringify(favorite));
 
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            }
 
-        const existingProduct = cart.findIndex(item => item.productVariantsId === selectedVariant.id);
-
-        if (existingProduct !== -1) {
-            cart[existingProduct].quantity += 1;
-        } else {
-            console.log('n', selectedVariant);
-
-            cart.push({
-                id: selectedVariant.product_id,
-                productVariantsId: selectedVariant.id,
-                productName: productName,
-                originalPrice: selectedVariant.price,
-                discount: selectedVariant.discount?.discount || 0,
-                image: selectedVariant.product_images[0].images,
-                size: selectedVariant.size,
-                quantity: 1
-            });
-        }
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-
-    });
-    favoritebtn.addEventListener("click", function(e) {
-        e.preventDefault();
-
-        if (!selectedVariant) {
-            alert('Please select a size first!');
-            return;
-        }
-
-        let favorite = JSON.parse(localStorage.getItem('favorite')) || [];
-
-        const exists = favorite.find(item => item.productVariantsId === selectedVariant.id);
-
-        if (exists) {
-            favorite = favorite.filter(item => item.productVariantsId !== selectedVariant.id);
-            localStorage.setItem('favorite', JSON.stringify(favorite));
-        } else {
-            favorite.push({
-                id: selectedVariant.product_id,
-                productVariantsId: selectedVariant.id,
-                productName: productName,
-                originalPrice: selectedVariant.price,
-                discount: selectedVariant.discount?.discount || 0,
-                image: selectedVariant.product_images[0].images,
-                size: selectedVariant.size,
-            });
-            localStorage.setItem('favorite', JSON.stringify(favorite));
-
-        }
-
-        updateHeartIcon(selectedVariant.product_id); // <-- Update icon after change
-    });
-
-    const heartOutline = document.getElementById('heart-outline');
-    const heartFilled = document.getElementById('heart-filled');
-
-    function updateHeartIcon(product_id) {
-        const favorite = JSON.parse(localStorage.getItem('favorite')) || [];
-        const isFavorited = favorite.some(item => item.id === product_id);
-
-        if (isFavorited) {
-            heartOutline.classList.add('hidden');
-            heartFilled.classList.remove('hidden');
-        } else {
-            heartOutline.classList.remove('hidden');
-            heartFilled.classList.add('hidden');
-        }
-    }
-
-    // Toggle Edit Product Form
-    // Toggle Edit Product Form
-    document.getElementById('edit-product-btn').addEventListener('click', () => {
-        document.getElementById('edit-product-form').classList.remove('hidden');
-        window.scrollTo({
-            top: document.getElementById('edit-product-form').offsetTop - 100,
-            behavior: 'smooth'
+            updateHeartIcon(selectedVariant.product_id); // <-- Update icon after change
         });
-    });
 
-    // Cancel Button
-    document.getElementById('cancel-edit-btn').addEventListener('click', () => {
-        document.getElementById('edit-product-form').classList.add('hidden');
-    });
+        const heartOutline = document.getElementById('heart-outline');
+        const heartFilled = document.getElementById('heart-filled');
+
+        function updateHeartIcon(product_id) {
+            const favorite = JSON.parse(localStorage.getItem('favorite')) || [];
+            const isFavorited = favorite.some(item => item.id === product_id);
+
+            if (isFavorited) {
+                heartOutline.classList.add('hidden');
+                heartFilled.classList.remove('hidden');
+            } else {
+                heartOutline.classList.remove('hidden');
+                heartFilled.classList.add('hidden');
+            }
+        }
+
+        function selectSizeBtn(button) {
+            // Reset styles for all buttons
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.style.backgroundColor = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+            });
+
+            // Apply style to the clicked button
+            // button.style.backgroundColor = '#d1d5db'; // Tailwind's bg-gray-300
+            button.style.borderColor = '#374151'; // Tailwind's border-gray-700
+            button.style.color = '#111827'; // Tailwind's text-gray-900
+        }
+        document.getElementById('delete-product-variant-btn').addEventListener('click', function() {
+            // const selected = [...document.querySelectorAll('.product-checkbox:checked')].map(cb => cb.value);
+            if (selected.length === 0) {
+                Swal.fire('No Selection', 'Please select at least one product to delete.', 'warning');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to delete ${selected.length} order.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete them!',
+                cancelButtonText: 'Cancel'
+            }).then(result => {
+                console.log(selected);
+
+                if (result.isConfirmed) {
+                    fetch('/admin/many-order', {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .content
+                            },
+                            body: JSON.stringify({
+                                ids: selected
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.message === "Orders deleted successfully") {
+                                Swal.fire('Deleted!', `${data.deleted} products deleted.`, 'success')
+                                    .then(() => location.reload());
+                            } else {
+                                Swal.fire('Error', 'Failed to delete products.', 'error');
+                            }
+                        });
+                }
+            });
+        });
     </script>
-
     </x-layout>

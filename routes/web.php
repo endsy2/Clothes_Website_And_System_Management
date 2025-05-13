@@ -8,11 +8,13 @@ use App\Http\Controllers\GraphController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+// use App\Http\Controllers\ProductVariantsController;
+use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\ProductVariantsController;
 use App\Http\Controllers\RegisterController;
-use Database\Seeders\ProductSeeder;
+// use Database\Seeders\ProductSeeder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth as FacadesAuth;
+// use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Route;
 
 //Customer Route
@@ -83,9 +85,11 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         $discounts = new DiscountController()->discountName()->getData(true);
         $brands = new BrandController()->showBrand()->getData(true);
         $categories = new CategoryController()->show()->getData(true);
-        // dd($discounts);
-        return view('admin.product', ['products' => $products, 'discounts' => $discounts, 'brands' => $brands, 'categories' => $categories]);
+        $productTypes = new ProductTypeController()->show()->getData(true);
+
+        return view('admin.product', ['products' => $products, 'discounts' => $discounts, 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
     })->name('admin.product');
+    Route::get('/insertProduct', [ProductController::class, 'insertProductView'])->name('insertProductView');
     Route::get('/user', function (Request $request) {
         // $product = new ProductController()->index($request)->getData(true);
         $customers = new CustomerController()->index()->getData(true);
@@ -128,9 +132,15 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     Route::delete('/delete-products-many', [ProductController::class, 'deleteMany'])->name('delete-product-many');
     Route::get('/product/{id}', function (Request $request) {
         $product     = (new ProductController())->productByProductIdPrductVariantID($request['id'])->getData(true);
-        return view('admin.productDetail', ['product' => $product]);
+        $brands = (new BrandController())->showBrand()->getData(true);
+        $categorys = (new CategoryController())->show()->getData(true);
+        $productTypes = (new ProductTypeController()->show()->getData(true));
+        $discounts = (new DiscountController()->index()->getData(true));
+        // dd($discounts);
+        return view('admin.productDetail', ['product' => $product, 'brands' => $brands, 'categorys' => $categorys, 'productTypes' => $productTypes, 'discounts' => $discounts]);
     })->name('admin.product-detail');
     Route::put("/product/{id}", [ProductController::class, 'update'])->name('admin.productupdate');
+    Route::put("/productVariant/{id}", [ProductVariantsController::class, 'update'])->name('admin.productVariantUpdate');
     Route::delete("/order/{id}", [OrderController::class, 'destroy'])->name('admin.order.delete');
     Route::get("/order/{id}", function (Request $request) {
 

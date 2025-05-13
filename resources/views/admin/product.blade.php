@@ -7,96 +7,13 @@ $titles = ['Id', 'name', 'category', 'brand', 'price'];
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <x-admin-layout>
-    <span class="text-2xl font-semibold">Insert New Product</span>
+    <span class="text-2xl font-semibold">Products</span>
 
 
 
     <!-- Add Product Form -->
-    <form action="/admin/add-product" id="form-input" class="grid grid-cols-2 gap-5 my-6" method="POST"
-        enctype="multipart/form-data">
-        @csrf
-        <input type="text" name="name" placeholder="Product Name" class="border border-gray-300 rounded px-2 py-1"
-            required>
-        <x-error-form name="name" />
-
-        <select name="category_name" class="bg-white border border-gray-300 rounded px-2 py-1" required>
-            <option value="">Select Category</option>
-            @foreach ($categories as $category)
-            <option value="{{ $category['category_name'] }}">{{ $category['category_name'] }}</option>
-            @endforeach
-        </select>
-        <x-error-form name="category_name" />
-
-        <select name="brand_name" class="bg-white border border-gray-300 rounded px-2 py-1" required>
-            <option value="">Select Brand</option>
-            @foreach ($brands as $brand)
-            <option value="{{ $brand['brand_name'] }}">{{ $brand['brand_name'] }}</option>
-            @endforeach
-        </select>
-        <x-error-form name="brand_name" />
-
-        <!-- Color Input -->
-        <div class="flex gap-2" id="color-container">
-            <div class="color-input-wrapper">
-                <input type="color" name="color[]" class="border rounded px-2 py-1" required>
-                <button type="button" class="remove-color-btn text-red-500 ml-2">X</button>
-            </div>
-        </div>
-
-        <button type="button" id="add-color-btn" class="bg-black text-white px-4 py-2 rounded mt-4">
-            Add Color
-        </button>
-
-        <!-- Size Selection -->
-        <div class="flex gap-2" id="size-wrapper">
-            @foreach(['S', 'M', 'L', 'XL', '2XL'] as $size)
-            <label class="cursor-pointer">
-                <input type="checkbox" name="size[]" value="{{ $size }}" class="sr-only peer">
-                <div
-                    class="px-4 py-2 border rounded-lg text-gray-700 peer-checked:bg-black peer-checked:text-white peer-checked:border-black transition">
-                    {{ $size }}
-                </div>
-            </label>
-            @endforeach
-            <div id="size-error" class="hidden"></div>
-        </div>
-
-        <input type="text" name="price" placeholder="price" class="border rounded border-gray-300 px-2 py-1" required>
-        <x-error-form name="price" />
-
-        <select name="discount" class="bg-white border border-gray-300 rounded px-2 py-1">
-            <option value="">Select Discount</option>
-            @foreach ($discounts['data'] as $discount)
-            <option value="{{ $discount['discount_name'] }}" @if(old('discount')==$discount['discount_name']) selected
-                @endif>
-                {{ $discount['discount_name'] }}
-            </option>
-            @endforeach
-        </select>
-        <x-error-form name="discount" />
-
-        <input type="text" name="stock" placeholder="quantity" class="border rounded border-gray-300 px-2 py-1"
-            required>
-        <x-error-form name="stock" />
-
-        <input type="text" name="description" placeholder="description" class="border rounded border-gray-300 px-2 py-1"
-            required>
-        <x-error-form name="description" />
-
-        <div class="flex flex-col gap-3">
-            <input type="file" name="images[]" placeholder="image" class="border rounded px-2 border-gray-300 py-1"
-                required multiple>
-            <input type="submit" value="Add Product"
-                class="bg-black text-white px-4 py-2 rounded mt-4 cursor-pointer hover:bg-gray-900 transition">
-        </div>
-
-        <x-error-form name="images" />
-        <x-sucesss-form name="success" />
-        <x-error-form name="error" />
-    </form>
 
 
-    <h2 class="text-lg font-semibold text-gray-700 mb-4">Products</h2>
     <div class="overflow-x-auto max-w-full bg-white shadow-md rounded-lg mt-8">
         <table class="min-w-full text-sm text-left text-gray-600">
             <thead class="bg-gray-100 text-xs text-gray-700 uppercase sticky top-0 z-10">

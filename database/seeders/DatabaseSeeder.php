@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Customers;
+use App\Models\productType;
 use App\Models\User;
+use Database\Seeders\ProductType as SeedersProductType;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -27,6 +29,7 @@ class DatabaseSeeder extends Seeder
             OrderSeeder::class,
             ProductImageSeeder::class,
             ProductSeeder::class,
+            SeedersProductType::class
             // ProductVariantSeeder::class
 
         ]);
