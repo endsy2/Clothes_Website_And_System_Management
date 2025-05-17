@@ -249,7 +249,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                     <div class="mb-6">
                         <label for="discount_name"
                             class="block text-sm font-semibold text-gray-700 mb-1">Discount</label>
-                        <select name="discount_name" required
+                        <select name="discount_name"
                             class="w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none text-sm">
                             <option value="">
                                 {{ $product['product_variant'][0]['discount']['discount_name'] ?? 'No discount' }}

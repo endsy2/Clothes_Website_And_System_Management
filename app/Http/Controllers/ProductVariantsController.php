@@ -42,33 +42,28 @@ class ProductVariantsController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            // Validate only product variant related fields
             $validatedData = $request->validate([
-                'discount_name' => 'nullable|exists:discounts,discount_name',
+                // 'discount_name' => 'nullable|exists:discounts,discount_name',
                 'price' => 'nullable|numeric',
                 'stock' => 'nullable|integer|min:0',
                 'color' => 'nullable|string',
                 'size' => 'nullable|string',
             ]);
 
-            // Get discount row if discount_name is provided
-            $discountRow = null;
-            if ($request->filled('discount_name')) {
-                $discountRow = Discount::where('discount_name', $request->input('discount_name'))->first();
-                if (!$discountRow) {
-                    return redirect()->back()->withErrors(['discount_name' => 'Discount not found!'])->withInput();
-                }
-            }
+            // Get the discount row if present
+            $discountRow = $request->filled('discount_name')
+                ? Discount::where('discount_name', $request->discount_name)->first()
+                : null;
 
-            // Build query for product variant
+            // Build the query to find product variants
             $productVariantQuery = ProductVariant::where('product_id', $id);
 
             if ($request->filled('color')) {
-                $productVariantQuery->where('color', $request->input('color'));
+                $productVariantQuery->where('color', $request->color);
             }
 
             if ($request->filled('size')) {
-                $productVariantQuery->where('size', $request->input('size'));
+                $productVariantQuery->where('size', $request->size);
             }
 
             $productVariants = $productVariantQuery->get();
@@ -77,21 +72,20 @@ class ProductVariantsController extends Controller
                 return redirect()->back()->withErrors(['variant' => 'No matching product variants found'])->withInput();
             }
 
-            // Update all matching product variants
             foreach ($productVariants as $variant) {
                 $variant->update([
                     'discount_id' => optional($discountRow)->id,
-                    'price' => $request->input('price', $variant->price),
-                    'stock' => $request->input('stock', $variant->stock),
+                    'price' => $request->filled('price') ? $request->price : $variant->price,
+                    'stock' => $request->filled('stock') ? $request->stock : $variant->stock,
                 ]);
             }
 
             return redirect()->back()->with('success', 'Product variant(s) updated successfully!');
-            // return $id;
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
+
 
 
     /**
