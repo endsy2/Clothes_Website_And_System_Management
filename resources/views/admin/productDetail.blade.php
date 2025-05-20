@@ -107,6 +107,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                     <button id="edit-product-variant-btn"
                         class="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-500">Edit Product
                         Variant</button>
+                    <form action={{ route('admin.delete-product-variant',)  }}></form>
                     <button id="delete-product-variant-btn"
                         class="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-500">Delete Product
                         Variant</button>
@@ -425,7 +426,9 @@ $sizebtns=['S','M','L','XL','2XL'];
         let finalPrice;
 
         function updateDetail(variant) {
-            mainImage.src = '/' + variant.product_images[0].images;
+            mainImage.src = variant.product_images[0].images;
+            console.log(mainImage);
+
             const discount = variant.discount ? parseFloat(variant.discount.discount || 0) : 0;
             const originalPrice = parseFloat(variant.price || 0);
             finalPrice = discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
@@ -448,9 +451,11 @@ $sizebtns=['S','M','L','XL','2XL'];
 
             // Update gallery
             gallery.innerHTML = '';
+            console.log(gallery);
+
             variant.product_images.forEach(img => {
                 const thumb = document.createElement('img');
-                thumb.src = '/' + img.images;
+                thumb.src = img.images;
                 thumb.className =
                     'w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-black transition';
                 thumb.dataset.img = '/' + img.images;

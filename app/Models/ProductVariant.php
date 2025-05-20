@@ -11,6 +11,11 @@ class ProductVariant extends Model
     use HasFactory;
     // protected $hidden = ['discount_id'];
     protected $fillable = ['product_id', 'discount_id', 'size', 'color', 'stock', 'price'];
+    protected $casts = [
+        'color' => 'array',
+        'size' => 'array',
+    ];
+
 
     public function orderItems()
     {

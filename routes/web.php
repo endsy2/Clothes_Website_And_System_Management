@@ -62,6 +62,7 @@ Route::prefix("/")->group(function () {
 //Admin Route
 
 Route::prefix('/admin')->middleware('auth:admin')->group(function () {
+    // dashboard
     Route::get('/dashboard', function (Request $request) {
 
         $countCustomer = (new CustomerController())->count()->getData(true);
@@ -141,6 +142,9 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     })->name('admin.product-detail');
     Route::put("/product/{id}", [ProductController::class, 'update'])->name('admin.productupdate');
     Route::put("/productVariant/{id}", [ProductVariantsController::class, 'update'])->name('admin.productVariantUpdate');
+    Route::get('/insertProductVariant', [ProductVariantsController::class, 'show'])->name('admin.add-product-variant-show');
+    Route::post('/add-product-variant', [ProductVariantsController::class, 'store'])->name('admin.add-product-variant');
+    Route::delete('/delete-product-variant', [ProductVariantsController::class, 'destroy'])->name('admin.delete-product-variant');
     Route::delete("/order/{id}", [OrderController::class, 'destroy'])->name('admin.order.delete');
     Route::get("/order/{id}", function (Request $request) {
 
@@ -148,7 +152,10 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         // dd($order);
         return view('admin.orderDetail', ['orders' => $order]);
     })->name('admin.order-detail');
+    // insert brand
     Route::delete("/many-order", [OrderController::class, 'destroyMany'])->name('admin.order.deleteMany');
+    Route::get('/insertBrand', [BrandController::class, 'displayBrand'])->name('admin.inserBrandDisplay');
+    Route::post('/insertBrand', [BrandController::class, 'store'])->name('admin.insertBrand');
 });
 
 //admin:guest Route

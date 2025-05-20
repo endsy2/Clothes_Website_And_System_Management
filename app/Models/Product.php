@@ -14,6 +14,7 @@ class Product extends Model
         'description',
         'category_id',  // Assuming you are using category_id to store the relationship
         'brand_id',
+        'product_type_id',
     ];
     public function category()
     {

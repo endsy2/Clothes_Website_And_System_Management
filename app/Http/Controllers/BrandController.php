@@ -13,6 +13,14 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:admin')->except(['show', 'showBrand']);
+    // }
+    public function display()
+    {
+        view('admin.insertBrand');
+    }
     public function index() {}
 
     /**

@@ -6,9 +6,14 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Discount;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+use Illuminate\Support\Facades\Log;
+
 
 class ProductVariantsController extends Controller
 {
@@ -23,18 +28,95 @@ class ProductVariantsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+
+
     public function store(Request $request)
     {
-        //
+        try {
+            Log::info('Incoming product variant request', $request->except('images'));
+
+            $validatedData = $request->validate([
+                'product_id' => 'required|exists:products,id',
+                'discount_id' => 'nullable|exists:discounts,id',
+                'price' => 'required|numeric',
+                'stock' => 'required|integer|min:0',
+                'color' => 'required|array|min:1',
+                'color.*' => 'required|string',
+                'size' => 'required|array|min:1',
+                'size.*' => 'required|string',
+                'images' => ['required', 'array', 'min:1'],
+                'images.*' => ['file', 'image', 'max:10240'],
+            ]);
+
+            Log::info('Validation passed', $validatedData);
+
+            DB::beginTransaction();
+
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                if (!$image->isValid()) {
+                    throw new Exception("Invalid image upload: " . $image->getClientOriginalName());
+                }
+                $storedPath = $image->store('product_images', 'public');
+                $imagePaths[] = $storedPath;
+                Log::info("Image stored: {$storedPath}");
+            }
+
+            foreach ($validatedData['color'] as $color) {
+                foreach ($validatedData['size'] as $size) {
+                    Log::info("Creating variant: color={$color}, size={$size}");
+
+                    $productVariant = ProductVariant::create([
+                        'product_id' => $validatedData['product_id'],
+                        'discount_id' => $validatedData['discount_id'] ?? null,
+                        'price' => $validatedData['price'],
+                        'stock' => $validatedData['stock'],
+                        'color' => $color,
+                        'size' => $size,
+                    ]);
+
+                    if (!$productVariant) {
+                        throw new Exception("Failed to create variant for {$color}/{$size}");
+                    }
+
+                    // Fix here: use 'images' key as per your migration
+                    foreach ($imagePaths as $path) {
+                        $productVariant->productImages()->create(['images' => $path]);
+                        Log::info("Image linked to variant ID {$productVariant->id}: {$path}");
+                    }
+
+                    Log::info("Variant created: ID={$productVariant->id}");
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'All product variants created successfully!');
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error('Product variant creation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
+
+
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $products = Product::get()->toArray();
+        $discounts = Discount::all()->toArray();
+        return view('admin.insertProductVariant', compact('products', 'discounts'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -93,6 +175,19 @@ class ProductVariantsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $productImage = ProductImage::where('product_variant_id', $id)->get();
+            if ($productImage) {
+                foreach ($productImage as $image) {
+                    $image->delete();
+                }
+            }
+            $productVariant = ProductVariant::findOrFail($id);
+            $productVariant->delete();
+
+            return redirect()->back()->with('success', 'Product variant deleted successfully!');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 }
