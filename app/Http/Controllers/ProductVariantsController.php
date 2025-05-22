@@ -48,6 +48,7 @@ class ProductVariantsController extends Controller
                 'images' => ['required', 'array', 'min:1'],
                 'images.*' => ['file', 'image', 'max:10240'],
             ]);
+            // dd($validatedData);
 
             Log::info('Validation passed', $validatedData);
 
@@ -58,7 +59,7 @@ class ProductVariantsController extends Controller
                 if (!$image->isValid()) {
                     throw new Exception("Invalid image upload: " . $image->getClientOriginalName());
                 }
-                $storedPath = $image->store('product_images', 'public');
+                $storedPath = $image->store('images', 'public');
                 $imagePaths[] = $storedPath;
                 Log::info("Image stored: {$storedPath}");
             }

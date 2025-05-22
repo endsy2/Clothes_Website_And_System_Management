@@ -8,7 +8,7 @@
 
 
         <!-- Content -->
-        <a href="">
+        <a>
             <div
                 class="absolute bottom-0 left-0 w-full p-5 text-white font-semibold text-xl bg-gradient-to-t from-black/60 to-transparent">
                 <p>{{ $title }}</p>

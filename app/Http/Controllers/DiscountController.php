@@ -6,6 +6,7 @@ use App\Models\Discount;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Exception;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 
 use function Pest\Laravel\get;
@@ -15,6 +16,10 @@ class DiscountController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function displayDiscount()
+    {
+        return view('admin.insertDiscount');
+    }
     public function index()
     {
         try {
@@ -61,7 +66,26 @@ class DiscountController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'discount_name' => 'required|string',
+            'discount' => 'required|numeric',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date', // Optional: ensures end date is not before start date
+        ]);
+
+
+        try {
+            $discount = Discount::create([
+                'discount_name' => $validatedData['discount_name'],
+                'discount' => $validatedData['discount'],
+                'start_date' => $validatedData['start_date'],
+                'end_date' => $validatedData['end_date'],
+            ]);
+
+            return redirect()->back()->with('success', 'Discount Created Successfully');
+        } catch (Exception $exception) {
+            return redirect()->back()->with('error', 'Discount Creation Failed');
+        }
     }
 
     /**

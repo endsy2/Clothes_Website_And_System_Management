@@ -25,23 +25,23 @@ class ProductController extends Controller
     {
         try {
             // Get query parameters
-            $name = $request->query('name');
-            $category = $request->query('category');
-            $brand = $request->query('brand');
             $type = $request->query('type');
+            // $category = $request->query('category');
+            // $brand = $request->query('brand');
+            // $type = $request->query('type');
 
             // Create a base query to fetch products with relationships
             $query = Product::with(['category', 'brand', 'productVariant.productImages']);
 
             // If 'name' query parameter is provided, filter products by name
 
-            if ($name) {
+            if ($type == "name") {
                 $products = $query->where('name', 'like', '%' . $name . '%')->get(); // Use get() for multiple products
                 return response()->json($products);
             }
 
             // If 'category' query parameter is provided, filter by category
-            if ($category) {
+            if ($type == "category") {
                 $categoryModel = Category::where('category_name', $category)->first(); // Look up category by name
                 if ($categoryModel) {
                     $products = $query->where('category_id', $categoryModel->id)->get(); // Use get() for multiple products
@@ -52,7 +52,7 @@ class ProductController extends Controller
             }
 
             // If 'brand' query parameter is provided, filter by brand
-            if ($brand) {
+            if ($type == "brand") {
                 $brandModel = Brand::where('brand_name', $brand)->first(); // Look up brand by name
                 if ($brandModel) {
                     $products = $query->where('brand_id', $brandModel->id)->get(); // Use get() for multiple products
@@ -61,7 +61,7 @@ class ProductController extends Controller
                     return response()->json(['message' => 'Brand not found'], 404);
                 }
             }
-            if ($type) {
+            if ($type == "productType") {
                 $products = $query->where('productType', $type)->simplePaginate(); // Use get() for multiple products
                 return response()->json($products['data']);
             }

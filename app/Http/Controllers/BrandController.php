@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Product;
 use Exception;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,9 +18,10 @@ class BrandController extends Controller
     // {
     //     $this->middleware('auth:admin')->except(['show', 'showBrand']);
     // }
-    public function display()
+    public function displayBrand()
     {
-        view('admin.insertBrand');
+
+        return view('admin.insertBrand');
     }
     public function index() {}
 
@@ -48,12 +50,11 @@ class BrandController extends Controller
                 'image' => $imagePath
             ]);
 
-            return response()->json(['message' => 'Insert successfully', 'brand' => $brand], 201);
+            return redirect()->back()->with('success', 'Brand created successfully');
         } catch (Exception $e) {
-            return response()->json([
-                'error' => 'Something went wrong',
-                'message' => $e->getMessage()
-            ], 500);
+
+            return redirect()->back()->with('error', 'Brand name already exists');
+            // return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

@@ -4,11 +4,14 @@ $links = [
 ['href' => '/admin/product', 'name' => 'Product','sub'=>[['href' => 'product', 'name' =>
 'Product'],['name'=>"Insert
 Product",'href'=>'insertProduct'],['name'=>'Insert Product Variant','href'=>'insertProductVariant'],['name'=>'Insert
-Product Brand','href'=>'productBrand'],['name'=>'Insert Category','href'=>'insertCategory'],['name'=>'Insert Product
+Product Brand','href'=>'insertBrand'],['name'=>'Insert Category','href'=>'insertCategory'],['name'=>'Insert
+Product
 Type','href'=>'insertProductType']]],
+['href' => '/admin/discount*', 'name' => 'Discount','sub'=>[['href' => 'discount', 'name' =>
+'Discount'],['name'=>"Insert Discount",'href'=>'insertDiscount']]],
 ['href' => '/admin/order', 'name' => 'Order'],
 ['href' => '/admin/user', 'name' => 'Customer'],
-['href' => '/admin/discount', 'name' => 'Discount'],
+
 ['href' => '/admin/report', 'name' => 'Report']
 ];
 $currentUrl = request()->path();

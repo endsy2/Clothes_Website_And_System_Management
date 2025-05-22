@@ -56,6 +56,16 @@ Route::prefix("/")->group(function () {
     Route::get('add-to-favorite', function (Request $request) {
         return view('user.add-to-favorite');
     });
+    Route::get('productsSort', function (Request $request) {
+        $type = $request->query('type');
+
+        if (in_array($type, ['brand', 'category', 'productType', 'discount'])) {
+            $products = (new ProductController())->index($request)->getData(true);
+            return view('user.productSort', ['products' => $products]);
+        } else {
+            return redirect()->route('home');
+        }
+    })->name('productSort');
     // Route::get('/productSort', [ProductController::class, 'index'])->name('productSort');
 });
 
@@ -81,16 +91,16 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
             'areaChart' => $AreaChart['data']
         ]);
     })->name('admin.dashboard');
+    //product
     Route::get('/product', function (Request $request) {
         $products = new ProductController()->index($request)->getData(true);
-        $discounts = new DiscountController()->discountName()->getData(true);
-        $brands = new BrandController()->showBrand()->getData(true);
-        $categories = new CategoryController()->show()->getData(true);
-        $productTypes = new ProductTypeController()->show()->getData(true);
 
-        return view('admin.product', ['products' => $products, 'discounts' => $discounts, 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
+
+        return view('admin.product', ['products' => $products]);
     })->name('admin.product');
+    //insert product
     Route::get('/insertProduct', [ProductController::class, 'insertProductView'])->name('insertProductView');
+    //get user page
     Route::get('/user', function (Request $request) {
         // $product = new ProductController()->index($request)->getData(true);
         $customers = new CustomerController()->index()->getData(true);
@@ -99,13 +109,13 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         return view('admin.user', ['customers' => $customers]);
     })->name('admin.user');
 
-
+    //get user detail page
     Route::get('/user/{id}', function ($id, Request $request) {
         $customer = new CustomerController()->show($id)->getData(true);
         // dd($customer);
         return view('admin.customerDetail', ['customers' => $customer]);
     });
-
+    //get user order page
     Route::get('/order', function (Request $request) {
         // $product = new ProductController()->index($request)->getData(true);
         $orders = new OrderController()->index()->getData(true);
@@ -116,21 +126,26 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         // dd($areaChartSales);
         return view('admin.order', ['orders' => $orders, 'areaChartCustomer' => $areaChartCustomer, 'areaChartSales' => $areaChartSales]);
     });
+    //get discount page
     Route::get('/discount', function (Request $request) {
         // $product = new ProductController()->index($request)->getData(true);
         $discounts = new DiscountController()->discountName()->getData(true);
         // dd($discounts['data']);
         return view('admin.discount', ['discounts' => $discounts]);
     })->name('admin.discount');
+    //delete discount route
     Route::delete("/discount/{id}", [DiscountController::class, 'destroy'])->name('deleteOneDiscount');
     Route::get('/report', function (Request $request) {
         $product = new ProductController()->index($request)->getData(true);
         return view('admin.report');
     })->name('admin.report');
     Route::post('/logout', [LoginController::class, 'adminLogout'])->name('adminLogout');
+    // add product route
     Route::post('/add-product', [ProductController::class, 'store'])->name('add-product');
+    //delete product route
     Route::delete('/delete-product-one', [ProductController::class, 'deleteOne'])->name('delete-product-one');
     Route::delete('/delete-products-many', [ProductController::class, 'deleteMany'])->name('delete-product-many');
+    //get product detail page
     Route::get('/product/{id}', function (Request $request) {
         $product     = (new ProductController())->productByProductIdPrductVariantID($request['id'])->getData(true);
         $brands = (new BrandController())->showBrand()->getData(true);
@@ -140,7 +155,9 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
         // dd($discounts);
         return view('admin.productDetail', ['product' => $product, 'brands' => $brands, 'categorys' => $categorys, 'productTypes' => $productTypes, 'discounts' => $discounts]);
     })->name('admin.product-detail');
+    // update product route
     Route::put("/product/{id}", [ProductController::class, 'update'])->name('admin.productupdate');
+    // update product variant route
     Route::put("/productVariant/{id}", [ProductVariantsController::class, 'update'])->name('admin.productVariantUpdate');
     Route::get('/insertProductVariant', [ProductVariantsController::class, 'show'])->name('admin.add-product-variant-show');
     Route::post('/add-product-variant', [ProductVariantsController::class, 'store'])->name('admin.add-product-variant');
@@ -154,8 +171,18 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     })->name('admin.order-detail');
     // insert brand
     Route::delete("/many-order", [OrderController::class, 'destroyMany'])->name('admin.order.deleteMany');
-    Route::get('/insertBrand', [BrandController::class, 'displayBrand'])->name('admin.inserBrandDisplay');
+    // insert brand route and display
+    Route::get('/insertBrand', [BrandController::class, 'displayBrand'])->name('admin.insertBrandDisplay');
     Route::post('/insertBrand', [BrandController::class, 'store'])->name('admin.insertBrand');
+    // insert category route and display
+    Route::get('/insertCategory', [CategoryController::class, 'displayCategory'])->name('admin.insertCategoryDisplay');
+    Route::post('/insertCategory', [CategoryController::class, 'store'])->name('admin.insertCategory');
+    // insert product type route and display
+    Route::get('/insertProductType', [ProductTypeController::class, 'displayProductType'])->name('admin.insertProductTypeDisplay');
+    Route::post('/insertProductType', [ProductTypeController::class, 'store'])->name('admin.insertProductType');
+    // insert discount route and display
+    Route::get('/insertDiscount', [DiscountController::class, 'displayDiscount'])->name('admin.insertDiscountDisplay');
+    Route::post('/insertDiscount', [DiscountController::class, 'store'])->name('admin.insertDiscount');
 });
 
 //admin:guest Route
