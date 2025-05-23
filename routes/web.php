@@ -31,7 +31,10 @@ Route::prefix("/")->group(function () {
         $brands = (new BrandController())->show()->getData(true);
         $products = (new ProductController())->show()->getData(true);
         $discounts = (new DiscountController())->index()->getData(true);
-        return view('user.welcome', ['brands' => $brands, 'products' => $products['data'], 'discounts' => $discounts]);
+        $categories = (new CategoryController())->paginateCategory()->getData(true);
+        // dd($categories['data']);''
+
+        return view('user.welcome', ['brands' => $brands, 'products' => $products['data'], 'discounts' => $discounts, 'categories' => $categories['data']]);
     })->name('home');
     Route::get('detail', function (Request $request) {
         $relatedProducts = (new ProductController())->show()->getData(true);
@@ -66,6 +69,8 @@ Route::prefix("/")->group(function () {
             return redirect()->route('home');
         }
     })->name('productSort');
+    Route::get('productSort', [ProductController::class, 'productSort'])->name('user.productSort');
+
     // Route::get('/productSort', [ProductController::class, 'index'])->name('productSort');
 });
 

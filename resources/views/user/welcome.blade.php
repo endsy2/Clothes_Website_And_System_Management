@@ -1,14 +1,3 @@
-@php
-$category_data = [
-['name' => 'LIFE STYLE', 'image' => asset('images/khanh-tu-nguyen-huy-vLNEV1rIKYg-unsplash.jpg')],
-['name' => 'SPORT LIFE', 'image' => asset('images/shafiq-sah-XTFLl_G4biY-unsplash.jpg')],
-['name' => 'SMART CASUAL', 'image' => asset('images/frank-ching-mvd5ld3eOUU-unsplash.jpg')],
-['name' => 'LIFE STYLE', 'image' => asset('images/life_style.svg')],
-['name' => 'SPORT LIFE', 'image' => asset('images/sergio-contreras-DDaFDoyiOek-unsplash.jpg')],
-['name' => 'SMART CASUAL', 'image' => asset('images/vo-m-nh-d-c-UkdwOSKlMmQ-unsplash.jpg')],
-];
-@endphp
-
 <x-layout>
     <x-slot name="title">
         <!-- Add your title here -->
@@ -54,7 +43,8 @@ $category_data = [
         <div class="swiper product-slider p-50 bg-white">
             <div class="swiper-wrapper">
                 @foreach ($brands['data'] as $brand)
-                <a class="swiper-slide flex justify-center" href="#">
+                <a class="swiper-slide flex justify-center"
+                    href="{{ route('user.productSort', ['type' => 'brand','brand'=>$brand['id']]) }}">
                     <div
                         class="bg-white flex flex-col justify-center items-center py-3 shadow-lg hover:shadow-2xl transition duration-300">
                         <img src="{{ asset('/' . $brand['image']) }}" alt="{{ $brand['brand_name'] }}"
@@ -68,9 +58,10 @@ $category_data = [
         </div>
     </div>
     <!-- Category Section -->
+
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-36 gap-y-10 mt-20">
-        @foreach ($category_data as $element)
-        <x-card-category :image="$element['image']" :title="$element['name']" />
+        @foreach ($categories as $element)
+        <x-card-category :image="$element['images']" :title="$element['category_name']" :category_id="$element['id']" />
         @endforeach
     </div>
 

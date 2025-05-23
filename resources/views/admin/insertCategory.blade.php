@@ -8,11 +8,12 @@
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">Basic Information</h2>
         <div class="grid grid-cols-1 gap-5">
 
-
             <input type="text" name="category_name" placeholder="Category Name"
                 class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
                 required>
-
+            <input type="file" name="image" id="image"
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+                required>
             <input type="submit" value="Add Brand"
                 class="w-full bg-black text-white py-2 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
             <x-error-form name="brand_name" />

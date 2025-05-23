@@ -32,7 +32,8 @@ class CategoryController extends Controller
             ]);
 
             $category = Category::create([
-                'category_name' => $validateData['category_name']
+                'category_name' => $validateData['category_name'],
+                'images' => $request->file('images')->store('imagpes', 'public')
             ]);
 
             return redirect()->back()->with('success', 'Category created successfully');
@@ -50,6 +51,11 @@ class CategoryController extends Controller
     public function show()
     {
         $categories = Category::get();
+        return response()->json($categories);
+    }
+    public function paginateCategory()
+    {
+        $categories = Category::paginate(6);
         return response()->json($categories);
     }
 

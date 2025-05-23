@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+
+use function Laravel\Prompts\progress;
 use function PHPUnit\Framework\returnArgument;
 
 
@@ -21,62 +23,51 @@ use function PHPUnit\Framework\returnArgument;
 class ProductController extends Controller
 {
     // Method to handle displaying products with optional filters
-    public function index(Request $request,)
+    public function getFilteredProducts(Request $request)
+    {
+        $query = Product::with(['category', 'brand', 'productVariant.productImages']);
+
+        $type = $request->query('type');
+        $name = $request->query('name');
+        $category_id = $request->query('category_id');
+        $brand_id = $request->query('brand_id');
+        $product_type_id = $request->query('products_type_id');
+
+        if ($type == "name" && $name !== null) {
+            $query->where('name', 'like', '%' . $name . '%');
+        } elseif ($type == "category" && $category_id) {
+            $query->where('category_id', $category_id);
+        } elseif ($type == "brand" && $brand_id) {
+            $query->where('brand_id', $brand_id);
+        } elseif ($type == "productType" && $product_type_id) {
+            $query->where('product_type_id', $product_type_id);
+        }
+
+        return $query->paginate(20);
+    }
+
+    // This stays as your API endpoint
+    public function productSort(Request $request)
+    {
+        $products = (new ProductController())->getFilteredProducts($request);
+        $title = $request->query('type');
+
+        return view('user.productSort', compact('products', 'title'));
+    }
+
+    public function index(Request $request)
     {
         try {
-            // Get query parameters
-            $type = $request->query('type');
-            // $category = $request->query('category');
-            // $brand = $request->query('brand');
-            // $type = $request->query('type');
-
-            // Create a base query to fetch products with relationships
-            $query = Product::with(['category', 'brand', 'productVariant.productImages']);
-
-            // If 'name' query parameter is provided, filter products by name
-
-            if ($type == "name") {
-                $products = $query->where('name', 'like', '%' . $name . '%')->get(); // Use get() for multiple products
-                return response()->json($products);
-            }
-
-            // If 'category' query parameter is provided, filter by category
-            if ($type == "category") {
-                $categoryModel = Category::where('category_name', $category)->first(); // Look up category by name
-                if ($categoryModel) {
-                    $products = $query->where('category_id', $categoryModel->id)->get(); // Use get() for multiple products
-                    return response()->json($products);
-                } else {
-                    return response()->json(['message' => 'Category not found'], 404);
-                }
-            }
-
-            // If 'brand' query parameter is provided, filter by brand
-            if ($type == "brand") {
-                $brandModel = Brand::where('brand_name', $brand)->first(); // Look up brand by name
-                if ($brandModel) {
-                    $products = $query->where('brand_id', $brandModel->id)->get(); // Use get() for multiple products
-                    return response()->json($products);
-                } else {
-                    return response()->json(['message' => 'Brand not found'], 404);
-                }
-            }
-            if ($type == "productType") {
-                $products = $query->where('productType', $type)->simplePaginate(); // Use get() for multiple products
-                return response()->json($products['data']);
-            }
-
-            // If no query parameter is provided, paginate the results
-            $products = $query->paginate(10); // Paginate the products
+            $products = $this->getFilteredProducts($request);
             return response()->json($products);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'error' => 'An error occurred while fetching products.',
                 'message' => $e->getMessage(),
             ], 500);
         }
-        // return response()->json($name);
     }
+
     public function show()
     {
         $products = Product::with(['category', 'brand', 'productVariant.productImages'])->paginate(10);
