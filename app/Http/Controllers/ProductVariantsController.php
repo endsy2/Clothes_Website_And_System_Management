@@ -115,7 +115,7 @@ class ProductVariantsController extends Controller
     {
         $products = Product::get()->toArray();
         $discounts = Discount::all()->toArray();
-        return view('admin.insertProductVariant', compact('products', 'discounts'));
+        return view('admin.insert-product-variant', compact('products', 'discounts'));
     }
 
 

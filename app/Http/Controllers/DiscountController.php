@@ -18,7 +18,7 @@ class DiscountController extends Controller
      */
     public function displayDiscount()
     {
-        return view('admin.insertDiscount');
+        return view('admin.insert-discount');
     }
     public function index()
     {

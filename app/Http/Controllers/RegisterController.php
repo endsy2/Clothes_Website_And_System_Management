@@ -14,7 +14,7 @@ class RegisterController extends Controller
     public function register()
     {
         try {
-            return view('user.userRegister');
+            return view('user.user-register');
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Something went wrong',

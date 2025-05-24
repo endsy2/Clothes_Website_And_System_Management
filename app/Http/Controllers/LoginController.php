@@ -11,7 +11,7 @@ class LoginController extends Controller
     public function login()
     {
         try {
-            return view('user.userLogin');
+            return view('user.user-login');
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Something went wrong',

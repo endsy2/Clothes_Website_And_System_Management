@@ -14,7 +14,7 @@ class ProductTypeController extends Controller
     }
     public function displayProductType()
     {
-        return view('admin.insertProductType');
+        return view('admin.insert-product-type');
     }
     public function store(Request $request)
     {

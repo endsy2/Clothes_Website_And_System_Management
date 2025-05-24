@@ -48,7 +48,7 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         try {
-            return view('user.userRegister');
+            return view('user.user-register');
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Something went wrong',
@@ -59,7 +59,7 @@ class CustomerController extends Controller
     public function login(Request $request)
     {
         try {
-            return view('user.userLogin');
+            return view('user.user-login');
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Something went wrong',

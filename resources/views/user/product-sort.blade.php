@@ -18,7 +18,6 @@
     </div>
 
     <div class="mt-6">
-        {{ $products->links('pagination::tailwind') }}
-
+        {{ $products->links() }}
     </div>
 </x-layout>

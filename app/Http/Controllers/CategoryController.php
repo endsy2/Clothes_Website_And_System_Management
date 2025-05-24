@@ -18,7 +18,7 @@ class CategoryController extends Controller
     }
     public function displayCategory()
     {
-        return view('admin.insertCategory');
+        return view('admin.insert-category');
     }
 
     /**

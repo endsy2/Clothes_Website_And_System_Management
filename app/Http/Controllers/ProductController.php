@@ -52,7 +52,7 @@ class ProductController extends Controller
         $products = (new ProductController())->getFilteredProducts($request);
         $title = $request->query('type');
 
-        return view('user.productSort', compact('products', 'title'));
+        return view('user.product-sort', compact('products', 'title'));
     }
 
     public function index(Request $request)
@@ -476,6 +476,6 @@ class ProductController extends Controller
         $categories = new CategoryController()->show()->getData(true);
         $productTypes = new ProductTypeController()->show()->getData(true);
 
-        return view('admin.insertProduct', ['discounts' => $discounts, 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
+        return view('admin.insert-product', ['discounts' => $discounts, 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
     }
 }

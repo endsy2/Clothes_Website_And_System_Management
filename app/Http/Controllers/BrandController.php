@@ -21,7 +21,7 @@ class BrandController extends Controller
     public function displayBrand()
     {
 
-        return view('admin.insertBrand');
+        return view('admin.insert-brand');
     }
     public function index() {}
 

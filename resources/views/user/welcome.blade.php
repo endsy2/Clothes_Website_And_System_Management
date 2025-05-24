@@ -44,7 +44,7 @@
             <div class="swiper-wrapper">
                 @foreach ($brands['data'] as $brand)
                 <a class="swiper-slide flex justify-center"
-                    href="{{ route('user.productSort', ['type' => 'brand','brand'=>$brand['id']]) }}">
+                    href="{{ route('productSort', ['type' => 'brand','brand'=>$brand['id']]) }}">
                     <div
                         class="bg-white flex flex-col justify-center items-center py-3 shadow-lg hover:shadow-2xl transition duration-300">
                         <img src="{{ asset('/' . $brand['image']) }}" alt="{{ $brand['brand_name'] }}"
@@ -135,6 +135,8 @@
         @endif
         @endforeach
     </div>
+
+
 </x-layout>
 @if (session('success'))
 <script>
