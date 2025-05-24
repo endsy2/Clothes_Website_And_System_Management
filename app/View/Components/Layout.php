@@ -2,25 +2,24 @@
 
 namespace App\View\Components;
 
-use Closure;
-use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class DetailProductCard extends Component
+class Layout extends Component
 {
     /**
      * Create a new component instance.
      */
     public function __construct()
     {
-        //
+        // You can pass variables to your component here if needed
     }
 
     /**
      * Get the view / contents that represent the component.
      */
-    public function render(): View|Closure|string
+    public function render()
     {
-        return view('components.detail-product-card');
+        // This loads the Blade view located at resources/views/components/layout.blade.php
+        return view('components.layout');
     }
 }

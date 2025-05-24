@@ -82,7 +82,7 @@ $ContactUs = [
 
 </head>
 
-<body class="lg:px-0 xl:px-0 2xl:px-72 py-5 bg-gray-50 text-gray-800">
+<body class="lg:px-0 xl:px-0 2xl:px-72 py-5 bg-ray-50 text-gray-800">
     <nav class="flex justify-between items-center z-10">
         <div>
             <div class="flex space-x-16 px-5">
