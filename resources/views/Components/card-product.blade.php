@@ -1,5 +1,6 @@
 @props(['productId','name', 'productImage', 'price', 'discount' => null])
 
+
 <a href="/detail?id={{ urlencode($productId) }}"
     class="group relative flex flex-col bg-white  shadow-md  transition-all duration-300 overflow-hidden hover:scale-[1.03]">
 

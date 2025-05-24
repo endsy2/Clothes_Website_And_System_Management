@@ -100,7 +100,7 @@
                     <div class="swiper-slide flex justify-center">
                         <div class="transition-transform transform hover:-translate-y-1  duration-300 ">
                             <x-card-product :productId="$discount['id']" :name="$discount['name'] ?? 'No Discount'"
-                                :product_image="isset($product['product_images'][0]['images']) ? $product['product_images'][0]['images'] : 'default-image.jpg'"
+                                :productImage="isset($product['product_images'][0]['images']) ? $product['product_images'][0]['images'] : 'default-image.jpg'"
                                 :price="$product['price'] ?? 0" :discount="$product['discount']['discount'] ?? 0" />
                         </div>
                     </div>
@@ -130,7 +130,7 @@
         @if ($productVariant)
         <x-card-product :productId="$product['id'] ?? '1'" :name="$product['name']"
             :price="$productVariant['price'] ?? 0"
-            :product_image="$productVariant['product_images'][0]['images'] ?? 'default-image.jpg'"
+            :productImage="$productVariant['product_images'][0]['images'] ?? 'default-image.jpg'"
             :discount="$productVariant['discount']['discount'] ?? null" />
         @endif
         @endforeach
