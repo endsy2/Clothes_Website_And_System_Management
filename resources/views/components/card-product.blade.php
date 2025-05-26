@@ -6,7 +6,7 @@
 
     {{-- Product Image --}}
     <div class="relative w-full aspect-[4/5] bg-gray-100 overflow-hidden">
-        <img src="{{ asset($productImage) }}" alt="{{ $name }}"
+        <img src="{{ url($productImage) }}" alt="{{ $name }}"
             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
 
         {{-- Discount Badge --}}
