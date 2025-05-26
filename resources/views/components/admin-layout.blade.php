@@ -27,7 +27,7 @@ $currentUrl = request()->path();
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <title>Admin Panel</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js','resources/js/adminLoading.js','resources/js/alert.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-gray-100 text-gray-800">
