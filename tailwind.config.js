@@ -1,16 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 
+// tailwind.config.js
 export default {
   content: [
-    './resources/**/*.{html,js,php,blade.php}',
-  ], theme: {
-    extend: {
-      fontFamily: {
-        'customer': ['JetBrains Mono'],
-        'test': ['test']
-      }
-    },
+    './resources/views/**/*.blade.php',
+    './resources/js/**/*.js',
+    './resources/css/**/*.css',
+  ],
+  theme: {
+    extend: {},
   },
   plugins: [],
 }
+
 
