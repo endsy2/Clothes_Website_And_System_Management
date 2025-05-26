@@ -1,1 +1,1 @@
-@dd($brands['data']);
+@php dd(url($brands['data'])) @endphp
