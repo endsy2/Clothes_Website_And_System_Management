@@ -4,7 +4,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "postinstall": "vite build"
+        "postinstall": "echo 'Checking Vite:' && npx vite --version && vite build"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.16",
