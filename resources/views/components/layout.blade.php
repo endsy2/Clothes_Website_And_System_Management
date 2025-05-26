@@ -78,7 +78,7 @@ $ContactUs = [
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
     @vite(['resources/css/app.css',
-    'resources/js/app.js','resources/js/loading.js','resources/js/slider.js','resources/js/addToCartTab.js','resources/js/search.js'])
+    'resources/js/app.js'])
 
 </head>
 
