@@ -1,0 +1,18 @@
+name: laravel-app
+services:
+  - name: web
+    github:
+      repo: https://github.com/endsy2/Clothes_Website_And_System_Management.git
+      branch: main
+    run_command: ""
+    build_command: |
+      composer install --no-dev --optimize-autoloader
+      php artisan storage:link
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+      npm install
+      npm run build
+    source_dir: .
+    http_port: 8080
+    http_directory: public
