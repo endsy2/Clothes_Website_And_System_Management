@@ -199,12 +199,10 @@ $ContactUs = [
 
     <main>
         <!-- Loader -->
-        <div id="page-loader" class="flex justify-center items-center h-96">
-            <div class="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
-        </div>
+
 
         <!-- Main Content Slot -->
-        <div id="main-content" class="hidden opacity-0">
+        <div id="main-content" class="">
             {{ $slot }}
         </div>
     </main>
