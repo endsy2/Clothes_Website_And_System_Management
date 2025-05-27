@@ -7,13 +7,17 @@ services:
       branch: main
     run_command: ""
     build_command: |
-      composer install --no-dev --optimize-autoloader
-      php artisan storage:link
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
-      npm install
-      npm run build
+    composer install --no-dev --optimize-autoloader
+    php artisan storage:link
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+    npm install
+    npm run build
+    chmod -R 755 public
+    chmod 644 public/index.php
+    chmod -R 775 storage bootstrap/cache
+
     source_dir: .
     http_port: 8080
     http_directory: public
