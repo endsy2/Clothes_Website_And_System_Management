@@ -5,7 +5,7 @@ services:
     github:
       repo: https://github.com/endsy2/Clothes_Website_And_System_Management.git
       branch: main
-    run_command: ""
+    run_command: "heroku-php-apache2 public/"
     build_command: |
     composer install --no-dev --optimize-autoloader
     php artisan storage:link
