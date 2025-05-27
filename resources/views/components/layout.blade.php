@@ -80,6 +80,7 @@ $ContactUs = [
 
     @vite(['resources/css/app.css',
     'resources/js/app.js'])
+    <script type="module" src="/build/assets/app-D-t_snuq.js"></script>
 
 
 </head>
