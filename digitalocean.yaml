@@ -1,4 +1,5 @@
-name: laravel-app
+name: sales_management
+version: 1.0
 services:
   - name: web
     github:
