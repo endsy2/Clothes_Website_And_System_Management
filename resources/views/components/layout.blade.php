@@ -203,9 +203,12 @@ $ContactUs = [
     <main>
         <!-- Loader -->
 
-
+        <div id="page-loader"
+            class="fixed inset-0 flex items-center justify-center bg-white z-50 transition-opacity duration-500">
+            <div class="w-12 h-12 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+        </div>
         <!-- Main Content Slot -->
-        <div id="main-content" class="">
+        <div id="main-content" class="hidden opacity-0 transition-opacity duration-500">
             {{ $slot }}
         </div>
     </main>
