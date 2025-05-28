@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('page-loader');
     const content = document.getElementById('main-content');
+    console.log('Loading script executed');
+
 
     setTimeout(() => {
         loader.classList.add('fade-out');

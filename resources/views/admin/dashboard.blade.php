@@ -2,6 +2,7 @@
 $titles=[
 'Id','name','category','brand','price']
 @endphp
+
 <html>
 
 <head>

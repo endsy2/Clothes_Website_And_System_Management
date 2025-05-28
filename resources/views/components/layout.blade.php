@@ -202,18 +202,20 @@ $ContactUs = [
 
     <main>
         <!-- Loader -->
-        <div id="page-loader"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
-            <div class="flex flex-col items-center">
-                <img src="{{ asset('logo.svg') }}" alt="Loading Logo" class="w-52 h-52'' animate-pulse mb-4">
-                <div class="loader-spinner"></div>
+        <div class="flex-1 relative">
+            <div id="page-loader"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
+                <div class="flex flex-col items-center">
+                    <img src="{{ asset('logo.svg') }}" alt="Loading Logo" class="w-52 h-52'' animate-pulse mb-4">
+                    <div class="loader-spinner"></div>
+                </div>
             </div>
-        </div>
 
 
-        <!-- Main Content Slot -->
-        <div id="main-content" class="hidden opacity-0 transition-opacity duration-500">
-            {{ $slot }}
+            <!-- Main Content Slot -->
+            <div id="main-content" class="hidden opacity-0 transition-opacity duration-500">
+                {{ $slot }}
+            </div>
         </div>
     </main>
     <script>

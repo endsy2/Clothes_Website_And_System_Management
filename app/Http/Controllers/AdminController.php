@@ -18,7 +18,7 @@ class AdminController extends Controller
         $AreaChart = (new GraphController())->DashBoardGraphArea()->getData(true);
         // $BarChart = (new GraphController())->DashBoardGraphBar()->getData(true);
 
-        // dd($BarChart);
+
         return view('admin.dashboard', [
             'countCustomer' => $countCustomer,
             'countOrder' => $countOrder,

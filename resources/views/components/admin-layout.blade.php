@@ -28,7 +28,9 @@ $currentUrl = request()->path();
     <!-- tailwind cdn -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>Admin Panel</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
+    @vite('resources/js/loading.js')
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -96,11 +98,16 @@ $currentUrl = request()->path();
 
         <!-- Main content with loader -->
         <div class="flex-1 relative">
-            <div id="page-loader" class="absolute inset-0 flex justify-center items-center bg-white z-10">
-                <div class="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+            <div id="page-loader"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
+                <div class="flex flex-col items-center">
+                    <img src="{{ asset('logo.svg') }}" alt="Loading Logo" class="w-52 h-52'' animate-pulse mb-4">
+                    <div class="loader-spinner"></div>
+                </div>
             </div>
 
-            <main id="main-content" class="opacity-0 transition-opacity duration-500 p-10">
+
+            <main id="main-content" class="opacity-0 transition-opacity duration-500 ">
                 {{ $slot }}
             </main>
         </div>
