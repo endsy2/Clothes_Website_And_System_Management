@@ -78,10 +78,9 @@ $ContactUs = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
-    @vite('resources/css/app.css')
-    @vite('resources/js/app.js')
+    <link rel="stylesheet" href="{{ asset('build/assets/app.css') }}">
+    <script type="module" src="{{ asset('build/assets/app.js') }}"></script>
 
-    <script type="module" src="/build/assets/app-D-t_snuq.js"></script>
 
 
 </head>
