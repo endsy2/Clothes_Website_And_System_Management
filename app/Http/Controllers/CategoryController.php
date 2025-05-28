@@ -56,7 +56,7 @@ class CategoryController extends Controller
     public function paginateCategory()
     {
         $categories = Category::paginate(6);
-        return response()->json($categories);
+        return $categories;
     }
 
     /**

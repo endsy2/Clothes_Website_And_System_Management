@@ -39,7 +39,7 @@ class DiscountController extends Controller
                 ->whereIn('id', $product_ids)
                 ->get();
 
-            return response()->json($products);
+            return $products;
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while fetching products.',

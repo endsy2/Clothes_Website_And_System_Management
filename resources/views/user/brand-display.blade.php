@@ -20,7 +20,6 @@
 
     <div class="mt-16 flex justify-center">
         {{ $brands->links('pagination::tailwind') }}
-
     </div>
 
 

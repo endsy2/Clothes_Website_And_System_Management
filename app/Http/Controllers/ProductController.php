@@ -70,8 +70,8 @@ class ProductController extends Controller
 
     public function show()
     {
-        $products = Product::with(['category', 'brand', 'productVariant.productImages'])->paginate(10);
-        return response()->json($products);
+        $products = Product::with(['category', 'brand', 'productVariant.productImages'])->paginate(20);
+        return $products;
     }
 
 

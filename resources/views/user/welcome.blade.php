@@ -42,7 +42,7 @@
         <!-- Swiper Container -->
         <div class="swiper product-slider p-50 bg-white">
             <div class="swiper-wrapper">
-                @foreach ($brands['data'] as $brand)
+                @foreach ($brands as $brand)
                 <a class="swiper-slide flex justify-center"
                     href="{{ route('productSort', ['type' => 'Brand :','brand'=>$brand['id'],'value'=>$brand['brand_name']]) }}">
                     <div
@@ -95,11 +95,16 @@
             <div class="swiper product-slider ">
                 <div class="swiper-wrapper">
                     @foreach ($discounts as $discount)
-                    @if (!empty($discount['product_variant']))
-                    @php $product = $discount['product_variant'][0]; @endphp
+                    @php
+                    $element = $discount->toArray();
+                    @endphp
+                    @if (!empty($element['product_variant']))
+                    @php
+                    $product = $element['product_variant'][0];
+                    @endphp
                     <div class="swiper-slide flex justify-center">
                         <div class="transition-transform transform hover:-translate-y-1  duration-300 ">
-                            <x-card-product :productId="$discount['id']" :name="$discount['name'] ?? 'No Discount'"
+                            <x-card-product :productId="$element['id']" :name="$element['name'] ?? 'No Discount'"
                                 :productImage="isset($product['product_images'][0]['images']) ? $product['product_images'][0]['images'] : 'default-image.jpg'"
                                 :price="$product['price'] ?? 0" :discount="$product['discount']['discount'] ?? 0" />
                         </div>
@@ -123,17 +128,22 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full gap-y-5 gap-x-6 mt-5">
         @foreach ($products as $product)
+
         @php
-        $productVariant = $product['product_variant'][0] ?? null;
+        $element=$product->toArray();
+        $productVariant = $element['product_variant'][0] ?? null;
         @endphp
 
         @if ($productVariant)
-        <x-card-product :productId="$product['id'] ?? '1'" :name="$product['name']"
+        <x-card-product :productId="$element['id'] ?? '1'" :name="$element['name']"
             :price="$productVariant['price'] ?? 0"
             :productImage="$productVariant['product_images'][0]['images'] ?? 'default-image.jpg'"
             :discount="$productVariant['discount']['discount'] ?? null" />
         @endif
         @endforeach
+    </div>
+    <div class="mt-16 flex justify-center">
+        {{ $products->links('pagination::tailwind') }}
     </div>
 
 

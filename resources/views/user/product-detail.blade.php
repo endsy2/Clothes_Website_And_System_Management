@@ -1,5 +1,3 @@
-@vite(['resources/css/app.css', 'resources/js/app.js','resources/js/addToCartTab.js'])
-
 <x-layout>
     <div class="max-w-7xl mx-auto p-6 mt-10">
         <div class="flex flex-col md:flex-row gap-10">
@@ -134,11 +132,14 @@
             <p class="font-semibold text-md text-right"><a href="">More View</a></p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-5 gap-x-6 mt-5">
-            @foreach ($relatedProducts as $relatedProduc)
-            @php $productVariant = $relatedProduc['product_variant'][0] ?? null; @endphp
+            @foreach ($relatedProducts as $relatedProduct)
+
+            @php
+            $element = $relatedProduct->toArray();
+            $productVariant = $element['product_variant'][0] ?? null;
+            @endphp
             @if ($productVariant)
-            <x-card-product :productId="$relatedProduc['id']" :name="$relatedProduc['name']"
-                :price="$productVariant['price'] ?? 0"
+            <x-card-product :productId="$element['id']" :name="$element['name']" :price="$productVariant['price'] ?? 0"
                 :productImage="$productVariant['product_images'][0]['images'] ?? 'default.jpg'"
                 :discount="$productVariant['discount'] ?? null" />
 

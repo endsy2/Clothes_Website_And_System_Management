@@ -11,19 +11,19 @@ class UserController extends Controller
      */
     public function PageHome()
     {
-        $brands = (new BrandController())->show()->getData(true);
-        $products = (new ProductController())->show()->getData(true);
-        $discounts = (new DiscountController())->index()->getData(true);
-        $categories = (new CategoryController())->paginateCategory()->getData(true);
-        // dd($categories['data']);''
+        $brands = (new BrandController())->show();
+        $products = (new ProductController())->show();
+        $discounts = (new DiscountController())->index();
+        $categories = (new CategoryController())->paginateCategory();
 
-        return view('user.welcome', ['brands' => $brands, 'products' => $products['data'], 'discounts' => $discounts, 'categories' => $categories['data']]);
+
+        return view('user.welcome', compact('brands', 'products', 'discounts', 'categories'));
     }
     public function PageProductDetail(Request $request)
     {
-        $relatedProducts = (new ProductController())->show()->getData(true);
+        $relatedProducts = (new ProductController())->show();
         $product = (new ProductController())->productByProductIdPrductVariantID($request['id'])->getData(true);
-        return view('user.product-detail', ['product' => $product, 'relatedProducts' => $relatedProducts['data']]);
+        return view('user.product-detail', ['product' => $product, 'relatedProducts' => $relatedProducts]);
     }
     public function PageProductSort(Request $request)
     {
