@@ -43,6 +43,9 @@ Route::prefix("/")->group(function () {
 
     Route::post('checkout', [CustomerController::class, 'checkout'])->middleware('auth:customer');
     Route::get('add-to-favorite', [UserController::class, 'PageAddToFavorite'])->name('add-to-favorite');
+
+    //display brand
+    Route::get('/brand', [BrandController::class, 'displayBrand'])->name('user.displaybrand');
     // Route::get('productsSort', function (Request $request) {
     //     $type = $request->query('type');
 
@@ -65,8 +68,10 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'PageHome'])->name('admin.dashboard');
     //product
     Route::get('/product', [AdminController::class, 'PageProduct'])->name('admin.product');
+
     //insert product
     Route::get('/insertProduct', [ProductController::class, 'insertProductView'])->name('insertProductView');
+
     //get user page
     Route::get('/user', [AdminController::class, 'PageUser'])->name('admin.user');
 
@@ -111,7 +116,7 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     // insert brand
     Route::delete("/many-order", [OrderController::class, 'destroyMany'])->name('admin.order.deleteMany');
     // insert brand route and display
-    Route::get('/insertBrand', [BrandController::class, 'displayBrand'])->name('admin.insertBrandDisplay');
+    Route::get('/insertBrand', [BrandController::class, 'displayInsertBrand'])->name('admin.insertBrandDisplay');
     Route::post('/insertBrand', [BrandController::class, 'store'])->name('admin.insertBrand');
     // insert category route and display
     Route::get('/insertCategory', [CategoryController::class, 'displayCategory'])->name('admin.insertCategoryDisplay');

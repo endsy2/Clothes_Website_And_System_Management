@@ -1,6 +1,6 @@
 @props(['title', 'image','category_id'])
 
-<a href="{{ route('productSort', ['type' => 'category', 'category_id' => $category_id]) }}">
+<a href="{{ route('productSort', ['type' => 'Category :', 'category_id' => $category_id,'value'=>$title]) }}">
     <div class="relative w-full h-72 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300">
         <!-- Background Image -->
         <div class="absolute inset-0 bg-cover bg-top" style="background-image: url('{{ $image }}');"></div>

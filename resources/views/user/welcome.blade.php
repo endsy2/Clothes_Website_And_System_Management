@@ -7,7 +7,7 @@
     <section class="relative bg-cover bg-center w-full h-[70vh] bg-no-repeat mt-5"
         style="background-image: url('{{ asset('images/slide1.svg') }}');">
         <div class="relative z-10 flex items-center h-full ml-36">
-            <a href="#explore"
+            <a href="{{ route('productSort')}}"
                 class="px-10 py-5 bg-slate-950 text-3xl font-bold rounded-full shadow-lg hover:bg-slate-500 hover:scale-105 transition-all duration-300 text-white block text-center">
                 SHOP NOW
             </a>
@@ -18,7 +18,7 @@
     <!-- HTML CODE -->
     <div>
         <h2 class="font-semibold text-2xl pt-5">Trend Brand</h2>
-        <p class="font-semibold text-lg text-right"><a href="">More View</a></p>
+        <p class="font-semibold text-lg text-right"><a href="{{ route('user.displaybrand') }}">More View</a></p>
     </div>
 
     <div class="relative mt-4 h-60 bg-white">
@@ -44,7 +44,7 @@
             <div class="swiper-wrapper">
                 @foreach ($brands['data'] as $brand)
                 <a class="swiper-slide flex justify-center"
-                    href="{{ route('productSort', ['type' => 'brand','brand'=>$brand['id']]) }}">
+                    href="{{ route('productSort', ['type' => 'Brand :','brand'=>$brand['id'],'value'=>$brand['brand_name']]) }}">
                     <div
                         class="bg-white flex flex-col justify-center items-center py-3 shadow-lg hover:shadow-2xl transition duration-300">
                         <img src="{{ asset('/' . $brand['image']) }}" alt="{{ $brand['brand_name'] }}"

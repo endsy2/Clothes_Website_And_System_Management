@@ -1,9 +1,11 @@
 <x-layout>
-    <div class="flex justify-center mt-10">
-        <h1 class="font-bold text-3xl text-gray-800">My Wish List</h1>
-    </div>
-    <div id="favorite-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-8">
-        <!-- Favorite items will be dynamically inserted here -->
+    <div class="my-10">
+        <div class="flex justify-center ">
+            <h1 class="font-bold text-3xl text-gray-800">My Wish List</h1>
+        </div>
+        <div id="favorite-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 ">
+            <!-- Favorite items will be dynamically inserted here -->
+        </div>
     </div>
 </x-layout>
 
@@ -14,6 +16,8 @@
     function renderFavorites() {
         favoriteContent.innerHTML = ''; // Clear previous content
         favorite.forEach((item, index) => {
+            console.log(item['id']);
+
             const discountedPrice = (item.originalPrice * (1 - item.discount / 100)).toFixed(2);
             const div = document.createElement('div');
 
@@ -24,6 +28,7 @@
             );
 
             div.innerHTML = `
+                <a href="/detail?id=${item.id}" >
                 <button data-index="${index}" class="remove-btn absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-600">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -40,6 +45,7 @@
                             : `<span class="text-lg font-bold text-gray-800">$${item.originalPrice}</span>`
                     }
                 </div>
+                </a>
                 ${
                     item.discount > 0
                         ? `<span class="bg-red-100 text-red-600 text-xs font-medium px-3 py-1 rounded-full">${item.discount}% OFF</span>`

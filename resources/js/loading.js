@@ -9,6 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loader.style.display = 'none';
             content.classList.remove('hidden');
             content.style.opacity = 1;
-        }, 400);
-    }, 500);
+        }, 1000);
+    }, 1500);
 });

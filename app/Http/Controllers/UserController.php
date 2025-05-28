@@ -27,9 +27,11 @@ class UserController extends Controller
     }
     public function PageProductSort(Request $request)
     {
-        $title = $request->query('type') ?? 'Default';
+        $title = $request->query('type') ?? 'ALL Products';
+        $value = $request->query('value') ?? null;
         $products = (new ProductController())->index($request)->getData(true);
-        return dd($products);
+        return view('user.product-sort', ['products' => $products, 'title' => $title, 'value' => $value]);
+        // return dd($products);
     }
     public function PageCheckOut(Request $request)
     {

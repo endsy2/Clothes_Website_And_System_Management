@@ -1,20 +1,24 @@
 @props(['productId','name', 'productImage', 'price', 'discount' => null])
 
 
+{{-- Ensure productImage is a valid URL or path --}}
 <a href="/detail?id={{ urlencode($productId) }}"
     class="group relative flex flex-col bg-white  shadow-md  transition-all duration-300 overflow-hidden hover:scale-[1.03]">
 
     {{-- Product Image --}}
     <div class="relative w-full aspect-[4/5] bg-gray-100 overflow-hidden">
-        <img src="{{ url('/'. $productImage) }}" alt="{{ $name }}"
+        <img src="{{ asset('/' . $productImage) }}" alt="{{ $name }}"
             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+
+
 
         {{-- Discount Badge --}}
         @if (!empty($discount) && is_numeric($discount) && $discount > 0)
         <div
-            class="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+            class="absolute top-3 left-3 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg ring-2 ring-white/30 backdrop-blur-sm">
             -{{ $discount }}% OFF
         </div>
+
         @endif
     </div>
 

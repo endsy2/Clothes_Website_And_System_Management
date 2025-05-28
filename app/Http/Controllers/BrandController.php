@@ -20,6 +20,13 @@ class BrandController extends Controller
     // }
     public function displayBrand()
     {
+        $brands = Brand::paginate(10);
+        // dd($brands);
+        return view('user.brand-display', ['brands' => $brands]);
+    }
+
+    public function displayInsertBrand()
+    {
 
         return view('admin.insert-brand');
     }
