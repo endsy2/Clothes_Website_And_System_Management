@@ -84,11 +84,11 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'host' => env('DB_HOST', 'db-postgresql-nyc3-21964-do-user-19061361-0.g.db.ondigitalocean.com'),
-            'port' => env('DB_PORT', '25061'),
-            'database' => env('DB_DATABASE', 'kongming'),
-            'username' => env('DB_USERNAME', 'doadmin'),
-            'password' => env('DB_PASSWORD', 'AVNS_mtET5WtDeA_QhkKTpR_'),
+            'host' => env('DB_HOST'),
+            'port' => env('DB_PORT'),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',
