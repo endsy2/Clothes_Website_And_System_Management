@@ -1,10 +1,13 @@
 {
   "private": true,
   "type": "module",
+ 
   "scripts": {
-    "dev": "vite dev",
-    "build": "cp .env.example .env && php artisan config:clear && php artisan config:cache && vite build"
+    "dev": "vite",
+    "build": "php artisan config:clear && vite build",
+    "serve": "vite"
   },
+
   "dependencies": {
     "@tailwindcss/vite": "^4.0.16",
     "autoprefixer": "^10.4.21",
