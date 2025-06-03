@@ -94,7 +94,8 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'schema' => 'public',
-            'sslmode' => 'prefer',
+            ' sslmode' => env('DB_SSLMODE', 'prefer'), // <-- add this
+
         ],
 
 
