@@ -12,17 +12,24 @@ $sizebtns=['S','M','L','XL','2XL'];
                 <div id="gallery"
                     class="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:h-[600px] scrollbar-thin scrollbar-thumb-gray-300 p-1">
                     @foreach ($product['product_variant'][0]['product_images'] ?? [] as $img)
+
                     <img src="{{ asset($img['images']) }}"
                         class="w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-[#128B9E] transition"
                         data-img="{{ asset($img['images']) }}">
+
                     @endforeach
                 </div>
 
                 {{-- Main Image --}}
                 <div id="main-image" class="flex-1">
-                    <img src="{{ asset($product['product_variant'][0]['product_images'][0]['images'] ?? 'default.jpg') }}"
-                        alt="product image" class="w-full aspect-[6/8] object-cover transition-all duration-300">
+                    @php
+                    $image=asset($product['product_variant'][0]['product_images'][0]['images'] );
+
+                    @endphp
+                    <img src="{{ $image }}" alt="product image"
+                        class="w-full aspect-[6/8] object-cover transition-all duration-300">
                 </div>
+
             </div>
 
             {{-- Product Info --}}
@@ -81,7 +88,9 @@ $sizebtns=['S','M','L','XL','2XL'];
                             data-color="{{ $colorVariant['color'] }}">
                             <img src="{{ asset($colorVariant['product_images'][0]['images'] ?? 'default.jpg') }}"
                                 class="w-full h-full object-cover">
+
                         </button>
+
                         @endforeach
                     </div>
                 </div>
@@ -426,9 +435,7 @@ $sizebtns=['S','M','L','XL','2XL'];
         let finalPrice;
 
         function updateDetail(variant) {
-            mainImage.src = variant.product_images[0].images;
-            console.log(mainImage);
-
+            mainImage.src = '/' + variant.product_images[0].images;
             const discount = variant.discount ? parseFloat(variant.discount.discount || 0) : 0;
             const originalPrice = parseFloat(variant.price || 0);
             finalPrice = discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
@@ -451,17 +458,16 @@ $sizebtns=['S','M','L','XL','2XL'];
 
             // Update gallery
             gallery.innerHTML = '';
-            console.log(gallery);
-
             variant.product_images.forEach(img => {
                 const thumb = document.createElement('img');
-                thumb.src = img.images;
+                thumb.src = '/' + img.images;
                 thumb.className =
                     'w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-black transition';
                 thumb.dataset.img = '/' + img.images;
                 gallery.appendChild(thumb);
             });
         }
+
 
 
 

@@ -96,13 +96,20 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     Route::delete('/delete-products-many', [ProductController::class, 'deleteMany'])->name('delete-product-many');
     //get product detail page
     Route::get('/product/{id}', function (Request $request) {
+
+
         $product     = (new ProductController())->productByProductIdPrductVariantID($request['id'])->getData(true);
+
         $brands = (new BrandController())->showBrand()->getData(true);
+
         $categorys = (new CategoryController())->show()->getData(true);
+
         $productTypes = (new ProductTypeController()->show()->getData(true));
+
         $discounts = (new DiscountController()->index()->getData(true));
+
         // dd($discounts);
-        return view('admin.productDetail', ['product' => $product, 'brands' => $brands, 'categorys' => $categorys, 'productTypes' => $productTypes, 'discounts' => $discounts]);
+        return view('admin.product-detail', ['product' => $product, 'brands' => $brands, 'categorys' => $categorys, 'productTypes' => $productTypes, 'discounts' => $discounts]);
     })->name('admin.product-detail');
     // update product route
     Route::put("/product/{id}", [ProductController::class, 'update'])->name('admin.productupdate');

@@ -12,7 +12,7 @@ Type','href'=>'insertProductType']]],
 ['href' => '/admin/order', 'name' => 'Order'],
 ['href' => '/admin/user', 'name' => 'Customer'],
 
-['href' => '/admin/report', 'name' => 'Report']
+
 ];
 $currentUrl = request()->path();
 @endphp
