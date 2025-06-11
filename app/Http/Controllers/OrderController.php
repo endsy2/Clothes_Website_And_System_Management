@@ -79,6 +79,7 @@ class OrderController extends Controller
     public function destroyMany(Request $request)
     {
         try {
+
             $ids = $request->input('ids');
             Order::destroy($ids);
             return response()->json(['message' => 'Orders deleted successfully']);

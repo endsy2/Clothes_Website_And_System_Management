@@ -77,9 +77,7 @@ $ContactUs = [
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-
-    @vite('resources/css/app.css')
-    @vite('resources/js/app.js')
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <script type="module" src="/build/assets/app-D-t_snuq.js"></script>
 
@@ -263,3 +261,10 @@ $ContactUs = [
 
 
 </body>
+<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('js/loading.js') }}"></script>
+<script src="{{ asset('js/alert.js') }}"></script>
+<script src="{{ asset('js/search.js') }}"></script>
+<script src="{{ asset('js/addToCartTab.js') }}"></script>
+<script src="{{ asset('js/add-to-favorite.js') }}"></script>
+<script src="{{ asset('js/slider.js') }}"></script>

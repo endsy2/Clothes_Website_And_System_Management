@@ -117,7 +117,7 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     Route::put("/productVariant/{id}", [ProductVariantsController::class, 'update'])->name('admin.productVariantUpdate');
     Route::get('/insertProductVariant', [ProductVariantsController::class, 'show'])->name('admin.add-product-variant-show');
     Route::post('/add-product-variant', [ProductVariantsController::class, 'store'])->name('admin.add-product-variant');
-    Route::delete('/delete-product-variant', [ProductVariantsController::class, 'destroy'])->name('admin.delete-product-variant');
+    Route::delete('/deleteProductVariant', [ProductVariantsController::class, 'destroy'])->name('admin.delete-product-variant');
     Route::delete("/order/{id}", [OrderController::class, 'destroy'])->name('admin.order.delete');
 
     // insert brand

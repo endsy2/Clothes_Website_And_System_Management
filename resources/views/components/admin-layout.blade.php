@@ -29,8 +29,6 @@ $currentUrl = request()->path();
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>Admin Panel</title>
     @vite('resources/css/app.css')
-    @vite('resources/js/app.js')
-    @vite('resources/js/loading.js')
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -107,20 +105,26 @@ $currentUrl = request()->path();
             </div>
 
 
-            <main id="main-content" class="opacity-0 transition-opacity duration-500 ">
+            <main id="main-content" class="opacity-0 transition-opacity p-10 duration-500 ">
                 {{ $slot }}
             </main>
         </div>
     </div>
     @if(session('success'))
     <script>
+        console.log('Success message:', @json(session('success')));
+
         window.successMessage = @json(session('success'));
     </script>
     @endif
-
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/loading.js') }}"></script>
+    <script src="{{ asset('js/alert.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.js') }}"></script>
 </body>
 
 </html>
+
 
 <script>
     const sidebar = document.getElementById('sidebar');

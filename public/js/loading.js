@@ -11,6 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loader.style.display = 'none';
             content.classList.remove('hidden');
             content.style.opacity = 1;
-        }, 1000);
-    }, 1500);
+        });
+    }, 1000);
 });

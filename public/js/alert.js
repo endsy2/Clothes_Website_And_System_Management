@@ -11,7 +11,7 @@ function showSuccessAlert(message) {
         timer: 3000,
         toast: true,
         customClass: {
-            popup: 'bg-white text-black px-6 py-3 rounded shadow-lg', // Ensuring bg-black and text-white are applied
+            popup: 'bg-white text-black px-6 py-3 rounded shadow-lg',
             title: 'text-sm font-semibold'
         }
     });
@@ -19,8 +19,9 @@ function showSuccessAlert(message) {
 
 document.addEventListener('DOMContentLoaded', function () {
     if (window.successMessage) {
-        var message = window.successMessage;
-        showSuccessAlert(message);
-        console.log('Alert triggered with message:', window.successMessage); // ✅ Debug
+        showSuccessAlert(window.successMessage);
+        console.log('✅ SweetAlert triggered with:', window.successMessage);
+    } else {
+        console.log('ℹ️ No success message found.');
     }
 });

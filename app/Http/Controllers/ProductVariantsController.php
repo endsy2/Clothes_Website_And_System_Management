@@ -174,21 +174,25 @@ class ProductVariantsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
         try {
-            $productImage = ProductImage::where('product_variant_id', $id)->get();
-            if ($productImage) {
-                foreach ($productImage as $image) {
-                    $image->delete();
-                }
+            $id = $request->input('id');
+            if (!$id) {
+                return response()->json(['message' => 'Product variant ID is required.'], 400);
             }
+
+            $productImage = ProductImage::where('product_variant_id', $id)->get();
+            foreach ($productImage as $image) {
+                $image->delete();
+            }
+
             $productVariant = ProductVariant::findOrFail($id);
             $productVariant->delete();
 
-            return redirect()->back()->with('success', 'Product variant deleted successfully!');
+            return response()->json(['message' => 'Product variant deleted successfully!']);
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
 }

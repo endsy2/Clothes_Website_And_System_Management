@@ -2,7 +2,6 @@
 $sizebtns=['S','M','L','XL','2XL'];
 @endphp
 
-@vite(['resources/css/app.css', 'resources/js/app.js'])
 <x-admin-layout>
     <div class="max-w-7xl mx-auto p-6 mt-10">
         <div class="flex flex-col md:flex-row gap-10">
@@ -132,7 +131,7 @@ $sizebtns=['S','M','L','XL','2XL'];
 
 
         <div id="edit-product-form-overlay"
-            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+            class="hidden fixed inset-0 z-50 flex items-center justify-center  bg-opacity-100 backdrop-blur-sm">
             <div id="edit-product-form"
                 class="bg-white rounded-2xl p-8 w-full max-w-xl relative shadow-2xl transform transition-all duration-300">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Product</h2>
@@ -213,7 +212,7 @@ $sizebtns=['S','M','L','XL','2XL'];
         {{-- edit product variant --}}
         <!-- Overlay with backdrop blur effect -->
         <div id="edit-product-variant-form-overlay"
-            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm">
             <div id="edit-product-variant-form"
                 class="bg-white rounded-2xl p-8 w-full max-w-xl relative shadow-2xl transform transition-all duration-300">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Product</h2>
@@ -468,9 +467,6 @@ $sizebtns=['S','M','L','XL','2XL'];
             });
         }
 
-
-
-
         function renderSizeButtons(color) {
             filtered = productVariants.filter(v => v.color === color);
             sizeContainer.innerHTML = '';
@@ -538,87 +534,7 @@ $sizebtns=['S','M','L','XL','2XL'];
         renderSizeButtons(productVariants[0]?.color);
         if (colorBtns[0]) colorBtns[0].classList.add('ring-2', 'ring-black');
 
-        // Add to Cart
-        document.getElementById('add-to-cart-btn').addEventListener('click', function(e) {
-            e.preventDefault();
 
-
-            if (!selectedVariant) {
-                alert('Please select a size first!');
-                return;
-            }
-
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-            const existingProduct = cart.findIndex(item => item.productVariantsId === selectedVariant.id);
-
-            if (existingProduct !== -1) {
-                cart[existingProduct].quantity += 1;
-            } else {
-                console.log('n', selectedVariant);
-
-                cart.push({
-                    id: selectedVariant.product_id,
-                    productVariantsId: selectedVariant.id,
-                    productName: productName,
-                    originalPrice: selectedVariant.price,
-                    discount: selectedVariant.discount?.discount || 0,
-                    image: selectedVariant.product_images[0].images,
-                    size: selectedVariant.size,
-                    quantity: 1
-                });
-            }
-
-            localStorage.setItem('cart', JSON.stringify(cart));
-
-        });
-        favoritebtn.addEventListener("click", function(e) {
-            e.preventDefault();
-
-            if (!selectedVariant) {
-                alert('Please select a size first!');
-                return;
-            }
-
-            let favorite = JSON.parse(localStorage.getItem('favorite')) || [];
-
-            const exists = favorite.find(item => item.productVariantsId === selectedVariant.id);
-
-            if (exists) {
-                favorite = favorite.filter(item => item.productVariantsId !== selectedVariant.id);
-                localStorage.setItem('favorite', JSON.stringify(favorite));
-            } else {
-                favorite.push({
-                    id: selectedVariant.product_id,
-                    productVariantsId: selectedVariant.id,
-                    productName: productName,
-                    originalPrice: selectedVariant.price,
-                    discount: selectedVariant.discount?.discount || 0,
-                    image: selectedVariant.product_images[0].images,
-                    size: selectedVariant.size,
-                });
-                localStorage.setItem('favorite', JSON.stringify(favorite));
-
-            }
-
-            updateHeartIcon(selectedVariant.product_id); // <-- Update icon after change
-        });
-
-        const heartOutline = document.getElementById('heart-outline');
-        const heartFilled = document.getElementById('heart-filled');
-
-        function updateHeartIcon(product_id) {
-            const favorite = JSON.parse(localStorage.getItem('favorite')) || [];
-            const isFavorited = favorite.some(item => item.id === product_id);
-
-            if (isFavorited) {
-                heartOutline.classList.add('hidden');
-                heartFilled.classList.remove('hidden');
-            } else {
-                heartOutline.classList.remove('hidden');
-                heartFilled.classList.add('hidden');
-            }
-        }
 
         function selectSizeBtn(button) {
             // Reset styles for all buttons
@@ -634,24 +550,25 @@ $sizebtns=['S','M','L','XL','2XL'];
             button.style.color = '#111827'; // Tailwind's text-gray-900
         }
         document.getElementById('delete-product-variant-btn').addEventListener('click', function() {
-            // const selected = [...document.querySelectorAll('.product-checkbox:checked')].map(cb => cb.value);
-            if (selected.length === 0) {
-                Swal.fire('No Selection', 'Please select at least one product to delete.', 'warning');
+            const selectedId = selectedVariant?.id;
+
+            if (!selectedId) {
+                Swal.fire('No Selection', 'Please select a product variant to delete.', 'warning');
                 return;
             }
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: `You are about to delete ${selected.length} order.`,
+                text: `You are about to delete this product variant.`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, delete them!',
+                confirmButtonText: 'Yes, delete it!',
                 cancelButtonText: 'Cancel'
             }).then(result => {
-                console.log(selected);
+                console.log(selectedId);
 
                 if (result.isConfirmed) {
-                    fetch('/admin/many-order', {
+                    fetch(`{{ route('admin.delete-product-variant') }}`, {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -659,20 +576,35 @@ $sizebtns=['S','M','L','XL','2XL'];
                                     .content
                             },
                             body: JSON.stringify({
-                                ids: selected
+                                id: selectedId
                             })
+
                         })
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error("Network response was not ok");
+                            return res.json();
+
+
+                        })
                         .then(data => {
-                            if (data.message === "Orders deleted successfully") {
-                                Swal.fire('Deleted!', `${data.deleted} products deleted.`, 'success')
+
+
+                            if (data.message?.includes("success")) {
+                                Swal.fire('Deleted!', 'Product variant deleted successfully.',
+                                        'success')
                                     .then(() => location.reload());
                             } else {
-                                Swal.fire('Error', 'Failed to delete products.', 'error');
+                                Swal.fire('Error', 'Failed to delete the product variant.', 'error');
                             }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire('Error', 'Something went wrong while deleting.', 'error');
                         });
                 }
             });
         });
     </script>
+    <script src="{{ asset('js/alert.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
     </x-layout>
