@@ -121,6 +121,8 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
+
+
     public function update(Request $request, $id)
     {
         try {

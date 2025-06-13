@@ -1,7 +1,6 @@
 @php
 $sizebtns=['S','M','L','XL','2XL'];
 @endphp
-
 <x-admin-layout>
     <div class="max-w-7xl mx-auto p-6 mt-10">
         <div class="flex flex-col md:flex-row gap-10">
@@ -217,32 +216,31 @@ $sizebtns=['S','M','L','XL','2XL'];
                 class="bg-white rounded-2xl p-8 w-full max-w-xl relative shadow-2xl transform transition-all duration-300">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Product</h2>
 
-                <form id="variant-form" method="POST">
+                <form id="variant-form" method="POST"
+                    action="{{ route('admin.productVariantUpdate', $product['id']) }}">
                     @csrf
                     @method('PUT')
-
-
                     <!-- Size Selection -->
                     <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2"> Size</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Size</label>
                         <div id="size-options" class="flex flex-wrap gap-2">
                             @foreach ($sizebtns as $sizebtn)
                             <button type="button"
                                 class="size-btn px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-200 transition"
-                                onclick="selectSizeBtn(this)">
+                                onclick="selectSizeBtn(this, '{{ $sizebtn }}')">
                                 {{ $sizebtn }}
                             </button>
                             @endforeach
                         </div>
+
+                        <!-- Hidden input to store selected size -->
+                        <input type="hidden" name="size" id="selected-size">
                     </div>
-
-
-
                     <!-- price -->
                     <div class="mb-6">
                         <label for="price" class="block text-lg font-medium text-gray-700">
                             Price</label>
-                        <input type="text" name="number" id="product-variant-price-input"
+                        <input type="number" name="price" id="product-variant-price-input"
                             class="mt-1 block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none transition">
 
                     </div>
@@ -250,7 +248,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                     <div class="mb-6">
                         <label for="stock" class="block text-lg font-medium text-gray-700">
                             Stock</label>
-                        <input type="text" name="number" id="product-variant-stock-input"
+                        <input type="number" name="stock" id="product-variant-stock-input"
                             class="mt-1 block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none transition">
 
                     </div>
@@ -308,8 +306,8 @@ $sizebtns=['S','M','L','XL','2XL'];
                         </button>
                     </div>
                 </form>
-                @if (session('success'))
-                <div class="bg-green-200 text-green-800 px-4 py-2 rounded">
+                <!-- @if (session('success')) -->
+                <!-- <div class="bg-green-200 text-green-800 px-4 py-2 rounded">
                     {{ session('success') }}
                 </div>
                 @endif
@@ -326,7 +324,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                     <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-                @endif
+                @endif -->
 
             </div>
         </div>
@@ -501,16 +499,7 @@ $sizebtns=['S','M','L','XL','2XL'];
             }, 0);
         }
 
-        function updateFormAction() {
-            let url = `/admin/productVariant/${selectedVariant.id}`;
 
-            // // If you need to pass query parameters too
-            // if (otherParam !== null) {
-            //     url += `?type=${encodeURIComponent(otherParam)}`;
-            // }
-
-            document.getElementById('variant-form').action = url;
-        }
 
         // Thumbnail click to update main image
         gallery.addEventListener('click', (e) => {
@@ -535,8 +524,7 @@ $sizebtns=['S','M','L','XL','2XL'];
         if (colorBtns[0]) colorBtns[0].classList.add('ring-2', 'ring-black');
 
 
-
-        function selectSizeBtn(button) {
+        function selectSizeBtn(button, sizeValue) {
             // Reset styles for all buttons
             document.querySelectorAll('.size-btn').forEach(btn => {
                 btn.style.backgroundColor = '';
@@ -545,9 +533,11 @@ $sizebtns=['S','M','L','XL','2XL'];
             });
 
             // Apply style to the clicked button
-            // button.style.backgroundColor = '#d1d5db'; // Tailwind's bg-gray-300
             button.style.borderColor = '#374151'; // Tailwind's border-gray-700
             button.style.color = '#111827'; // Tailwind's text-gray-900
+
+            // Set hidden input value
+            document.getElementById('selected-size').value = sizeValue;
         }
         document.getElementById('delete-product-variant-btn').addEventListener('click', function() {
             const selectedId = selectedVariant?.id;

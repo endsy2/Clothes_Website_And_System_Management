@@ -125,49 +125,44 @@ class ProductVariantsController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            // ✅ Validate request first!
             $validatedData = $request->validate([
-                // 'discount_name' => 'nullable|exists:discounts,discount_name',
                 'price' => 'nullable|numeric',
                 'stock' => 'nullable|integer|min:0',
                 'color' => 'nullable|string',
                 'size' => 'nullable|string',
+                'image' => 'nullable|array',
+                'image.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048', // validate each file
             ]);
 
-            // Get the discount row if present
-            $discountRow = $request->filled('discount_name')
-                ? Discount::where('discount_name', $request->discount_name)->first()
-                : null;
+            // ✅ Find the variant
+            $variant = ProductVariant::findOrFail($id);
 
-            // Build the query to find product variants
-            $productVariantQuery = ProductVariant::where('product_id', $id);
+            // ✅ Update basic fields
+            $variant->price = $validatedData['price'] ?? $variant->price;
+            $variant->stock = $validatedData['stock'] ?? $variant->stock;
+            $variant->color = $validatedData['color'] ?? $variant->color;
+            $variant->size = $validatedData['size'] ?? $variant->size;
+            $variant->save(); // 🟢 Don't forget to save the changes
 
-            if ($request->filled('color')) {
-                $productVariantQuery->where('color', $request->color);
-            }
+            // ✅ Handle multiple images
+            if ($request->hasFile('image')) {
+                foreach ($request->file('image') as $image) {
+                    if (!$image->isValid()) {
+                        throw new \Exception("Invalid image upload: " . $image->getClientOriginalName());
+                    }
 
-            if ($request->filled('size')) {
-                $productVariantQuery->where('size', $request->size);
-            }
-
-            $productVariants = $productVariantQuery->get();
-
-            if ($productVariants->isEmpty()) {
-                return redirect()->back()->withErrors(['variant' => 'No matching product variants found'])->withInput();
-            }
-
-            foreach ($productVariants as $variant) {
-                $variant->update([
-                    'discount_id' => optional($discountRow)->id,
-                    'price' => $request->filled('price') ? $request->price : $variant->price,
-                    'stock' => $request->filled('stock') ? $request->stock : $variant->stock,
-                ]);
+                    $storedPath = $image->store('productImage', 'public'); // storage/app/public/productImage
+                    $variant->productImages()->create(['images' => $storedPath]);
+                }
             }
 
             return redirect()->back()->with('success', 'Product variant(s) updated successfully!');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
+
 
 
 

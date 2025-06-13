@@ -114,7 +114,7 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     // update product route
     Route::put("/product/{id}", [ProductController::class, 'update'])->name('admin.productupdate');
     // update product variant route
-    Route::put("/productVariant/{id}", [ProductVariantsController::class, 'update'])->name('admin.productVariantUpdate');
+
     Route::get('/insertProductVariant', [ProductVariantsController::class, 'show'])->name('admin.add-product-variant-show');
     Route::post('/add-product-variant', [ProductVariantsController::class, 'store'])->name('admin.add-product-variant');
     Route::delete('/deleteProductVariant', [ProductVariantsController::class, 'destroy'])->name('admin.delete-product-variant');
@@ -134,6 +134,9 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     // insert discount route and display
     Route::get('/insertDiscount', [DiscountController::class, 'displayDiscount'])->name('admin.insertDiscountDisplay');
     Route::post('/insertDiscount', [DiscountController::class, 'store'])->name('admin.insertDiscount');
+    // delete discount route
+    Route::delete("/deleteDiscount/{id}", [DiscountController::class, 'destroy'])->name('admin.deleteDiscount');
+    Route::delete('/deleteManyDiscount', [DiscountController::class, 'destroyMany'])->name('admin.deleteManyDiscount');
 });
 
 //admin:guest Route

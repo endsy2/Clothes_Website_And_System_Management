@@ -8,6 +8,7 @@ use App\Models\ProductVariant;
 use Exception;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 use function Pest\Laravel\get;
 
@@ -53,7 +54,7 @@ class DiscountController extends Controller
     {
         try {
             $discounts = Discount::paginate(10);
-            return response()->json($discounts);
+            return $discounts;
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while fetching discounts.',
@@ -108,14 +109,46 @@ class DiscountController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+
+
+
+    public function destroy($id)
     {
         try {
-            $result = Discount::where('id', $id)->delete();
+            Log::info("Attempting to delete discount with ID: " . $id);
+            if (!$id) {
+                Log::error("No ID provided for deletion");
+                return response()->json(['message' => 'No ID provided'], 400);
+            }
+            $discount = Discount::findOrFail($id);
+            Log::info("Found discount: " . $discount);
+            $discount->delete();
+
+            return response()->json(['message' => 'Discount deleted successfully']);
+        } catch (\Exception $e) {
+            Log::error("Delete failed: " . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Failed to delete discount',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function deleteMany(Request $request)
+    {
+        try {
+            $ids = $request->input('ids');
+            if (empty($ids)) {
+                return response()->json(['message' => 'No IDs provided'], 400);
+            }
+
+            $result = Discount::whereIn('id', $ids)->delete();
             if ($result) {
                 return response()->json(['message' => 'Delete Success']);
             } else {
-                return response()->json(['message' => 'Discount not found'], 404);
+                return response()->json(['message' => 'No discounts found for the provided IDs'], 404);
             }
         } catch (\Throwable $th) {
             return response()->json([
