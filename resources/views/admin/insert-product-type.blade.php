@@ -5,7 +5,6 @@
         @csrf
 
         <h2 class="text-2xl font-semibold text-gray-800 border-b pb-2">Insert Product Type</h2>
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">Basic Information</h2>
         <div class="grid grid-cols-1 gap-5">
 
 

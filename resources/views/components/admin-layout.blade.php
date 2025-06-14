@@ -125,7 +125,7 @@ $currentUrl = request()->path();
                 </div>
             </div>
 
-            <main id="main-content" class="opacity-0 transition-opacity p-10 duration-500">
+            <main id="main-content" class="opacity-0 transition-opacity px-10  duration-500">
                 {{ $slot }}
             </main>
         </div>
