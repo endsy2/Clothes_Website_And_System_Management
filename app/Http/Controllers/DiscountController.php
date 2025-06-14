@@ -6,9 +6,9 @@ use App\Models\Discount;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Exception;
-use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 use function Pest\Laravel\get;
 
@@ -20,6 +20,11 @@ class DiscountController extends Controller
     public function displayDiscount()
     {
         return view('admin.insert-discount');
+    }
+    public function displayEditDiscount($id)
+    {
+        $discount = Discount::find($id);
+        return view('admin.edit-discount', ['discount' => $discount->toArray()]);
     }
     public function index()
     {
@@ -89,26 +94,28 @@ class DiscountController extends Controller
             return redirect()->back()->with('error', 'Discount Creation Failed');
         }
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit($id)
     {
-        //
-    }
+        try {
+            Discount::where('id', $id)->update([
+                'discount_name' => request('discount_name'),
+                'discount' => request('discount'),
+                'start_date' => request('start_date'),
+                'end_date' => request('end_date'),
+            ]);
+            log::info("Discount with ID " . $id . " updated successfully");
+            // Flash message to session
+            Session::flash('success', 'Discount updated successfully');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+            // Redirect back or wherever you want
+            return redirect('/admin/discount')->with('success', 'Discount updated successfully');
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Discount not found',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
 
 
 
@@ -123,7 +130,7 @@ class DiscountController extends Controller
             $discount = Discount::findOrFail($id);
             Log::info("Found discount: " . $discount);
             $discount->delete();
-
+            Log::info("Discount with ID " . $id . " deleted successfully");
             return response()->json(['message' => 'Discount deleted successfully']);
         } catch (\Exception $e) {
             Log::error("Delete failed: " . $e->getMessage());
@@ -139,6 +146,8 @@ class DiscountController extends Controller
     public function deleteMany(Request $request)
     {
         try {
+            log::info("Delete many discounts request received");
+
             $ids = $request->input('ids');
             if (empty($ids)) {
                 return response()->json(['message' => 'No IDs provided'], 400);
@@ -146,7 +155,7 @@ class DiscountController extends Controller
 
             $result = Discount::whereIn('id', $ids)->delete();
             if ($result) {
-                return response()->json(['message' => 'Delete Success']);
+                return response()->json(['message' => 'Discount deleted successfully']);
             } else {
                 return response()->json(['message' => 'No discounts found for the provided IDs'], 404);
             }

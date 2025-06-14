@@ -10,7 +10,6 @@
         "slick-carousel": "^1.8.1",
         "sweetalert2": "^11.19.1",
         "swiper": "^11.2.6",
-        "axios": "^1.8.2",
         "vite": "^6.3.5",
         "tailwindcss": "^3.4.17",
         "postcss": "^8.5.3",

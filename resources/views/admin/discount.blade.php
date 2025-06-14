@@ -51,7 +51,8 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date'];
                         href="discount/{{ $discount['id'] ?? null }}">{{ $discount['end_date'] ?? null }}</a>
                 </td>
                 <td class="px-6 py-4 text-center space-x-2">
-                    <a href="/admin/product" class="text-blue-600 hover:underline font-medium">Edit</a>
+                    <a href="{{  route('admin.editDiscount', $discount['id']) }}"
+                        class="text-blue-600 hover:underline font-medium">Edit</a>
                     <button class="text-red-600 hover:text-red-800 font-medium delete-btn"
                         data-id="{{ $discount['id'] }}">
                         <span class="hidden sm:inline">Delete</span>
@@ -121,7 +122,7 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date'];
                     })
                     .then(res => res.json())
                     .then(data => {
-                        if (data.message === "Orders deleted successfully") {
+                        if (data.message === "Discount deleted successfully") {
                             Swal.fire('Deleted!', `${data.deleted} products deleted.`, 'success')
                                 .then(() => location.reload());
                         } else {
@@ -156,7 +157,7 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date'];
                         })
                         .then(res => res.json())
                         .then(data => {
-                            if (data.message === "Order deleted successfully") {
+                            if (data.message === "Discount deleted successfully") {
                                 Swal.fire('Deleted!', 'Order has been deleted.', 'success')
                                     .then(() => location.reload());
                             } else {

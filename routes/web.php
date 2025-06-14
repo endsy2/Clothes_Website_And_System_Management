@@ -136,7 +136,10 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     Route::post('/insertDiscount', [DiscountController::class, 'store'])->name('admin.insertDiscount');
     // delete discount route
     Route::delete("/deleteDiscount/{id}", [DiscountController::class, 'destroy'])->name('admin.deleteDiscount');
-    Route::delete('/deleteManyDiscount', [DiscountController::class, 'destroyMany'])->name('admin.deleteManyDiscount');
+    Route::delete('/deleteManyDiscount', [DiscountController::class, 'deleteMany'])->name('admin.deleteManyDiscount');
+    // display edit discount
+    Route::get('/editDiscount/{id}', [DiscountController::class, 'displayE ditDiscount'])->name('admin.editDiscountDisplay');
+    Route::put('/editDiscount/{id}', [DiscountController::class, 'edit'])->name('admin.editDiscount');
 });
 
 //admin:guest Route

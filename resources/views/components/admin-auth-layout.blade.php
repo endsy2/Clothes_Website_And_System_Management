@@ -5,10 +5,10 @@
     <link rel="icon" href="{{ asset('logo.svg') }}" type="image/x-icon" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- tailwind cdn -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
     <title>Cothing</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+
 
 </head>
 
@@ -35,6 +35,10 @@
     <script src="{{ asset('js/loading.js') }}"></script>
     <script src="{{ asset('js/alert.js') }}"></script>
     <script src="{{ asset('js/bootstrap.js') }}"></script>
+    <!-- sweetalert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <!-- tailwind cdn -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </body>
 
 </html>
