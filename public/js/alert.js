@@ -4,15 +4,20 @@ function showSuccessAlert(message) {
     if (!message) return;
 
     Swal.fire({
-        position: 'top-end',
+        toast: true,
+        position: 'top-right', // Already places it on the right side
         icon: 'success',
         title: message,
         showConfirmButton: false,
         timer: 3000,
-        toast: true,
+        timerProgressBar: true,
         customClass: {
-            popup: 'bg-white text-black px-6 py-3 rounded shadow-lg',
-            title: 'text-sm font-semibold'
+            popup: 'bg-white text-green-700 shadow-lg border-l-4 border-green-500 px-5 py-3 rounded-md',
+            title: 'text-sm font-medium',
+        },
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
         }
     });
 }

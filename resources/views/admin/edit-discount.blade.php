@@ -18,29 +18,25 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <input type="text" name="discount_name" value="{{ $discount['discount_name'] }}" placeholder="Discount Name"
-                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
-                required>
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black">
             @error('discount_name')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
 
             <input type="number" name="discount" value="{{ $discount['discount'] }}" placeholder="Discount"
-                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
-                required>
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black">
             @error('discount')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
 
             <input type="date" name="start_date" value="{{ $discount['start_date'] }}" placeholder="Start Date"
-                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
-                required>
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black">
             @error('start_date')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
 
             <input type="date" name="end_date" value="{{$discount['end_date']  }}" placeholder="End Date"
-                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
-                required>
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black">
             @error('end_date')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror

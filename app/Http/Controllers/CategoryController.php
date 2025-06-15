@@ -31,9 +31,10 @@ class CategoryController extends Controller
                 'category_name' => ['required', 'string']
             ]);
 
+
             $category = Category::create([
                 'category_name' => $validateData['category_name'],
-                'images' => $request->file('images')->store('imagpes', 'public')
+                'images' => $request->file('image')->store('productImage', 'public')
             ]);
 
             return redirect()->back()->with('success', 'Category created successfully');

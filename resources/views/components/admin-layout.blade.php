@@ -125,7 +125,7 @@ $currentUrl = request()->path();
                 </div>
             </div>
 
-            <main id="main-content" class="opacity-0 transition-opacity px-10  duration-500">
+            <main id="main-content" class="opacity-0 transition-opacity px-10 py-5  duration-500">
                 {{ $slot }}
             </main>
         </div>
@@ -178,12 +178,22 @@ $currentUrl = request()->path();
         document.addEventListener('DOMContentLoaded', () => {
             if (window.successMessage) {
                 Swal.fire({
+                    toast: true,
+                    position: 'top-end',
                     icon: 'success',
-                    title: 'Success',
-                    text: window.successMessage,
-                    timer: 2000,
-                    showConfirmButton: false
+                    title: window.successMessage,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'bg-white text-green-800 shadow-lg border-l-4 border-green-500 px-4 py-3 rounded-md'
+                    },
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
                 });
+
             }
             // Hide loader and show content after page load
             const loader = document.getElementById('page-loader');
