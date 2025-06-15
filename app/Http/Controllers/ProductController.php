@@ -121,6 +121,8 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
+
+
     public function update(Request $request, $id)
     {
         try {
@@ -471,11 +473,11 @@ class ProductController extends Controller
     public function insertProductView(Request $request)
     {
 
-        $discounts = new DiscountController()->discountName()->getData(true);
+        $discounts = new DiscountController()->discountName();
         $brands = new BrandController()->showBrand()->getData(true);
         $categories = new CategoryController()->show()->getData(true);
         $productTypes = new ProductTypeController()->show()->getData(true);
 
-        return view('admin.insert-product', ['discounts' => $discounts, 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
+        return view('admin.insert-product', ['discounts' => $discounts->toArray(), 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
     }
 }

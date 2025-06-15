@@ -96,7 +96,7 @@
                 <div class="swiper-wrapper">
                     @foreach ($discounts as $discount)
                     @php
-                    $element = $discount->toArray();
+                    $element = $discount;
                     @endphp
                     @if (!empty($element['product_variant']))
                     @php

@@ -1,7 +1,9 @@
 @php
-$titles=['ID','Discount Name','Discount','Start Date','End Date']
+$titles=['ID','Discount Name','Discount','Start Date','End Date'];
+
 @endphp
 <x-admin-layout>
+
     <h1 class="px-5 py-8 font-semibold text-2xl">Discount</h1>
 
     <table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -28,7 +30,8 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date']
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-            @foreach($discounts['data'] as $discount)
+
+            @foreach($discounts as $discount)
             <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-4">
                     <input type="checkbox" name="selected_products[]" value="{{ $discount['id'] }}"
@@ -48,7 +51,8 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date']
                         href="discount/{{ $discount['id'] ?? null }}">{{ $discount['end_date'] ?? null }}</a>
                 </td>
                 <td class="px-6 py-4 text-center space-x-2">
-                    <a href="/admin/product" class="text-blue-600 hover:underline font-medium">Edit</a>
+                    <a href="{{  route('admin.editDiscount', $discount['id']) }}"
+                        class="text-blue-600 hover:underline font-medium">Edit</a>
                     <button class="text-red-600 hover:text-red-800 font-medium delete-btn"
                         data-id="{{ $discount['id'] }}">
                         <span class="hidden sm:inline">Delete</span>
@@ -60,20 +64,25 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date']
         </tbody>
     </table>
     <!-- Pagination -->
-    <div class="p-4 border-t flex justify-center space-x-1 bg-white">
-        @foreach ($discounts['links'] as $link)
+    <!-- <div class="p-4 border-t flex justify-center space-x-1 bg-white">
+        @foreach ($discounts->links() as $link)
         @if ($link['url'])
         <a href="{{ $link['url'] }}"
             class="px-3 py-1 border rounded text-sm {{ $link['active'] ? 'bg-blue-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-100' }}">
             {!! $link['label'] !!}
         </a>
         @else
-        <span class="px-3 py-1 border rounded text-sm text-gray-400 cursor-not-allowed">{!!
-            $link['label']
-            !!}</span>
+        <span class="px-3 py-1 border rounded text-sm text-gray-400 cursor-not-allowed">
+            {!! $link['label'] !!}
+        </span>
         @endif
         @endforeach
+    </div> -->
+    <div class="p-4 border-t flex justify-center space-x-1 bg-white">
+        {{ $discounts->links() }}
     </div>
+
+
 </x-admin-layout>
 <script>
     // ✅ Handle Select All
@@ -101,7 +110,7 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date']
             console.log(selected);
 
             if (result.isConfirmed) {
-                fetch('/admin/many-order', {
+                fetch('/admin/deleteManyDiscount', {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',
@@ -113,7 +122,7 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date']
                     })
                     .then(res => res.json())
                     .then(data => {
-                        if (data.message === "Orders deleted successfully") {
+                        if (data.message === "Discount deleted successfully") {
                             Swal.fire('Deleted!', `${data.deleted} products deleted.`, 'success')
                                 .then(() => location.reload());
                         } else {
@@ -137,7 +146,7 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date']
             }).then(result => {
                 const discountId = this.dataset.id;
                 if (result.isConfirmed) {
-                    fetch(`/admin/discount/${discountId}`, {
+                    fetch(`/admin/deleteDiscount/${discountId}`, {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -148,7 +157,7 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date']
                         })
                         .then(res => res.json())
                         .then(data => {
-                            if (data.message === "Order deleted successfully") {
+                            if (data.message === "Discount deleted successfully") {
                                 Swal.fire('Deleted!', 'Order has been deleted.', 'success')
                                     .then(() => location.reload());
                             } else {

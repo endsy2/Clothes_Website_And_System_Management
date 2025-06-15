@@ -3,6 +3,7 @@
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVariantsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use PhpParser\Node\Stmt\TryCatch;
@@ -29,3 +30,5 @@ Route::prefix('discount')->group(function () {
     Route::get('/', [DiscountController::class, 'index']);
 });
 Route::get('/brand', [BrandController::class, 'show']);
+
+Route::put("/productVariantUpdate/{id}", [ProductVariantsController::class, 'update'])->name('admin.productVariantUpdate');

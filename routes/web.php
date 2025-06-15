@@ -96,21 +96,28 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     Route::delete('/delete-products-many', [ProductController::class, 'deleteMany'])->name('delete-product-many');
     //get product detail page
     Route::get('/product/{id}', function (Request $request) {
+
+
         $product     = (new ProductController())->productByProductIdPrductVariantID($request['id'])->getData(true);
+
         $brands = (new BrandController())->showBrand()->getData(true);
+
         $categorys = (new CategoryController())->show()->getData(true);
+
         $productTypes = (new ProductTypeController()->show()->getData(true));
+
         $discounts = (new DiscountController()->index()->getData(true));
+
         // dd($discounts);
-        return view('admin.productDetail', ['product' => $product, 'brands' => $brands, 'categorys' => $categorys, 'productTypes' => $productTypes, 'discounts' => $discounts]);
+        return view('admin.product-detail', ['product' => $product, 'brands' => $brands, 'categorys' => $categorys, 'productTypes' => $productTypes, 'discounts' => $discounts]);
     })->name('admin.product-detail');
     // update product route
     Route::put("/product/{id}", [ProductController::class, 'update'])->name('admin.productupdate');
     // update product variant route
-    Route::put("/productVariant/{id}", [ProductVariantsController::class, 'update'])->name('admin.productVariantUpdate');
+
     Route::get('/insertProductVariant', [ProductVariantsController::class, 'show'])->name('admin.add-product-variant-show');
     Route::post('/add-product-variant', [ProductVariantsController::class, 'store'])->name('admin.add-product-variant');
-    Route::delete('/delete-product-variant', [ProductVariantsController::class, 'destroy'])->name('admin.delete-product-variant');
+    Route::delete('/deleteProductVariant', [ProductVariantsController::class, 'destroy'])->name('admin.delete-product-variant');
     Route::delete("/order/{id}", [OrderController::class, 'destroy'])->name('admin.order.delete');
 
     // insert brand
@@ -127,6 +134,12 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     // insert discount route and display
     Route::get('/insertDiscount', [DiscountController::class, 'displayDiscount'])->name('admin.insertDiscountDisplay');
     Route::post('/insertDiscount', [DiscountController::class, 'store'])->name('admin.insertDiscount');
+    // delete discount route
+    Route::delete("/deleteDiscount/{id}", [DiscountController::class, 'destroy'])->name('admin.deleteDiscount');
+    Route::delete('/deleteManyDiscount', [DiscountController::class, 'deleteMany'])->name('admin.deleteManyDiscount');
+    // display edit discount
+    Route::get('/editDiscount/{id}', [DiscountController::class, 'displayE ditDiscount'])->name('admin.editDiscountDisplay');
+    Route::put('/editDiscount/{id}', [DiscountController::class, 'edit'])->name('admin.editDiscount');
 });
 
 //admin:guest Route

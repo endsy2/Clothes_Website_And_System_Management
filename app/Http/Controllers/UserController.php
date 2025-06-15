@@ -13,7 +13,7 @@ class UserController extends Controller
     {
         $brands = (new BrandController())->show();
         $products = (new ProductController())->show();
-        $discounts = (new DiscountController())->index();
+        $discounts = (new DiscountController())->index()->getData(true);
         $categories = (new CategoryController())->paginateCategory();
 
 

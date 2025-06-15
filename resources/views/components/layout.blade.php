@@ -86,6 +86,9 @@ $ContactUs = [
     <link rel="stylesheet" href="{{ asset('build/' . $manifest['resources/css/app.css']['file']) }}">
 
 
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <!-- sweetalert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
 
 
@@ -262,3 +265,10 @@ $ContactUs = [
 
 
 </body>
+<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('js/loading.js') }}"></script>
+<script src="{{ asset('js/alert.js') }}"></script>
+<script src="{{ asset('js/search.js') }}"></script>
+<script src="{{ asset('js/addToCartTab.js') }}"></script>
+<script src="{{ asset('js/add-to-favorite.js') }}"></script>
+<script src="{{ asset('js/slider.js') }}"></script>

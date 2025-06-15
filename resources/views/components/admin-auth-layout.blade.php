@@ -5,8 +5,10 @@
     <link rel="icon" href="{{ asset('logo.svg') }}" type="image/x-icon" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Cothing</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js','resources/js/adminLoading.js'])
+
+
 
 </head>
 
@@ -20,11 +22,23 @@
     </nav>
 
     <main class="flex justify-center ">
-        <div id="page-loader" class="absolute inset-0 flex justify-center items-center bg-white z-10">
-            <div class="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
-        </div>
         @yield("content")
     </main>
+    @if(session('success'))
+    <script>
+        console.log('Success message:', @json(session('success')));
+
+        window.successMessage = @json(session('success'));
+    </script>
+    @endif
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/loading.js') }}"></script>
+    <script src="{{ asset('js/alert.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.js') }}"></script>
+    <!-- sweetalert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <!-- tailwind cdn -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </body>
 
 </html>
