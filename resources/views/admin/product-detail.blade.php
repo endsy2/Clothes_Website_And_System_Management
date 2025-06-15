@@ -148,7 +148,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                     <!-- Brand Dropdown -->
                     <div class="mb-6">
                         <label for="brand_name" class="block text-sm font-semibold text-gray-700 mb-2">Brands</label>
-                        <select name="brand_name" required
+                        <select name="brand_name"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
                             <option value="">{{ $product['brand']['brand_name']}}</option>
                             @foreach ($brands as $brand)
@@ -160,7 +160,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                     <div class="mb-6">
                         <label for="category_name"
                             class="block text-sm font-semibold text-gray-700 mb-2">Categorys</label>
-                        <select name="category_name" required
+                        <select name="category_name"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
                             <option value="">{{ $product['category']['category_name']}}</option>
                             @foreach ($categorys as $category)
@@ -173,7 +173,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                         <label for="product_type_name" class="block text-sm font-semibold text-gray-700 mb-2">
                             Product Types
                         </label>
-                        <select name="product_type_name" required
+                        <select name="product_type_name"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
                             <option value="{{ $product['product_type']['product_type_name'] ?? '' }}">
                                 {{ $product['product_type']['product_type_name'] ?? 'Select product type' }}
