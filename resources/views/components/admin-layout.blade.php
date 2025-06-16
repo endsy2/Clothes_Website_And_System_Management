@@ -26,8 +26,9 @@ $currentUrl = request()->path();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
     <title>Admin Panel</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
         /* Overlay for mobile sidebar */
         #sidebar-overlay {
@@ -146,6 +147,7 @@ $currentUrl = request()->path();
     <script src="{{ asset('js/loading.js') }}"></script>
     <script src="{{ asset('js/alert.js') }}"></script>
     <script src="{{ asset('js/bootstrap.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 
     <script>
         const sidebar = document.getElementById('sidebar');
