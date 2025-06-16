@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -26,6 +27,7 @@ class LoginController extends Controller
                 'email' => 'required|email',
                 'password' => 'required'
             ]);
+            Log::info('Login attempt', ['email' => $attributes['email']]);
             if (Auth::guard('customer')->attempt($attributes)) {
                 $request->session()->regenerate();
                 return redirect('/')->with('success', 'You have been logged in');

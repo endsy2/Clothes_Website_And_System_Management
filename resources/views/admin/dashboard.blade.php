@@ -5,6 +5,7 @@ $titles=[
 
 <html>
 
+
 <head>
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
@@ -139,7 +140,8 @@ $titles=[
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($trendProduct['products'] as $item)
+
+                        <!-- @foreach($trendProduct['products'] as $item)
                         @php
                         $productVariant = $item['product_variant'];
                         $product = $productVariant['product'];
@@ -152,7 +154,7 @@ $titles=[
                             <td class="px-6 py-4 text-gray-700">${{ number_format($productVariant['price']??null, 2) }}
                             </td>
                         </tr>
-                        @endforeach
+                        @endforeach -->
                     </tbody>
                 </table>
             </div>
