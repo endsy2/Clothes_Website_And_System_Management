@@ -2,7 +2,6 @@ import './bootstrap';
 import '../css/app.css';
 import './search.js';
 import './addToCartTab.js';
-import './add-to-favorite.js';
 import './alert.js'
 import './slider.js'
 import './loading.js';
