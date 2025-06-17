@@ -10,7 +10,7 @@
     <!-- tailwind cdn -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-@vite('resources/css/app.css')
+@vite('{{ css/app.css }}')
 
 <body>
     <nav class="border-b border-gray-300  lg:px-5 2xl:px-80 py-5 ">

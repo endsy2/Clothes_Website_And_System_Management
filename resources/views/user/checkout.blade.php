@@ -130,7 +130,7 @@
             });
 
             form.appendChild(createHiddenInput('total_price', total.toFixed(2)));
-
+            localStorage.setItem('showCart', 'false');
             // ❌ DON'T DO THIS ANYMORE
             // form.appendChild(createHiddenInput('payment_method', paymentMethod.value));
         });

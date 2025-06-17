@@ -16,10 +16,8 @@ $ContactUs = [
 ['text' => '+123456789', 'icon' => asset('/icon/phone-svgrepo-com.svg')],
 ['text' => 'Telegram', 'icon' => asset('/icon/telegram-svgrepo-com.svg')],
 ];
-
 @endphp
 
-<!-- Optional: Add this in your <head> to control fade animation -->
 <style>
     .fade-out {
         animation: fadeOut 0.4s ease-out forwards;
@@ -36,39 +34,13 @@ $ContactUs = [
     #main-content {
         transition: opacity 0.4s ease-out;
     }
-
-    nav,
-    footer {
-        background-color: #f9fafb;
-        border-radius: 12px;
-        padding: 1rem 2rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .nav-link {
-        transition: all 0.3s ease;
-    }
-
-    .nav-link:hover {
-        transform: scale(1.05);
-        color: #128B9E;
-    }
-
-    .search-popup {
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    footer h3 {
-        margin-bottom: 0.5rem;
-    }
 </style>
 
 <!doctype html>
 <html>
 
 <head>
-    <title>Clothing</title>
+    <title>Clothing Store</title>
     <link rel="icon" href="url{{ asset('logo.svg') }}" type="image/x-icon" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -80,193 +52,243 @@ $ContactUs = [
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <!-- sweetalert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
     <script type="module" src="/build/assets/app-D-t_snuq.js"></script>
-
-
 </head>
 
-<body class="lg:px-0 xl:px-0 2xl:px-72 py-5 bg-ray-50 text-gray-800">
-    <nav class="flex justify-between items-center z-10">
-        <div>
-            <div class="flex space-x-16 px-5">
-                @foreach($navLinks as $navLink)
-                <x-nav-link href="{{ $navLink['href'] }}" :active="request()->is($navLink['href'])">
-                    {{ $navLink['name'] }}
-                </x-nav-link>
-                @endforeach
-            </div>
-        </div>
-        <div class="flex-grow flex justify-center">
-            <a href="/"><img src="{{ asset('logo.svg') }}" alt="Logo" /></a>
-        </div>
-        <!--  -->
-        <div class="flex gap-5">
-            <div class="relative">
-                <!-- <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21 21l-5.197-5.197M15.803 15.803A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                    </svg>
-                </span> -->
-                <!-- Trigger Input -->
-                <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border rounded-lg w-full ring-0"
-                    onclick="toggleSearchPopup()" />
-
-                <!-- Search Popup -->
-                <div id="searchPopup"
-                    class="fixed top-0 left-0 w-full bg-white shadow-lg p-4 z-50 transform -translate-y-full transition-transform duration-300 ease-out">
-                    <div class="max-w-3xl mx-auto">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">Search Products</h2>
-                            <button onclick="toggleSearchPopup()"
-                                class="text-gray-500 hover:text-black">&times;</button>
-                        </div>
-                        <input id="popupSearchInput" type="text" placeholder="Type to search..."
-                            class="w-full px-4 py-2 border rounded-md" />
-                        <div id="popupSearchResults" class="mt-4 space-y-2"></div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="flex items-center justify-center gap-10">
-                <!-- Favorite Button -->
-                <a id="add-to-favorite-btn" href="/add-to-favorite">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                    </svg>
-                </a>
-
-                <!-- Add to Cart -->
-                <button class="add-to-cart-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                    </svg>
-                </button>
-            </div>
-
-
-            <!-- This will be shown/hidden -->
-            <!-- Cart Tab -->
-            <!-- Overlay for blur background -->
-            <div id="cart-overlay" class="fixed inset-0 z-40 bg-black/10 backdrop-blur-sm hidden"></div>
-
-            <!-- Cart tab -->
-            <div id="cart-tab"
-                class="fixed right-0 top-0 w-full sm:w-1/3 md:w-1/4 lg:w-1/5 h-full bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col py-6 border-l border-gray-300">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-300 px-4 py-2">
-                    <h2 class="text-xl font-semibold text-gray-800">Cart</h2>
-                    <button id="close-cart-btn" class="text-gray-500 hover:text-red-500 text-xl">&times;</button>
-                </div>
-                <div id="cart-items" class="flex flex-col gap-4 overflow-y-auto max-h-[70vh]"></div>
-                <div class="absolute bottom-0 p-4 w-full">
-
-                    <a href="/checkout"
-                        class="block w-full bg-black text-white text-center px-4 py-2 rounded hover:bg-gray-800">
-                        Proceed to Checkout
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between py-4">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="/">
+                        <img src="{{ asset('logo.svg') }}" alt="Logo" class="h-10 w-auto" />
                     </a>
-
-
-
                 </div>
 
-            </div>
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    @foreach($navLinks as $navLink)
+                    <x-nav-link href="{{ $navLink['href'] }}"
+                        class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 {{ request()->is($navLink['href']) ? 'text-blue-600 border-b-2 border-blue-600' : '' }}">
+                        {{ $navLink['name'] }}
+                    </x-nav-link>
+                    @endforeach
+                </nav>
 
+                <!-- Right Section -->
+                <div class="flex items-center space-x-4">
+                    <!-- Search -->
+                    <div class="relative hidden sm:block">
+                        <input type="text" placeholder="Search products..."
+                            class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            onclick="toggleSearchPopup()" />
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
 
-            <div class="space-x-10">
-                @auth('customer')
-                <form action="/logout" method="POST">
-                    @csrf
-                    <button type="submit"
-                        class="ml-10 text-xl text-white bg-slate-950 px-5 py-2 rounded-lg hover:shadow-sm">
-                        Logout
+                    <!-- Action Buttons -->
+                    <div class="flex items-center space-x-3">
+                        <!-- Favorites -->
+                        <a href="/add-to-favorite"
+                            class="p-2 text-gray-700 hover:text-red-500 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                </path>
+                            </svg>
+                        </a>
+
+                        <!-- Cart -->
+                        <button
+                            class="add-to-cart-btn p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                            </svg>
+                        </button>
+
+                        <!-- Auth Buttons -->
+                        @auth('customer')
+                        <form action="/logout" method="POST" class="inline">
+                            @csrf
+                            <button type="submit"
+                                class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-200">
+                                Logout
+                            </button>
+                        </form>
+                        @endauth
+
+                        @guest('customer')
+                        <a href="/login" class="text-gray-700 hover:text-gray-900 px-3 py-2 font-medium">Login</a>
+                        <a href="/register"
+                            class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-200">Register</a>
+                        @endguest
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button class="md:hidden p-2 text-gray-700 hover:text-gray-900" onclick="toggleMobileMenu()">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
                     </button>
-                </form>
-                @endauth
-
-                @guest('customer')
-                <button class="text-xl text-slate-950 bg-gray-100 px-5 py-2 rounded-lg hover:shadow-xl">
-                    <a href="/login">Login</a>
-                </button>
-                <button class="text-xl text-white bg-slate-950 px-5 py-2 rounded-lg hover:shadow-sm">
-                    <a href="/register">Register</a>
-                </button>
-                @endguest
-            </div>
-    </nav>
-
-    <main>
-        <!-- Loader -->
-        <div class="flex-1 relative">
-            <div id="page-loader"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('logo.svg') }}" alt="Loading Logo" class="w-52 h-52'' animate-pulse mb-4">
-                    <div class="loader-spinner"></div>
                 </div>
             </div>
 
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden hidden border-t border-gray-200">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    @foreach($navLinks as $navLink)
+                    <x-nav-link href="{{ $navLink['href'] }}"
+                        class="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md {{ request()->is($navLink['href']) ? 'text-blue-600 bg-blue-50' : '' }}">
+                        {{ $navLink['name'] }}
+                    </x-nav-link>
+                    @endforeach
+                </div>
+                <!-- Mobile Search -->
+                <div class="px-2 pb-3">
+                    <input type="text" placeholder="Search products..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        onclick="toggleSearchPopup()" />
+                </div>
+            </div>
+        </div>
+    </header>
 
-            <!-- Main Content Slot -->
-            <div id="main-content" class="hidden opacity-0 transition-opacity duration-500">
+    <!-- Search Popup -->
+    <div id="searchPopup"
+        class="fixed top-0 left-0 w-full h-full bg-white z-50 transform -translate-y-full transition-transform duration-300 ease-out">
+        <div class="max-w-4xl mx-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Search Products</h2>
+                <button onclick="toggleSearchPopup()"
+                    class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <input id="popupSearchInput" type="text" placeholder="Type to search..."
+                class="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+            <div id="popupSearchResults" class="mt-6 space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" class="fixed inset-0 z-40 bg-black bg-opacity-50 hidden"></div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-tab"
+        class="fixed right-0 top-0 w-full sm:w-96 h-full bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col">
+        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">Shopping Cart</h2>
+            <button id="close-cart-btn" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+        <div class="p-6 border-t border-gray-200 bg-gray-50">
+            <a href="/checkout"
+                class="block w-full bg-blue-600 text-white text-center py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
+                Proceed to Checkout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        <!-- Loader -->
+        <div id="page-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
+            <div class="text-center">
+                <img src="{{ asset('logo.svg') }}" alt="Loading" class="w-40 h-20 mx-auto mb-4 animate-pulse">
+
+
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div id="main-content" class="hidden opacity-0 transition-opacity duration-500">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {{ $slot }}
             </div>
         </div>
     </main>
-    <script>
-        console.log(localStorage)
-    </script>
-    <footer>
-        <section class="flex justify-between items-start mt-28">
-            <div>
-                <img src={{ asset('logo.svg') }} alt="" />
-            </div>
-            <div class="flex space-x-10 space-y-1">
-                <div>
-                    <h3 href="" class="text-xl font-bold">Follow Us</h3>
-                    @foreach($FollowUs as $FolowUs)
-                    <a href="{{ $FolowUs['href'] }}" class="flex items-center space-x-4">
-                        <img src="{{ $FolowUs['icon'] }}" alt="" class="w-6 h-6">
-                        <p>{{ $FolowUs['name'] }}</p>
-                    </a>
-                    @endforeach
+
+    <!-- Footer -->
+    <footer class="bg-va= text-black mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Brand -->
+                <div class="space-y-4">
+                    <img src="{{ asset('logo.svg') }}" alt="Logo" class="h-10 w-auto  " />
                 </div>
-            </div>
-            <div>
-                <div class="flex flex-col space-y-1">
-                    <h3 class="text-xl font-bold">Contact Us</h3>
-                    @foreach($ContactUs as $contact)
-                    <div class="flex items-center space-x-4">
-                        <img src="{{ $contact['icon'] }}" alt="" class="w-6 h-6">
-                        <p>{{ $contact['text'] }}</p>
+
+                <!-- Follow Us -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold">Follow Us</h3>
+                    <div class="space-y-3">
+                        @foreach($FollowUs as $social)
+                        <a href="{{ $social['href'] }}"
+                            class="flex items-center space-x-3 text-black hover:text-gray-800 transition-colors duration-200">
+                            <img src="{{ $social['icon'] }}" alt="{{ $social['name'] }}" class="w-5 h-5 ">
+                            <span>{{ $social['name'] }}</span>
+                        </a>
+                        @endforeach
                     </div>
-                    @endforeach
+                </div>
+
+                <!-- Contact -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold">Contact Us</h3>
+                    <div class="space-y-3">
+                        @foreach($ContactUs as $contact)
+                        <div class="flex items-center space-x-3 text-black">
+                            <img src="{{ $contact['icon'] }}" alt="" class="w-5 h-5  ">
+                            <span>{{ $contact['text'] }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold">We Accept</h3>
+                    <img src="{{ asset('/images/We-accept-payment–for-web-footer-1.png') }}" alt="Payment Methods"
+                        class="max-w-full h-auto">
                 </div>
             </div>
-            <div class="space-y-3">
-                <h3 class="text-xl font-bold">WE ACCEPT</h3>
-                <img src={{ asset('/images/We-accept-payment–for-web-footer-1.png') }} alt="" class="w-96">
+
+            <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">© 2024 Clothes Store. All Rights Reserved.</p>
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <a href="#"
+                        class="text-black hover:text-gray-800 text-sm transition-colors duration-200">Privacy</a>
+                    <a href="#" class="text-black hover:text-gray-800 text-sm transition-colors duration-200">Terms</a>
+                    <a href="#"
+                        class="text-black hover:text-gray-800 text-sm transition-colors duration-200">Support</a>
+                </div>
             </div>
-        </section>
-        <div class="w-full h-0.5 bg-black my-10"></div>
-        <section class="flex justify-end">
-            <div>
-                <p>© 2021 Clothes Store. All Rights Reserved.</p>
-            </div>
-        </section>
+        </div>
     </footer>
 
+    <script>
+        console.log(localStorage);
 
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/loading.js') }}"></script>
+    <script src="{{ asset('js/alert.js') }}"></script>
+    <script src="{{ asset('js/search.js') }}"></script>
+    <script src="{{ asset('js/addToCartTab.js') }}"></script>
+    <script src="{{ asset('js/add-to-favorite.js') }}"></script>
+    <script src="{{ asset('js/slider.js') }}"></script>
 </body>
-<script src="{{ asset('js/app.js') }}"></script>
-<script src="{{ asset('js/loading.js') }}"></script>
-<script src="{{ asset('js/alert.js') }}"></script>
-<script src="{{ asset('js/search.js') }}"></script>
-<script src="{{ asset('js/addToCartTab.js') }}"></script>
-<script src="{{ asset('js/add-to-favorite.js') }}"></script>
-<script src="{{ asset('js/slider.js') }}"></script>
+
+</html>

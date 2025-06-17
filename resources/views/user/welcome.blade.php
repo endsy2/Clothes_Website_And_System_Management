@@ -6,7 +6,8 @@
     <!-- Hero Section -->
     <section class="relative bg-cover bg-center w-full h-[70vh] bg-no-repeat mt-5"
         style="background-image: url('{{ asset('images/slide1.svg') }}');">
-        <div class="relative z-10 flex items-center h-full ml-36">
+        <div class="md:hidden absolute inset-0 bg-black/30"></div>
+        <div class="relative z-10 flex items-center max-md:justify-center h-full md:ml-32">
             <a href="{{ route('productSort')}}"
                 class="px-10 py-5 bg-slate-950 text-3xl font-bold rounded-full shadow-lg hover:bg-slate-500 hover:scale-105 transition-all duration-300 text-white block text-center">
                 SHOP NOW
