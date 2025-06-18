@@ -3,7 +3,6 @@
     <form action={{ route('add-product') }} method="POST" enctype="multipart/form-data" id="form-input"
         class="space-y-5 bg-white py-6 px-10 rounded-lg shadow-md max-w-5xl mx-auto">
         @csrf
-
         <h2 class="text-2xl font-semibold text-gray-800 border-b pb-2">Insert Product</h2>
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">Basic Information</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
