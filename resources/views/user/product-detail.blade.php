@@ -129,7 +129,7 @@
         {{-- Related Products --}}
         <div class="mt-10">
             <h2 class="font-semibold text-2xl pt-5">Similar Product</h2>
-            <p class="font-semibold text-md text-right"><a href="">More View</a></p>
+            <p class="font-semibold text-md text-right"><a>More View</a></p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-5 gap-x-6 mt-5">
             @foreach ($relatedProducts as $relatedProduct)

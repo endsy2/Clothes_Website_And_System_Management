@@ -79,7 +79,7 @@
                 <select name="discount_id"
                     class="w-full bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black">
                     <option value="">Select Discount</option>
-                    @foreach ($discounts['data'] as $discount)
+                    @foreach ($discounts as $discount)
                     <option value="{{ $discount['id'] }}">
                         {{ $discount['discount'] }}% - {{ $discount['discount_name'] }}
                         {{ $discount['discount_name'] }}

@@ -58,8 +58,8 @@ class DiscountController extends Controller
     public function discountName()
     {
         try {
-            $discounts = Discount::paginate(10);
-            return $discounts;
+            $discounts = Discount::get();
+            return response()->json($discounts);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while fetching discounts.',
@@ -80,7 +80,7 @@ class DiscountController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date', // Optional: ensures end date is not before start date
         ]);
 
-
+        Log::info("Creating discount with data: ", $validatedData);
         try {
             $discount = Discount::create([
                 'discount_name' => $validatedData['discount_name'],

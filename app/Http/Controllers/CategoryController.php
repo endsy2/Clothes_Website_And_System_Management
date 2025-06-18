@@ -27,14 +27,22 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validate input
             $validateData = $request->validate([
-                'category_name' => ['required', 'string']
+                'category_name' => ['required', 'string'],
+                'image' => ['required', 'image', 'mimes:jpg,jpeg,png,svg,gif', 'max:2048'],
             ]);
 
+            // Store the image manually to /public/images
+            $file = $request->file('image');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images'), $filename);
+            $imagePath = '/images/' . $filename; // relative URL for <img>
 
+            // Create category
             $category = Category::create([
                 'category_name' => $validateData['category_name'],
-                'images' => $request->file('image')->store('productImage', 'public')
+                'images' => $imagePath,
             ]);
 
             return redirect()->back()->with('success', 'Category created successfully');
@@ -44,6 +52,7 @@ class CategoryController extends Controller
             // return response()->json(['error' => $th->getMessage()], 500);
         }
     }
+
 
 
     /**

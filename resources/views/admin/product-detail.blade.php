@@ -10,7 +10,9 @@ $sizebtns=['S','M','L','XL','2XL'];
                 <div id="gallery"
                     class="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:h-[600px] scrollbar-thin scrollbar-thumb-gray-300 p-1">
                     @foreach ($product['product_variant'][0]['product_images'] ?? [] as $img)
-
+                    @php
+                    $file= $img['images'];
+                    @endphp
                     <img src="{{ asset($img['images']) }}"
                         class="w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-[#128B9E] transition"
                         data-img="{{ asset($img['images']) }}">
@@ -21,10 +23,12 @@ $sizebtns=['S','M','L','XL','2XL'];
                 {{-- Main Image --}}
                 <div id="main-image" class="flex-1">
                     @php
-                    $image=asset($product['product_variant'][0]['product_images'][0]['images'] );
+                    $imagePath = ltrim($product['product_variant'][0]['product_images'][0]['images'], '/');
+                    $fullImageUrl = asset( $imagePath);
 
                     @endphp
-                    <img src="{{ $image }}" alt="product image"
+
+                    <img src="{{ $fullImageUrl }}" alt="product image" id="main-product-image"
                         class="w-full aspect-[6/8] object-cover transition-all duration-300">
                 </div>
 
@@ -216,8 +220,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                 class="bg-white rounded-2xl p-8 w-full max-w-xl relative shadow-2xl transform transition-all duration-300">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Product</h2>
 
-                <form id="variant-form" method="POST"
-                    action="{{ route('admin.productVariantUpdate', $product['id']) }}">
+                <form id="variant-form" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <!-- Size Selection -->
@@ -256,13 +259,13 @@ $sizebtns=['S','M','L','XL','2XL'];
                     <div class="mb-6">
                         <label for="discount_name"
                             class="block text-sm font-semibold text-gray-700 mb-1">Discount</label>
-                        <select name="discount_name"
+                        <select name="discount_id"
                             class="w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-black focus:outline-none text-sm">
                             <option value="">
                                 {{ $product['product_variant'][0]['discount']['discount_name'] ?? 'No discount' }}
                             </option>
                             @foreach ($discounts as $discount)
-                            <option value="{{ $discount['name'] }}">{{ $discount['name'] }}</option>
+                            <option value="{{ $discount['id'] }}">{{ $discount['name'] }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -287,7 +290,8 @@ $sizebtns=['S','M','L','XL','2XL'];
                             <!-- Image input container -->
                             <input type="file" name="images[]" id="product-variant-image-input"
                                 class="w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:outline-none transition-all ease-in-out duration-150"
-                                accept="image/*" multiple />
+                                accept="image/*" multiple>
+
 
                             <!-- Display the selected images count with label -->
                             <span id="image-display" class="text-sm text-gray-600">No images selected</span>
@@ -300,14 +304,16 @@ $sizebtns=['S','M','L','XL','2XL'];
                             class="px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
                             Cancel
                         </button>
-                        <button type="submit" onclick="updateFormAction()"
+                        <button type="submit"
                             class="px-5 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition">
                             Save
                         </button>
-                    </div>
+
                 </form>
-                <!-- @if (session('success')) -->
-                <!-- <div class="bg-green-200 text-green-800 px-4 py-2 rounded">
+            </div>
+            </form>
+            <!-- @if (session('success')) -->
+            <!-- <div class="bg-green-200 text-green-800 px-4 py-2 rounded">
                     {{ session('success') }}
                 </div>
                 @endif
@@ -326,8 +332,8 @@ $sizebtns=['S','M','L','XL','2XL'];
                 </ul>
                 @endif -->
 
-            </div>
         </div>
+    </div>
 
 
 
@@ -389,7 +395,18 @@ $sizebtns=['S','M','L','XL','2XL'];
         document.getElementById('edit-product-variant-btn').addEventListener('click', () => {
             const formOverlay = document.getElementById('edit-product-variant-form-overlay');
             const form = document.getElementById('edit-product-variant-form');
-
+            document.getElementById('product-variant-price-input').value = selectedVariant.price
+            document.getElementById('product-variant-stock-input').value = selectedVariant.stock
+            // document.getElementById('product-variant-color-input').value = selectedVariant.color
+            // document.getElementById('product-variant-size').value = selectedVariant.size;
+            // document.getElementById('product-variant-discount_id').value = selectedVariant.discount_id;
+            // document.getElementById('product-variant-discount_name').value = selectedVariant.discount ?
+            // selectedVariant.discount.discount_name:
+            //     'No discount';
+            console.log('here is select variant', selectedVariant);
+            const variantForm = document.getElementById('variant-form');
+            variantForm.action = `/admin/updateProductVariant/${selectedVariant.id}`;
+            variantForm.querySelector('input[name="_method"]').value = 'PUT';
             // Show the overlay and modal with smooth scaling animation
             formOverlay.classList.remove('hidden');
             form.classList.remove('scale-95');
@@ -460,7 +477,7 @@ $sizebtns=['S','M','L','XL','2XL'];
                 thumb.src = '/' + img.images;
                 thumb.className =
                     'w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-black transition';
-                thumb.dataset.img = '/' + img.images;
+                thumb.dataset.img = 'http://127.0.0.1:8000/storage/' + img.images;
                 gallery.appendChild(thumb);
             });
         }
@@ -482,9 +499,8 @@ $sizebtns=['S','M','L','XL','2XL'];
                     btn.classList.add('bg-black', 'text-white');
                     updateDetail(variant);
                     selectedVariant = variant;
-                    document.getElementById('product-variant-price-input').value = selectedVariant.price
-                    document.getElementById('product-variant-stock-input').value = selectedVariant.stock
-                    document.getElementById('product-variant-color-input').value = selectedVariant.color
+
+
                     document.getElementById('color-display').textContent = selectedVariant.color
                         .toUpperCase();
                     document.getElementById('')
@@ -535,7 +551,6 @@ $sizebtns=['S','M','L','XL','2XL'];
             // Apply style to the clicked button
             button.style.borderColor = '#374151'; // Tailwind's border-gray-700
             button.style.color = '#111827'; // Tailwind's text-gray-900
-
             // Set hidden input value
             document.getElementById('selected-size').value = sizeValue;
         }

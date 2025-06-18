@@ -46,10 +46,11 @@ class BrandController extends Controller
                 "image" => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048']
             ]);
 
-            // Handle file upload
+            // Handle file upload — manually move to public/images
             $file = $request->file('image');
-            $path = $file->store('brand_image', 'public');
-            $imagePath = Storage::url($path);
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images'), $filename); // Move to /public/images
+            $imagePath = '/images/' . $filename; // Relative path for frontend
 
             // Create brand record
             $brand = Brand::create([
@@ -59,11 +60,11 @@ class BrandController extends Controller
 
             return redirect()->back()->with('success', 'Brand created successfully');
         } catch (Exception $e) {
-
             return redirect()->back()->with('error', 'Brand name already exists');
-            // return response()->json(['error' => $e->getMessage()], 500);
+            // Or log the exact error: Log::error($e->getMessage());
         }
     }
+
 
 
     /**

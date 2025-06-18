@@ -141,20 +141,30 @@ $titles=[
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
 
-                        <!-- @foreach($trendProduct['products'] as $item)
+                        @if (!empty($trendProduct['products']) && count($trendProduct['products']) > 0)
+                        @foreach($trendProduct['products'] as $item)
                         @php
-                        $productVariant = $item['product_variant'];
-                        $product = $productVariant['product'];
+                        $productVariant = $item['product_variant'] ?? null;
+                        $product = $productVariant['product'] ?? null;
                         @endphp
+                        @if ($product && $productVariant)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 text-gray-700">{{ $product['id']??null }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $product['name']??null }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $product['category']['category_name'] ??null}}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $product['brand']['brand_name'] ??null}}</td>
-                            <td class="px-6 py-4 text-gray-700">${{ number_format($productVariant['price']??null, 2) }}
+                            <td class="px-6 py-4 text-gray-700">{{ $product['id'] ?? '-' }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $product['name'] ?? '-' }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $product['category']['category_name'] ?? '-' }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $product['brand']['brand_name'] ?? '-' }}</td>
+                            <td class="px-6 py-4 text-gray-700">
+                                ${{ number_format($productVariant['price'] ?? 0, 2) }}
                             </td>
                         </tr>
-                        @endforeach -->
+                        @endif
+                        @endforeach
+                        @else
+                        <tr>
+                            <td colspan="5" class="text-center text-gray-500 py-6">No trending products available.</td>
+                        </tr>
+                        @endif
+
                     </tbody>
                 </table>
             </div>

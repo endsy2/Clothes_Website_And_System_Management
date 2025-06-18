@@ -123,22 +123,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Total section
         const totalDiv = document.createElement('div');
-        totalDiv.className = 'absolute bottom-20 pt-4 px-5 w-full font-semibold text-lg text-gray-800';
+        totalDiv.className = 'absolute bottom-[105px] right-0 pt-6 px-3  pb-12 w-full font-semibold text-lg text-gray-900 bg-white shadow-md';
+
         totalDiv.innerHTML = `
-            <div class="flex flex-col gap-3">
-                <div class='w-full flex justify-between'>
-                    <span class='font-semibold'>Origin Price</span>
-                    <span class='font-semibold'>$${originTotal.toFixed(2)}</span>
-                </div>
-                <div class='w-full flex justify-between'>
-                    <span class='font-semibold'>Save</span>
-                    <span class='font-semibold'>$${saved.toFixed(2)}</span>
-                </div>
-                <div class='w-full flex justify-between'>
-                    <span class='font-semibold'>Total</span>
-                    <span class='font-semibold'>$${total.toFixed(2)}</span>
-                </div>
-            </div>`;
+                        <div class="flex flex-col gap-4 text-sm">
+                            <div class="w-full flex justify-between border-b border-gray-200 pb-2">
+                            <span class="font-medium text-gray-700">Origin Price</span>
+                            <span class="font-medium text-gray-700">$${originTotal.toFixed(2)}</span>
+                            </div>
+                            <div class="w-full flex justify-between border-b border-gray-200 pb-2">
+                            <span class="font-medium text-gray-700">Save</span>
+                            <span class="font-medium text-green-600">-$${saved.toFixed(2)}</span>
+                            </div>
+                            <div class="w-full flex justify-between pt-3 text-lg font-bold text-gray-900">
+                            <span>Total</span>
+                            <span>$${total.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        `;
+
         cartItemsContainer.appendChild(totalDiv);
     }
 

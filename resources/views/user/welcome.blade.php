@@ -1,4 +1,5 @@
 <x-layout>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <x-slot name="title">
         <!-- Add your title here -->
     </x-slot>
@@ -72,7 +73,7 @@
         <p class="font-semibold text-md text-right"><a href="">More View</a></p>
     </div>
 
-    <div class="w-full max-w-full mx-auto pt-5 h-[550px]">
+    <div class="w-full max-w-full mx-auto pt-5 h-[370px]">
         <!-- Swiper Container Wrapper -->
         <div class="relative w-full py-8">
             <!-- Navigation Buttons -->
@@ -93,7 +94,7 @@
             </button>
 
             <!-- Swiper Main Container -->
-            <div class="swiper product-slider ">
+            <div class="swiper product-slider h-[370px]">
                 <div class="swiper-wrapper">
                     @foreach ($discounts as $discount)
                     @php
@@ -103,7 +104,7 @@
                     @php
                     $product = $element['product_variant'][0];
                     @endphp
-                    <div class="swiper-slide flex justify-center">
+                    <div class="swiper-slide flex justify-center ">
                         <div class="transition-transform transform hover:-translate-y-1  duration-300 ">
                             <x-card-product :productId="$element['id']" :name="$element['name'] ?? 'No Discount'"
                                 :productImage="isset($product['product_images'][0]['images']) ? $product['product_images'][0]['images'] : 'default-image.jpg'"
@@ -146,6 +147,7 @@
     <div class="mt-16 flex justify-center">
         {{ $products->links('pagination::tailwind') }}
     </div>
+    <script src="{{ asset('js/slider.js') }}"></script>
 
 
 </x-layout>

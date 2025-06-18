@@ -64,7 +64,7 @@ $ContactUs = [
                 <!-- Logo -->
                 <div class="flex-shrink-0">
                     <a href="/">
-                        <img src="{{ asset('logo.svg') }}" alt="Logo" class="h-10 w-auto" />
+                        <img src="{{ asset('logo.svg') }}" alt="Logo" class="h-5 md:h-7 xl:h-10 w-auto" />
                     </a>
                 </div>
 
@@ -179,22 +179,31 @@ $ContactUs = [
     </div>
 
     <!-- Cart Overlay -->
-    <div id="cart-overlay" class="fixed inset-0 z-40 bg-black bg-opacity-50 hidden"></div>
+    <div id="cart-overlay" class="fixed inset-0 z-40 backdrop-blur-sm bg-opacity-50 hidden"></div>
 
     <!-- Cart Sidebar -->
     <div id="cart-tab"
-        class="fixed right-0 top-0 w-full sm:w-96 h-full bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col">
-        <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-900">Shopping Cart</h2>
-            <button id="close-cart-btn" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+        class="fixed right-0 top-0 w-full sm:w-96 h-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col rounded-l-lg overflow-hidden">
+
+        <!-- Header -->
+        <header class="flex justify-between items-center px-6 py-5 border-b border-gray-300 bg-gray-50">
+            <h2 class="text-2xl font-bold text-gray-900 tracking-wide">Shopping Cart</h2>
+            <button id="close-cart-btn" aria-label="Close Cart"
+                class="text-gray-600 hover:text-gray-900 transition-colors duration-300 text-3xl font-extrabold leading-none">&times;</button>
+        </header>
+
+        <!-- Cart Items -->
+        <div id="cart-items"
+            class="flex-1 overflow-y-auto px-6 py-5 space-y-5 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         </div>
-        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
-        <div class="p-6 border-t border-gray-200 bg-gray-50">
+
+        <!-- Footer -->
+        <footer class="p-6 border-t border-gray-300 bg-white">
             <a href="/checkout"
-                class="block w-full bg-blue-600 text-white text-center py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
+                class="block w-full bg-gradient-to-r from-gray-900 to-black text-white text-center py-4 rounded-xl shadow-lg hover:from-gray-800 hover:to-gray-900 transition-colors duration-300 font-semibold tracking-wide">
                 Proceed to Checkout
             </a>
-        </div>
+        </footer>
     </div>
 
     <!-- Main Content -->
@@ -222,7 +231,7 @@ $ContactUs = [
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Brand -->
                 <div class="space-y-4">
-                    <img src="{{ asset('logo.svg') }}" alt="Logo" class="h-10 w-auto  " />
+                    <img src="{{ asset('logo.svg') }}" alt="Logo" class="h-5 md:h-7 xl:h-10 w-auto " />
                 </div>
 
                 <!-- Follow Us -->

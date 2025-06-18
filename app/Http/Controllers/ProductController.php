@@ -126,41 +126,59 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $validateData = $request->validate([
-                'name' => 'required|string',
-                'description' => 'required|string',
-                'category_name' => 'required|string',
-                'brand_name' => 'required|string',
-                'product_type_name' => 'required|string'
+            Log::info('Update product request received', [
+                'id' => $id,
+                'request' => $request->all(),
             ]);
 
-            $category = Category::where('category_name', $validateData['category_name'])->first();
-            $brand = Brand::where('brand_name', $validateData['brand_name'])->first();
-            $product_type = ProductType::where('product_type_name', $validateData['product_type_name'])->first();
-
-            if (!$category) {
-                return redirect()->back()->withErrors(['category_name' => 'Category not found'])->withInput();
-            }
-            if (!$brand) {
-                return redirect()->back()->withErrors(['brand_name' => 'Brand not found'])->withInput();
-            }
-            if (!$product_type) {
-                return redirect()->back()->withErrors(['product_type_name' => 'Product Type not found'])->withInput();
-            }
-
-            $productData = [
-                'name' => $validateData['name'],
-                'description' => $validateData['description'],
-                'product_type_id' => $product_type->id,
-                'category_id' => $category->id,
-                'brand_id' => $brand->id,
-            ];
 
             $product = Product::findOrFail($id);
+
+            // Prepare the array to store updated fields
+            $productData = [];
+
+            // Conditionally update name
+            if ($request->filled('name')) {
+                $productData['name'] = $request->input('name');
+            }
+
+            // Conditionally update description
+            if ($request->filled('description')) {
+                $productData['description'] = $request->input('description');
+            }
+
+            // Conditionally update category
+            if ($request->filled('category_name')) {
+                $category = Category::where('category_name', $request->input('category_name'))->first();
+                if (!$category) {
+                    return redirect()->back()->withErrors(['category_name' => 'Category not found'])->withInput();
+                }
+                $productData['category_id'] = $category->id;
+            }
+
+            // Conditionally update brand
+            if ($request->filled('brand_name')) {
+                $brand = Brand::where('brand_name', $request->input('brand_name'))->first();
+                if (!$brand) {
+                    return redirect()->back()->withErrors(['brand_name' => 'Brand not found'])->withInput();
+                }
+                $productData['brand_id'] = $brand->id;
+            }
+
+            // Conditionally update product type
+            if ($request->filled('product_type_name')) {
+                $productType = ProductType::where('product_type_name', $request->input('product_type_name'))->first();
+                if (!$productType) {
+                    return redirect()->back()->withErrors(['product_type_name' => 'Product Type not found'])->withInput();
+                }
+                $productData['product_type_id'] = $productType->id;
+            }
+
+            // Update the product only with provided fields
             $product->update($productData);
 
             return redirect()->back()->with('success', 'Product updated successfully!');
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             return redirect()->back()->with('error', 'An error occurred: ' . $exception->getMessage());
         }
     }
@@ -217,22 +235,23 @@ class ProductController extends Controller
                 'images' => ['required', 'array', 'min:1'],
                 'images.*' => ['file', 'image', 'max:10240'], // max 10MB per image
             ]);
-            // dd($validatedData['product_type_id']);
-            // Get files from request
-            $files = $request->file('images');
 
-            // Store images and get URLs
+            // Create directory if not exists
+            if (!file_exists(public_path('images'))) {
+                mkdir(public_path('images'), 0755, true);
+            }
+
+            // Store images in public/images
             $imagePaths = [];
-            foreach ($files as $file) {
+            foreach ($request->file('images') as $file) {
                 if ($file->isValid()) {
-                    // Save in 'public/images' folder
-                    $imagePaths[] = $file->store('images', 'public');
-                    // $imagePaths[] = Storage::url($path);
+                    $filename = uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path('images'), $filename);
+                    $imagePaths[] = 'images/' . $filename;
                 } else {
                     return back()->withErrors(['images' => 'One or more files failed to upload'])->withInput();
                 }
             }
-
 
             // Create Product
             $product = Product::create([
@@ -241,10 +260,8 @@ class ProductController extends Controller
                 'price' => $validatedData['price'],
                 'category_id' => $validatedData['category_id'],
                 'brand_id' => $validatedData['brand_id'],
-                'product_type_id' => $validatedData['product_type_id'], // ✅ This is what was missing
+                'product_type_id' => $validatedData['product_type_id'],
             ]);
-
-
 
             // Create Product Variants and associate images
             foreach ($validatedData['size'] as $size) {
@@ -267,12 +284,11 @@ class ProductController extends Controller
 
             return redirect()->back()->with('success', 'Product created successfully!');
         } catch (Exception $e) {
-            // Log the error for debugging if you want
-            \Log::error('Error creating product: ' . $e->getMessage());
-
+            Log::error('Error creating product: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Something went wrong!')->withInput();
         }
     }
+
 
 
 
@@ -473,11 +489,12 @@ class ProductController extends Controller
     public function insertProductView(Request $request)
     {
 
-        $discounts = new DiscountController()->discountName();
+        $discounts = new DiscountController()->discountName()->getData(true);
         $brands = new BrandController()->showBrand()->getData(true);
         $categories = new CategoryController()->show()->getData(true);
         $productTypes = new ProductTypeController()->show()->getData(true);
 
-        return view('admin.insert-product', ['discounts' => $discounts->toArray(), 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
+
+        return view('admin.insert-product', ['discounts' => $discounts, 'brands' => $brands, 'categories' => $categories, 'productTypes' => $productTypes]);
     }
 }

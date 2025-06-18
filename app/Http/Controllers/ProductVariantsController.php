@@ -9,11 +9,14 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use Exception;
+use Illuminate\Container\Attributes\Log as AttributesLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
+use function Illuminate\Log\log;
 
 class ProductVariantsController extends Controller
 {
@@ -48,20 +51,29 @@ class ProductVariantsController extends Controller
                 'images' => ['required', 'array', 'min:1'],
                 'images.*' => ['file', 'image', 'max:10240'],
             ]);
-            // dd($validatedData);
 
             Log::info('Validation passed', $validatedData);
 
             DB::beginTransaction();
+
+            // Ensure 'public/images' exists
+            if (!file_exists(public_path('images'))) {
+                mkdir(public_path('images'), 0755, true);
+            }
 
             $imagePaths = [];
             foreach ($request->file('images') as $image) {
                 if (!$image->isValid()) {
                     throw new Exception("Invalid image upload: " . $image->getClientOriginalName());
                 }
-                $storedPath = $image->store('images', 'public');
-                $imagePaths[] = $storedPath;
-                Log::info("Image stored: {$storedPath}");
+
+                // Move uploaded image to public/images with unique name
+                $filename = uniqid() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images'), $filename);
+                $relativePath = 'images/' . $filename;
+
+                $imagePaths[] = $relativePath;
+                Log::info("Image stored: {$relativePath}");
             }
 
             foreach ($validatedData['color'] as $color) {
@@ -81,7 +93,6 @@ class ProductVariantsController extends Controller
                         throw new Exception("Failed to create variant for {$color}/{$size}");
                     }
 
-                    // Fix here: use 'images' key as per your migration
                     foreach ($imagePaths as $path) {
                         $productVariant->productImages()->create(['images' => $path]);
                         Log::info("Image linked to variant ID {$productVariant->id}: {$path}");
@@ -108,6 +119,7 @@ class ProductVariantsController extends Controller
 
 
 
+
     /**
      * Display the specified resource.
      */
@@ -125,43 +137,62 @@ class ProductVariantsController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            // ✅ Validate request first!
-            $validatedData = $request->validate([
-                'price' => 'nullable|numeric',
+            Log::info("Updating product variant with ID: {$id}");
+            Log::info("Request data:", $request->all());
+            Log::info('Request file: ' . json_encode($request->file('images')));
+
+            $variant = ProductVariant::find($id);
+            if (!$variant) {
+                Log::error("Variant not found with ID: {$id}");
+                return redirect()->back()->with('error', "Product variant with ID {$id} not found.");
+            }
+
+            $request->validate([
+                'price' => 'nullable|numeric|min:0',
                 'stock' => 'nullable|integer|min:0',
                 'color' => 'nullable|string',
                 'size' => 'nullable|string',
-                'image' => 'nullable|array',
-                'image.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048', // validate each file
+                'discount_id' => 'nullable|exists:discounts,id',
+                'images' => 'nullable|array',
+                'images.*' => 'file|image|max:10240', // 10MB max size
             ]);
 
-            // ✅ Find the variant
-            $variant = ProductVariant::findOrFail($id);
+            $variant->fill($request->only(['price', 'stock', 'color', 'size', 'discount_id']));
+            $variant->save();
+            Log::info("Updated variant data:", $variant->toArray());
 
-            // ✅ Update basic fields
-            $variant->price = $validatedData['price'] ?? $variant->price;
-            $variant->stock = $validatedData['stock'] ?? $variant->stock;
-            $variant->color = $validatedData['color'] ?? $variant->color;
-            $variant->size = $validatedData['size'] ?? $variant->size;
-            $variant->save(); // 🟢 Don't forget to save the changes
-
-            // ✅ Handle multiple images
-            if ($request->hasFile('image')) {
-                foreach ($request->file('image') as $image) {
-                    if (!$image->isValid()) {
-                        throw new \Exception("Invalid image upload: " . $image->getClientOriginalName());
+            if ($request->hasFile('images')) {
+                // Delete old images
+                foreach ($variant->productImages as $oldImage) {
+                    $oldImagePath = public_path($oldImage->images);
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
                     }
+                    $oldImage->delete();
+                }
 
-                    $storedPath = $image->store('productImage', 'public'); // storage/app/public/productImage
-                    $variant->productImages()->create(['images' => $storedPath]);
+                // Save new images to public/images
+                foreach ($request->file('images') as $image) {
+                    $filename = uniqid() . '_' . $image->getClientOriginalName();
+                    $image->move(public_path('images'), $filename);
+                    $relativePath = 'images/' . $filename;
+
+                    Log::info("Image saved to: {$relativePath}");
+                    $variant->productImages()->create(['images' => $relativePath]);
                 }
             }
 
-            return redirect()->back()->with('success', 'Product variant(s) updated successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+            Log::info("Product variant with ID {$id} updated successfully.");
+            return redirect()->back()->with('success', 'Product variant updated successfully!');
+        } catch (Exception $e) {
+            Log::error("Error updating product variant: " . $e->getMessage());
+            return redirect()->back()->with('error
+', 'An error occurred while updating the product variant: ' . $e->getMessage());
         }
     }
+
+
+
 
 
 
