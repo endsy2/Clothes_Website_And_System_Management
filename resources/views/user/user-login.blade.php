@@ -45,6 +45,9 @@
                 class="px-8 py-3 border border-black rounded-md font-medium text-black hover:bg-black hover:text-white transition">Create
                 Account</a>
         </div>
+        <script>
+            localStorage.setItem('showCart', 'false');
+        </script>
 
     </section>
 </x-layout>

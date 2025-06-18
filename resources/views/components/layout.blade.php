@@ -281,14 +281,48 @@ $ContactUs = [
             </div>
         </div>
     </footer>
+    @if (session('success'))
+    <script>
+        window.successMessage = @json(session('success'));
+    </script>
+    @endif
 
     <script>
         console.log(localStorage);
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('showCart', 'false');
+        });
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
         }
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.successMessage) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: window.successMessage,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'bg-white text-green-800 shadow-lg border-l-4 border-green-500 px-4 py-3 rounded-md'
+                    },
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
+            }
+            // Hide loader and show content after page load
+            const loader = document.getElementById('page-loader');
+            const mainContent = document.getElementById('main-content');
+            loader.classList.add('opacity-0', 'pointer-events-none');
+            mainContent.classList.remove('opacity-0');
+        });
     </script>
 
     <script src="{{ asset('js/app.js') }}"></script>

@@ -25,14 +25,16 @@ class ProductController extends Controller
     // Method to handle displaying products with optional filters
     public function getFilteredProducts(Request $request)
     {
+        // $query = Product::with(['category', 'brand', 'productVariant.productImages', 'productVariant.disscount']);
         $query = Product::with(['category', 'brand', 'productVariant.productImages']);
 
         $type = $request->query('type');
         $name = $request->query('name');
+        $discount = $request->query('discount');
         $category_id = $request->query('category_id');
         $brand_id = $request->query('brand_id');
         $product_type_id = $request->query('products_type_id');
-
+        $discount_id = $request->query('discount_id');
         if ($type == "name" && $name !== null) {
             $query->where('name', 'like', '%' . $name . '%');
         } elseif ($type == "category" && $category_id) {
@@ -42,6 +44,9 @@ class ProductController extends Controller
         } elseif ($type == "productType" && $product_type_id) {
             $query->where('product_type_id', $product_type_id);
         }
+        // elseif ($type == "discount" && $discount_id) {
+        //     $query->where('discount_id', $discount_id);
+        // }
 
         return $query->paginate(20);
     }

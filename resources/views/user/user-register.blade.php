@@ -42,4 +42,7 @@
             </x-form-btn>
         </form>
     </section>
+    <script>
+        localStorage.setItem('showCart', 'false');
+    </script>
 </x-layout>
