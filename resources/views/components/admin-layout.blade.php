@@ -197,16 +197,15 @@ $currentUrl = request()->path();
                 });
 
             }
-            // Hide loader and show content after page load
             const loader = document.getElementById('page-loader');
             const mainContent = document.getElementById('main-content');
 
-            // Wait 8 seconds before hiding the loader
+            // Add a delay before hiding the loader
             setTimeout(() => {
-                loader.classList.add('opacity-0', 'pointer-events-none'); // fade out loader
-                mainContent.classList.remove('opacity-0'); // show content
-            }, 3000); // 8000 milliseconds = 8 seconds
-
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                mainContent.classList.remove('opacity-0');
+                mainContent.classList.add('opacity-100'); // optional: smooth fade-in
+            }, 3000); // 3000ms = 3 seconds
         });
     </script>
 </body>
