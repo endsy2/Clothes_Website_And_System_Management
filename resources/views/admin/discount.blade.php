@@ -31,30 +31,34 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date'];
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
 
-            @foreach($discounts as $discount)
+
+            @foreach($discounts_data as $discount)
+
             <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-4">
-                    <input type="checkbox" name="selected_products[]" value="{{ $discount['id'] }}"
+                    <input type="checkbox" name="selected_products[]" value="{{ $discount['id'] ?? null }}"
                         class="product-checkbox text-blue-600">
+
+
                 </td>
                 <td class="px-6 py-4 text-gray-700"><a
                         href="discount/{{ $discount['id']??null}}">{{ $discount['id'] ?? null }}</a></td>
                 <td class="px-6 py-4 text-gray-700"><a
-                        href="discount/{{ $discount['id']??null}}">{{ $discount['discount_name'] ?? null }}</a>
+                        href="discount/{{ $discount['id']??null}}">{{ $discount['discount_name']?? null }}</a>
                 </td>
                 <td class="px-6 py-4 text-gray-700"><a
                         href="discount/{{ $discount['id']??null}}">{{ $discount['discount'] ?? null }}</a>
                 </td>
                 <td class="px-6 py-4 text-gray-700"><a
-                        href="discount/{{ $discount['id'] ?? null }}">{{ $discount['start_date'] ?? null }}</a></td>
+                        href="discount/{{$discount['id']?? null }}">{{ $discount['start_date'] ?? null }}</a></td>
                 <td class="px-6 py-4 text-gray-700"><a
                         href="discount/{{ $discount['id'] ?? null }}">{{ $discount['end_date'] ?? null }}</a>
                 </td>
                 <td class="px-6 py-4 text-center space-x-2">
-                    <a href="{{  route('admin.editDiscount', $discount['id']) }}"
+                    <a href="{{  route('admin.editDiscount', $discount['id'] ?? null ) }}"
                         class="text-blue-600 hover:underline font-medium">Edit</a>
                     <button class="text-red-600 hover:text-red-800 font-medium delete-btn"
-                        data-id="{{ $discount['id'] }}">
+                        data-id="{{ $discount['id']}}">
                         <span class="hidden sm:inline">Delete</span>
                         <span class="sm:hidden">🗑️</span>
                     </button>
@@ -63,21 +67,9 @@ $titles=['ID','Discount Name','Discount','Start Date','End Date'];
             @endforeach
         </tbody>
     </table>
-    <!-- Pagination -->
-    <!-- <div class="p-4 border-t flex justify-center space-x-1 bg-white">
-        @foreach ($discounts->links() as $link)
-        @if ($link['url'])
-        <a href="{{ $link['url'] }}"
-            class="px-3 py-1 border rounded text-sm {{ $link['active'] ? 'bg-blue-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-100' }}">
-            {!! $link['label'] !!}
-        </a>
-        @else
-        <span class="px-3 py-1 border rounded text-sm text-gray-400 cursor-not-allowed">
-            {!! $link['label'] !!}
-        </span>
-        @endif
-        @endforeach
-    </div> -->
+
+
+
     <div class="p-4 border-t flex justify-center space-x-1 bg-white">
         {{ $discounts->links() }}
     </div>

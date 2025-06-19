@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Discount;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -59,7 +60,9 @@ class AdminController extends Controller
     }
     public function PageDiscount(Request $request)
     {
-        $discounts = (new DiscountController())->discountName();
-        return view('admin.discount', compact('discounts'));
+        $discounts_data = (new DiscountController())->discountName()->getData(true);
+        $discounts = Discount::paginate(20);
+
+        return view('admin.discount', compact('discounts', 'discounts_data'));
     }
 }

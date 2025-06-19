@@ -49,7 +49,7 @@
                     href="{{ route('productSort', ['type' => 'Brand :','brand'=>$brand['id'],'value'=>$brand['brand_name']]) }}">
                     <div
                         class="bg-white flex flex-col justify-center items-center py-3 shadow-lg hover:shadow-2xl transition duration-300">
-                        <img src="{{ asset('/' . $brand['image']) }}" alt="{{ $brand['brand_name'] }}"
+                        <img src="{{ asset( $brand['image']) }}" alt="{{ $brand['brand_name'] }}"
                             class="w-96 h-40 object-contain ">
                     </div>
                 </a>

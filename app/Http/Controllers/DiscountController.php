@@ -67,6 +67,18 @@ class DiscountController extends Controller
             ], 500);
         }
     }
+    public function discountPaginate()
+    {
+        try {
+            $discounts = Discount::paginate(10);
+            return response()->json($discounts);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while fetching discounts.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * Store a newly created resource in storage.

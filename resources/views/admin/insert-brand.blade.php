@@ -16,7 +16,7 @@
                 class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
                 required>
             <input type="submit" value="Add Brand"
-                class="w-full bg-black text-white py-2 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
+                class="w-full bg-black text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition duration-200">
             <x-error-form name="brand_name" />
     </form>
 </x-admin-layout>
