@@ -209,14 +209,13 @@ $ContactUs = [
     <!-- Main Content -->
     <main class="flex-1">
         <!-- Loader -->
-        <div id="page-loader"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
-            <div class="flex flex-col items-center">
-                <img src="{{ asset('logo.svg') }}" alt="Loading Logo" class="w-52 h-52 animate-pulse mb-4" />
-                <div class="loader-spinner"></div>
+        <div id="page-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
+            <div class="text-center">
+                <img src="{{ asset('logo.svg') }}" alt="Loading" class="w-40 h-20 mx-auto mb-4 animate-pulse">
+
+
             </div>
         </div>
-
 
         <!-- Content -->
         <div id="main-content" class="hidden opacity-0 transition-opacity duration-500">
@@ -289,22 +288,6 @@ $ContactUs = [
     @endif
 
     <script>
-        const loader = document.getElementById('page-loader');
-        const mainContent = document.getElementById('main-content');
-
-        setTimeout(() => {
-            // Fade out loader
-            loader.classList.add('opacity-0', 'pointer-events-none');
-
-            // After fade-out duration (500ms), hide loader completely
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 500); // match your CSS duration-500 (0.5 seconds)
-
-            // Show main content by removing 'hidden' and 'opacity-0' to trigger fade-in
-            mainContent.classList.remove('hidden', 'opacity-0');
-        }, 3000); // 3 seconds delay before starting fade out
-
         console.log(localStorage);
         window.addEventListener('beforeunload', () => {
             localStorage.setItem('showCart', 'false');
@@ -334,7 +317,11 @@ $ContactUs = [
                 });
 
             }
-
+            // Hide loader and show content after page load
+            const loader = document.getElementById('page-loader');
+            const mainContent = document.getElementById('main-content');
+            loader.classList.add('opacity-0', 'pointer-events-none');
+            mainContent.classList.remove('opacity-0');
         });
     </script>
 
