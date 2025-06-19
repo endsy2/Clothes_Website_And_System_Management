@@ -207,7 +207,8 @@ $ContactUs = [
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 relative ml-10 md:ml-15 transition-all duration-300 ease-in-out">
+    <main class="flex-1">
+        <!-- Loader -->
         <div id="page-loader"
             class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
             <div class="flex flex-col items-center">
@@ -216,10 +217,13 @@ $ContactUs = [
             </div>
         </div>
 
-        <main id="main-content" class="opacity-0 transition-opacity px-10 py-5  duration-500">
-            {{ $slot }}
-        </main>
-    </div>
+        <!-- Content -->
+        <div id="main-content" class="hidden opacity-0 transition-opacity duration-500">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {{ $slot }}
+            </div>
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer class="bg-va= text-black mt-16">
