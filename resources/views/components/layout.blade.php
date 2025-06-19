@@ -209,11 +209,11 @@ $ContactUs = [
     <!-- Main Content -->
     <main class="flex-1">
         <!-- Loader -->
-        <div id="page-loader"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
-            <div class="flex flex-col items-center">
-                <img src="{{ asset('logo.svg') }}" alt="Loading Logo" class="w-52 h-52 animate-pulse mb-4" />
-                <div class="loader-spinner"></div>
+        <div id="page-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
+            <div class="text-center">
+                <img src="{{ asset('logo.svg') }}" alt="Loading" class="w-40 h-20 mx-auto mb-4 animate-pulse">
+
+
             </div>
         </div>
 
@@ -320,14 +320,8 @@ $ContactUs = [
             // Hide loader and show content after page load
             const loader = document.getElementById('page-loader');
             const mainContent = document.getElementById('main-content');
-
-            // Add a delay before hiding the loader
-            setTimeout(() => {
-                loader.classList.add('opacity-0', 'pointer-events-none');
-                mainContent.classList.remove('opacity-0');
-                mainContent.classList.add('opacity-100'); // optional: smooth fade-in
-            }, 1000); // 3000ms = 3 seconds
-
+            loader.classList.add('opacity-0', 'pointer-events-none');
+            mainContent.classList.remove('opacity-0');
         });
     </script>
 
