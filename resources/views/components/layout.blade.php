@@ -326,7 +326,7 @@ $ContactUs = [
                 loader.classList.add('opacity-0', 'pointer-events-none');
                 mainContent.classList.remove('opacity-0');
                 mainContent.classList.add('opacity-100'); // optional: smooth fade-in
-            }, 3000); // 3000ms = 3 seconds
+            }, 1000); // 3000ms = 3 seconds
 
         });
     </script>
