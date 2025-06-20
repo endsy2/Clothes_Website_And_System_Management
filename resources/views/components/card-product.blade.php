@@ -11,21 +11,9 @@ $discount_price = ($discount > 0) ? $price * ((100 - $discount) / 100) : $price;
 
     {{-- Image --}}
     <div class="relative h-2/3 bg-gray-100 overflow-hidden">
-        {{-- Spinner --}}
-        <div id="loader-{{ $productId }}" class="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-            <svg class="w-6 h-6 text-black animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-            </svg>
-        </div>
-
-        {{-- Product Image --}}
         <img src="{{ asset('/' . $productImage) }}" alt="{{ $name }}"
-            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 opacity-0"
-            id="image-{{ $productId }}" onload="imageLoaded({{ $productId }})">
+            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
 
-        {{-- Discount Badge --}}
         @if ($discount > 0)
         <div
             class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md ring-1 ring-white/20 backdrop-blur-sm">
@@ -48,14 +36,3 @@ $discount_price = ($discount > 0) ? $price * ((100 - $discount) / 100) : $price;
         @endif
     </div>
 </a>
-
-<script>
-    function imageLoaded(id) {
-        const loader = document.getElementById('loader-' + id);
-        const image = document.getElementById('image-' + id);
-        if (loader && image) {
-            loader.classList.add('hidden');
-            image.classList.remove('opacity-0');
-        }
-    }
-</script>
