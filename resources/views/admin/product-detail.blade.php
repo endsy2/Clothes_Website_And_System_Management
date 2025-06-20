@@ -88,8 +88,9 @@ $sizebtns=['S','M','L','XL','2XL'];
                         <button
                             class="color-btn w-16 h-16  overflow-hidden border border-gray-300 hover:border-black transition"
                             data-color="{{ $colorVariant['color'] }}">
-                            <img src="{{ asset($colorVariant['product_images'][0]['images'] ?? 'default.jpg') }}"
+                            <img src="{{ 'https://my-app-files3.sgp1.digitaloceanspaces.com/' . ltrim($colorVariant['product_images'][0]['images'] ?? 'default.jpg', '/') }}"
                                 class="w-full h-full object-cover">
+
 
                         </button>
 
@@ -449,7 +450,7 @@ $sizebtns=['S','M','L','XL','2XL'];
         let finalPrice;
 
         function updateDetail(variant) {
-            mainImage.src = '/' + variant.product_images[0].images;
+            mainImage.src = 'https://my-app-files3.sgp1.digitaloceanspaces.com/' + variant.product_images[0].images;
             const discount = variant.discount ? parseFloat(variant.discount.discount || 0) : 0;
             const originalPrice = parseFloat(variant.price || 0);
             finalPrice = discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
@@ -474,10 +475,10 @@ $sizebtns=['S','M','L','XL','2XL'];
             gallery.innerHTML = '';
             variant.product_images.forEach(img => {
                 const thumb = document.createElement('img');
-                thumb.src = '/' + img.images;
+                thumb.src = 'https://my-app-files3.sgp1.digitaloceanspaces.com/' + img.images;
                 thumb.className =
                     'w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-black transition';
-                thumb.dataset.img = 'http://127.0.0.1:8000/storage/' + img.images;
+                thumb.dataset.img = 'https://my-app-files3.sgp1.digitaloceanspaces.com/' + img.images;
                 gallery.appendChild(thumb);
             });
         }

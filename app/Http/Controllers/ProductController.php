@@ -247,16 +247,17 @@ class ProductController extends Controller
             }
 
             // Store images in public/images
+            // Store images in DigitalOcean Spaces
             $imagePaths = [];
             foreach ($request->file('images') as $file) {
                 if ($file->isValid()) {
-                    $filename = uniqid() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('images'), $filename);
-                    $imagePaths[] = 'images/' . $filename;
+                    $path = $file->store('uploads/products', 'spaces'); // uploads/products/unique.jpg
+                    $imagePaths[] = $path;
                 } else {
                     return back()->withErrors(['images' => 'One or more files failed to upload'])->withInput();
                 }
             }
+
 
             // Create Product
             $product = Product::create([

@@ -7,7 +7,9 @@ use App\Models\Product;
 use Exception;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log as FacadesLog;
 use Illuminate\Support\Facades\Storage;
+
 
 class BrandController extends Controller
 {
@@ -37,6 +39,8 @@ class BrandController extends Controller
      */
 
 
+
+
     public function store(Request $request)
     {
         try {
@@ -46,22 +50,21 @@ class BrandController extends Controller
                 "image" => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048']
             ]);
 
-            // Handle file upload — manually move to public/images
+            // Upload image to DigitalOcean Spaces
             $file = $request->file('image');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images'), $filename); // Move to /public/images
-            $imagePath = '/images/' . $filename; // Relative path for frontend
 
-            // Create brand record
+            $path = $file->store('uploads/brands', 'spaces'); // stores like: uploads/brands/abc123.jpg
+            FacadesLog::info('Brand image uploaded to Spaces', [$path]);
+            // Save to DB (store the relative path)
             $brand = Brand::create([
                 'brand_name' => $validatedData['brand_name'],
-                'image' => $imagePath
+                'image' => $path,
             ]);
 
             return redirect()->back()->with('success', 'Brand created successfully');
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Brand name already exists');
-            // Or log the exact error: Log::error($e->getMessage());
+            // Optional: Log::error($e->getMessage());
         }
     }
 

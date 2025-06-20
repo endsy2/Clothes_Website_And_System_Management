@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cartItem.innerHTML = `
                 <div class="relative h-full flex gap-4 items-center p-3 w-full">
                     <div class="w-24 h-32 overflow-hidden flex items-center justify-center rounded-sm shadow-md">
-                        <img src="/${image}" alt="${productName}" class="w-full h-full object-cover" />
+                        <img src="https://my-app-files3.sgp1.digitaloceanspaces.com/${image}" alt="${productName}" class="w-full h-full object-cover" />
                     </div>
                     <div class="deleteBtn absolute top-4 right-2 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">

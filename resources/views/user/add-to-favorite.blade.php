@@ -35,7 +35,7 @@
                     </svg>
                 </button>
 
-                <img src="${item.image}" alt="${item.productName}" class="w-full h-52 object-cover rounded-xl mb-4">
+                <img src="https://my-app-files3.sgp1.digitaloceanspaces.com/${item.image}" alt="${item.productName}" class="w-full h-52 object-cover rounded-xl mb-4">
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">${item.productName}</h2>
                 <div class="flex items-center justify-center gap-2 mb-3">
                     ${

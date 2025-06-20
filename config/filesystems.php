@@ -47,6 +47,21 @@ return [
             'report' => false,
         ],
 
+
+        'spaces' => [
+            'driver' => 's3',
+            'key' => 'DO003QRUFVPMDXZA8ECA',
+            'secret' => 'uA2gYd9aRD10Cr7oh5vCArv/CwONCh87sZ5bQ7QG3FU',
+            'region' => 'sgp1',
+            'bucket' => 'my-app-files3',
+            'url' => "https://my-app-files3.sgp1.cdn.digitaloceanspaces.com",
+            'endpoint' => 'https://sgp1.digitaloceanspaces.com',
+            'bucket_endpoint' => true,
+            'visibility' => 'public',
+            'throw' => false,
+            'use_path_style_endpoint' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -72,9 +87,5 @@ return [
     | the locations of the links and the values should be their targets.
     |
     */
-
-    'links' => [
-        public_path('storage') => storage_path('app/public'),
-    ],
 
 ];

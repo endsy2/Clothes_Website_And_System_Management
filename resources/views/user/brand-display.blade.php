@@ -7,8 +7,9 @@
             class="flex flex-col items-center bg-white rounded-xl border border-gray-200 shadow-sm
                   hover:shadow-lg hover:scale-105 transition-transform duration-300 p-4 animate-fadeIn">
             <div class="w-full flex justify-center overflow-hidden rounded-lg">
-                <img src="{{ asset($brand['image']) }}" alt="{{ $brand['brand_name'] }}"
+                <img src="{{ 'https://my-app-files3.sgp1.digitaloceanspaces.com/' . ltrim($brand['image'], '/') }}" alt="{{ $brand['brand_name'] }}"
                     class="w-full max-w-[300px] h-40 object-contain transition-transform duration-300 hover:scale-110" />
+
             </div>
             <span
                 class="mt-4 text-lg font-semibold text-gray-800 hover:text-[#128B9E] hover:underline transition-colors duration-300 text-center">

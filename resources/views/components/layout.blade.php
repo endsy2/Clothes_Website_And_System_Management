@@ -41,7 +41,7 @@ $ContactUs = [
 
 <head>
     <title>Clothing Store</title>
-    <link rel="icon" href="url{{ asset('logo.svg') }}" type="image/x-icon" />
+    <link rel="icon" href="https://my-app-files3.sgp1.digitaloceanspaces.com/logo.svg" type="image/x-icon" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- tailwind cdn -->
@@ -64,7 +64,9 @@ $ContactUs = [
                 <!-- Logo -->
                 <div class="flex-shrink-0">
                     <a href="/">
-                        <img src="{{ asset('logo.svg') }}" alt="Logo" class="h-5 md:h-7 xl:h-10 w-auto" />
+                        <img src="https://my-app-files3.sgp1.digitaloceanspaces.com/logo.svg" alt="Logo"
+                            class="h-5 md:h-7 xl:h-10 w-auto" />
+
                     </a>
                 </div>
 
@@ -325,7 +327,7 @@ $ContactUs = [
                 mainContent.classList.remove('opacity-0');
                 mainContent.classList.remove('hidden');
                 mainContent.classList.add('opacity-100'); // optional: smooth fade-in
-            }, 3000); // 3000ms = 3 seconds
+            }, 1000); // 3000ms = 3 seconds
 
         });
     </script>

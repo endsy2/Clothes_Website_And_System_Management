@@ -12,9 +12,9 @@ use Exception;
 use Illuminate\Container\Attributes\Log as AttributesLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+
 
 use function Illuminate\Log\log;
 
@@ -31,7 +31,6 @@ class ProductVariantsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-
 
 
     public function store(Request $request)
@@ -56,24 +55,17 @@ class ProductVariantsController extends Controller
 
             DB::beginTransaction();
 
-            // Ensure 'public/images' exists
-            if (!file_exists(public_path('images'))) {
-                mkdir(public_path('images'), 0755, true);
-            }
-
             $imagePaths = [];
             foreach ($request->file('images') as $image) {
                 if (!$image->isValid()) {
                     throw new Exception("Invalid image upload: " . $image->getClientOriginalName());
                 }
 
-                // Move uploaded image to public/images with unique name
-                $filename = uniqid() . '_' . $image->getClientOriginalName();
-                $image->move(public_path('images'), $filename);
-                $relativePath = 'images/' . $filename;
+                // Upload to DigitalOcean Spaces
+                $path = $image->store('uploads/product-variants', 'spaces');
+                $imagePaths[] = $path;
 
-                $imagePaths[] = $relativePath;
-                Log::info("Image stored: {$relativePath}");
+                Log::info("Image stored in Spaces: {$path}");
             }
 
             foreach ($validatedData['color'] as $color) {
@@ -120,6 +112,7 @@ class ProductVariantsController extends Controller
 
 
 
+
     /**
      * Display the specified resource.
      */
@@ -134,6 +127,8 @@ class ProductVariantsController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
+
     public function update(Request $request, string $id)
     {
         try {
@@ -154,7 +149,7 @@ class ProductVariantsController extends Controller
                 'size' => 'nullable|string',
                 'discount_id' => 'nullable|exists:discounts,id',
                 'images' => 'nullable|array',
-                'images.*' => 'file|image|max:10240', // 10MB max size
+                'images.*' => 'file|image|max:10240', // 10MB
             ]);
 
             $variant->fill($request->only(['price', 'stock', 'color', 'size', 'discount_id']));
@@ -162,23 +157,20 @@ class ProductVariantsController extends Controller
             Log::info("Updated variant data:", $variant->toArray());
 
             if ($request->hasFile('images')) {
-                // Delete old images
+                // ✅ Delete old images from Spaces
                 foreach ($variant->productImages as $oldImage) {
-                    $oldImagePath = public_path($oldImage->images);
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
+                    if (Storage::disk('spaces')->exists($oldImage->images)) {
+                        Storage::disk('spaces')->delete($oldImage->images);
+                        Log::info("Deleted old image from Spaces: {$oldImage->images}");
                     }
                     $oldImage->delete();
                 }
 
-                // Save new images to public/images
+                // ✅ Upload new images to Spaces
                 foreach ($request->file('images') as $image) {
-                    $filename = uniqid() . '_' . $image->getClientOriginalName();
-                    $image->move(public_path('images'), $filename);
-                    $relativePath = 'images/' . $filename;
-
-                    Log::info("Image saved to: {$relativePath}");
-                    $variant->productImages()->create(['images' => $relativePath]);
+                    $path = $image->store('uploads/product-variants', 'spaces');
+                    Log::info("Uploaded new image to Spaces: {$path}");
+                    $variant->productImages()->create(['images' => $path]);
                 }
             }
 
@@ -186,10 +178,10 @@ class ProductVariantsController extends Controller
             return redirect()->back()->with('success', 'Product variant updated successfully!');
         } catch (Exception $e) {
             Log::error("Error updating product variant: " . $e->getMessage());
-            return redirect()->back()->with('error
-', 'An error occurred while updating the product variant: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while updating the product variant: ' . $e->getMessage());
         }
     }
+
 
 
 

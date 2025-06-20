@@ -24,6 +24,8 @@ $currentUrl = request()->path();
 
 <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="https://my-app-files3.sgp1.digitaloceanspaces.com/logo.svg" type="image/x-icon" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
@@ -205,7 +207,7 @@ $currentUrl = request()->path();
                 loader.classList.add('opacity-0', 'pointer-events-none');
                 mainContent.classList.remove('opacity-0');
                 mainContent.classList.add('opacity-100'); // optional: smooth fade-in
-            }, 2000); // 3000ms = 3 seconds
+            }, 1000); // 3000ms = 3 seconds
         });
     </script>
 </body>

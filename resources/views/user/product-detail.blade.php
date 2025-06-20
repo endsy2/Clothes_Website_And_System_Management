@@ -7,16 +7,18 @@
                 <div id="gallery"
                     class="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:h-[600px] scrollbar-thin scrollbar-thumb-gray-300 p-1">
                     @foreach ($product['product_variant'][0]['product_images'] ?? [] as $img)
-                    <img src="{{ asset($img['images']) }}"
+                    <img src="{{ 'https://my-app-files3.sgp1.digitaloceanspaces.com/' . ltrim($img['images'], '/') }}"
                         class="w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-[#128B9E] transition"
-                        data-img="{{ asset($img['images']) }}">
+                        data-img="{{ 'https://my-app-files3.sgp1.digitaloceanspaces.com/' . ltrim($img['images'], '/') }}">
+
                     @endforeach
                 </div>
 
                 {{-- Main Image --}}
                 <div id="main-image" class="flex-1">
-                    <img src="{{ asset($product['product_variant'][0]['product_images'][0]['images'] ?? 'default.jpg') }}"
+                    <img src="{{ 'https://my-app-files3.sgp1.digitaloceanspaces.com/' . ltrim($product['product_variant'][0]['product_images'][0]['images'], '/') }}"
                         alt="product image" class="w-full aspect-[6/8] object-cover transition-all duration-300">
+
                 </div>
             </div>
 
@@ -74,8 +76,9 @@
                         <button
                             class="color-btn w-16 h-16  overflow-hidden border border-gray-300 hover:border-black transition"
                             data-color="{{ $colorVariant['color'] }}">
-                            <img src="{{ asset($colorVariant['product_images'][0]['images'] ?? 'default.jpg') }}"
+                            <img src="{{ 'https://my-app-files3.sgp1.digitaloceanspaces.com/' . ltrim($colorVariant['product_images'][0]['images'] ?? 'default.jpg', '/') }}"
                                 class="w-full h-full object-cover">
+
                         </button>
                         @endforeach
                     </div>
@@ -166,7 +169,7 @@
         let finalPrice;
 
         function updateDetail(variant) {
-            mainImage.src = '/' + variant.product_images[0].images;
+            mainImage.src = 'https://my-app-files3.sgp1.digitaloceanspaces.com/' + variant.product_images[0].images;
             const discount = variant.discount ? parseFloat(variant.discount.discount || 0) : 0;
             const originalPrice = parseFloat(variant.price || 0);
             finalPrice = discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
@@ -191,10 +194,10 @@
             gallery.innerHTML = '';
             variant.product_images.forEach(img => {
                 const thumb = document.createElement('img');
-                thumb.src = '/' + img.images;
+                thumb.src = 'https://my-app-files3.sgp1.digitaloceanspaces.com/' + img.images;
                 thumb.className =
                     'w-20 h-32 object-cover border border-gray-300 cursor-pointer hover:ring-2 ring-black transition';
-                thumb.dataset.img = '/' + img.images;
+                thumb.dataset.img = 'https://my-app-files3.sgp1.digitaloceanspaces.com/' + img.images;
                 gallery.appendChild(thumb);
             });
         }

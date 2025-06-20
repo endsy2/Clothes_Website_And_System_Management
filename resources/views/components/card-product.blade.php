@@ -11,7 +11,7 @@ $discount_price = ($discount > 0) ? $price * ((100 - $discount) / 100) : $price;
 
     {{-- Image --}}
     <div class="relative h-2/3 bg-gray-100 overflow-hidden">
-        <img src="{{ asset('/' . $productImage) }}" alt="{{ $name }}"
+        <img src="{{ 'https://my-app-files3.sgp1.digitaloceanspaces.com'. '/' . $productImage }}" alt="{{ $name }}"
             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
 
         @if ($discount > 0)

@@ -69,7 +69,7 @@
             cartItem.innerHTML = `
                 <div class="flex items-center">
                     <div class="relative">
-                        <img src="${image}" alt="${productName}" class="w-16 h-16 object-cover rounded-md mr-4">
+                        <img src="https://my-app-files3.sgp1.digitaloceanspaces.com/${image}" alt="${productName}" class="w-16 h-16 object-cover rounded-md mr-4">
                         <div class="absolute top-0 right-2 bg-gray-300 text-white text-xs font-semibold px-2 py-1 rounded-full">${quantity}</div>
                     </div>
                     <div>
