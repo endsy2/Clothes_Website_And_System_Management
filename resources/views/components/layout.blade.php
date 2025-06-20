@@ -325,21 +325,10 @@ $ContactUs = [
                 mainContent.classList.remove('opacity-0');
                 mainContent.classList.remove('hidden');
                 mainContent.classList.add('opacity-100'); // optional: smooth fade-in
-            }, 2300); // 3000ms = 3 seconds
-
+            }, 3000); // 3000ms = 3 seconds
 
         });
-
-        function imageLoaded(id) {
-            const loader = document.getElementById('loader-' + id);
-            const image = document.getElementById('image-' + id);
-            if (loader && image) {
-                loader.classList.add('hidden');
-                image.classList.remove('opacity-0');
-            }
-        }
     </script>
-
 
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/loading.js') }}"></script>
