@@ -49,9 +49,28 @@
                     href="{{ route('productSort', ['type' => 'Brand :','brand'=>$brand['id'],'value'=>$brand['brand_name']]) }}">
                     <div
                         class="bg-white flex flex-col justify-center items-center py-3 shadow-lg hover:shadow-2xl transition duration-300">
-                        <img src="{{ asset( $brand['image']) }}" alt="{{ $brand['brand_name'] }}"
-                            class="w-96 h-40 object-contain ">
+                        <div class="relative w-96 h-40">
+                            {{-- Simple Black Spinner --}}
+                            <div id="loader-{{ $brand['id'] }}"
+                                class="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+                                <svg class="w-6 h-6 text-black animate-spin" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                            </div>
+
+                            {{-- Image --}}
+                            <img src="{{ asset($brand['image']) }}" alt="{{ $brand['brand_name'] }}"
+                                class="w-full h-full object-contain opacity-0 transition-opacity duration-500"
+                                id="image-{{ $brand['id'] }}" onload="imageLoaded({{ $brand['id'] }})">
+                        </div>
                     </div>
+
+
+
                 </a>
                 @endforeach
             </div>
