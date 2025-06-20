@@ -21,7 +21,10 @@ document.getElementById('popupSearchInput').addEventListener('input', function (
                     resultsContainer.innerHTML += `
                         <a href="/detail?id=${product.id}" >
                         <div class="flex items-center gap-5 p-3 bg-gray-100 rounded shadow">
-                            <img src="${product.product_variant[0].product_images[0].images}" alt="${product.name}" class="w-16 h-16 rounded">
+                           <img src="https://my-app-files3.sgp1.digitaloceanspaces.com/${product.product_variant[0].product_images[0].images}" 
+     alt="${product.name}" 
+     class="w-16 h-16 rounded">
+
                             <p class="font-semibold ">${product.name}</p>
                         </div>
                         </a>

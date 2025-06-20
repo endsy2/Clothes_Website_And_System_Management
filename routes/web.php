@@ -158,32 +158,3 @@ Route::prefix('/admin')->middleware('guest:admin')->group(function () {
     Route::post('/login', [LoginController::class, 'adminstore'])->name('adminLogin');
     Route::post('/sigup', [RegisterController::class, 'adminStore'])->name('adminStore');
 });
-
-use Illuminate\Support\Facades\Log;
-
-Route::get('/test-upload', function () {
-    $success = Storage::disk('spaces')->put('test.txt', 'Hello from Laravel');
-    return $success ? 'Success' : 'Failed';
-});
-
-use Aws\S3\S3Client;
-
-Route::get('/debug-spaces', function () {
-    try {
-        $client = new S3Client([
-            'version' => 'latest',
-            'region' => env('SPACES_DEFAULT_REGION', 'sgp1'),
-            'endpoint' => env('SPACES_ENDPOINT', 'https://sgp1.digitaloceanspaces.com'),
-            'credentials' => [
-                'key' => 'DO003QRUFVPMDXZA8ECA',
-                'secret' => 'uA2gYd9aRD10Cr7oh5vCArv/CwONCh87sZ5bQ7QG3FU',
-            ],
-        ]);
-
-        // Try to list buckets
-        $buckets = $client->listBuckets();
-        return response()->json($buckets);
-    } catch (\Exception $e) {
-        return response('Error: ' . $e->getMessage(), 500);
-    }
-});

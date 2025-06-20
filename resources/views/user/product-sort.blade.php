@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="mt-16">
+    <div class="">
         <h2 class="font-semibold text-2xl py-5">
             {{ $title ?? 'Products' }} {{ $value ?? '' }}
         </h2>

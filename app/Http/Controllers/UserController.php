@@ -29,6 +29,7 @@ class UserController extends Controller
     {
         $title = $request->query('type') ?? 'ALL Products';
         $value = $request->query('value') ?? null;
+        dd($title, $value);
         $products = (new ProductController())->index($request)->getData(true);
         return view('user.product-sort', ['products' => $products, 'title' => $title, 'value' => $value]);
         // return dd($products);
