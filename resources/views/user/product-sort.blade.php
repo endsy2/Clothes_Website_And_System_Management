@@ -1,13 +1,15 @@
 <x-layout>
     <div class="">
         <h2 class="font-semibold text-2xl py-5">
-            {{ $title ?? 'Products' }} {{ $value ?? '' }}
+            {{ $title ?? 'Products' }}:{{ $value ?? '' }}
         </h2>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full gap-y-5 gap-x-6 mt-5">
-        @if (!empty($products['data']) && is_array($products['data']))
-        @foreach ($products['data'] as $product)
+
+        @if (!empty($products) && is_array($products))
+
+        @foreach ($products as $product)
         @php
         $productVariant = $product['product_variant'][0] ?? null;
         $productId = $product['id'] ?? null;

@@ -92,7 +92,7 @@ class CustomerController extends Controller
             ]);
         }
 
-        return redirect('/')->with('success', 'true');
+        return redirect('/')->with('success', 'successfully checkout');
     }
     /**
      * Display the specified resource.

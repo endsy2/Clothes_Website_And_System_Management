@@ -26,6 +26,7 @@ class ProductController extends Controller
     public function getFilteredProducts(Request $request)
     {
         // $query = Product::with(['category', 'brand', 'productVariant.productImages', 'productVariant.disscount']);
+
         $query = Product::with(['category', 'brand', 'productVariant.productImages']);
 
         $type = $request->query('type');
@@ -35,20 +36,22 @@ class ProductController extends Controller
         $brand_id = $request->query('brand_id');
         $product_type_id = $request->query('products_type_id');
         $discount_id = $request->query('discount_id');
+        // dd($type, $name, $discount, $category_id, $brand_id, $product_type_id, $discount_id);
         if ($type == "name" && $name !== null) {
             $query->where('name', 'like', '%' . $name . '%');
-        } elseif ($type == "category" && $category_id) {
+        } elseif ($type == "Category" && $category_id) {
             $query->where('category_id', $category_id);
         } elseif ($type == "brand" && $brand_id) {
             $query->where('brand_id', $brand_id);
-        } elseif ($type == "productType" && $product_type_id) {
+        } elseif ($type == "Product Type" && $product_type_id) {
             $query->where('product_type_id', $product_type_id);
-        }
-        // elseif ($type == "discount" && $discount_id) {
-        //     $query->where('discount_id', $discount_id);
-        // }
+        } elseif ($type == "discount") {
+            $products = (new DiscountController())->index()->getData(true);
 
-        return $query->paginate(20);
+            return $products;
+        }
+
+        return $query->get();
     }
 
     // This stays as your API endpoint

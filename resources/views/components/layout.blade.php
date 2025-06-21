@@ -1,10 +1,33 @@
 @php
 $navLinks = [
-['href' => '/productSort/?type=Men', 'name' => 'Men'],
-['href' => '/productSort/?type=Women', 'name' => 'Women'],
-['href' => '/productSort/?type=Child', 'name' => 'Child'],
-['href' => '/productSort/?product=Discount', 'name' => 'Discount'],
+[
+'name' => 'Men',
+'type' => 'Product Type',
+'value' => 'Men',
+'products_type_id' => 1,
+],
+[
+'name' => 'Women',
+'type' => 'Product Type',
+'value' => 'Women',
+'products_type_id' => 2,
+],
+[
+'name' => 'Child',
+'type' => 'Product Type',
+'value' => 'Child',
+'products_type_id' => 3,
+],
+[
+'name' => 'Discount',
+'type' => 'discount', // or whatever your controller expects
+'value' => 'Discount',
+'products_type_id' => null,
+'product' => 'Discount', // if your controller looks for `product`
+],
 ];
+
+
 $FollowUs = [
 ['href' => 'https://www.facebook.com/', 'name' => 'Facebook', 'icon' => asset('/icon/facebook-svgrepo-com.svg')],
 ['href' => 'https://www.instagram.com/', 'name' => 'Instagram', 'icon' => asset('/icon/instagram-svgrepo-com.svg')],
@@ -72,11 +95,13 @@ $ContactUs = [
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-8">
-                    @foreach($navLinks as $navLink)
-                    <x-nav-link href="{{ $navLink['href'] }}"
-                        class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 {{ request()->is($navLink['href']) ? 'text-blue-600 border-b-2 border-blue-600' : '' }}">
+                    @foreach($navLinks as $navLink )
+
+                    <a href="{{ route('productSort', ['value' => $navLink['value'],'type' => $navLink['type'],'products_type_id' => $navLink['products_type_id']]) }}"
+                        class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200">
                         {{ $navLink['name'] }}
-                    </x-nav-link>
+                    </a>
+
                     @endforeach
                 </nav>
 
@@ -149,10 +174,10 @@ $ContactUs = [
             <div id="mobile-menu" class="md:hidden hidden border-t border-gray-200">
                 <div class="px-2 pt-2 pb-3 space-y-1">
                     @foreach($navLinks as $navLink)
-                    <x-nav-link href="{{ $navLink['href'] }}"
-                        class="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md {{ request()->is($navLink['href']) ? 'text-blue-600 bg-blue-50' : '' }}">
+                    <a href="{{ route('productSort', ['value'=>$navLink['value'],'type'=>$navLink['type'],'products_type_id'=>$navLink['products_type_id']])  }}""
+                        class=" block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md">
                         {{ $navLink['name'] }}
-                    </x-nav-link>
+                    </a>
                     @endforeach
                 </div>
                 <!-- Mobile Search -->
@@ -327,7 +352,7 @@ $ContactUs = [
                 mainContent.classList.remove('opacity-0');
                 mainContent.classList.remove('hidden');
                 mainContent.classList.add('opacity-100'); // optional: smooth fade-in
-            }, 500); // 3000ms = 3 seconds
+            }); // 3000ms = 3 seconds
 
         });
     </script>
