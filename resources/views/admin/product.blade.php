@@ -35,6 +35,7 @@ $titles = ['Id', 'name', 'category', 'brand', 'price'];
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 ">
+
                 @foreach($products['data'] as $product)
                 @php $variant = $product['product_variant'][0] ?? null; @endphp
                 <tr class="hover:bg-gray-50 transition-all ease-in-out duration-200">

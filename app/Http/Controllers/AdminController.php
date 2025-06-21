@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Discount;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -30,8 +31,11 @@ class AdminController extends Controller
     }
     public function PageProduct(Request $request)
     {
-        $products = (new ProductController())->index($request)->getData(true);
-        return view('admin.product', ['products' => $products]);
+        $products = Product::with(['brand', 'category', 'productType', 'productVariant.discount'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return view('admin.product', ['products' => $products->toArray()]);
     }
     public function PageUser(Request $request)
     {
