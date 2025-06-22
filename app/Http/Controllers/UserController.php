@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -12,7 +13,7 @@ class UserController extends Controller
     public function PageHome()
     {
         $brands = (new BrandController())->show();
-        $products = (new ProductController())->show();
+        $products = Product::with(['productVariant.productImages', 'brand', 'category', 'productVariant.discount'])->get();
         $discounts = (new DiscountController())->index()->getData(true);
         $categories = (new CategoryController())->paginateCategory();
 

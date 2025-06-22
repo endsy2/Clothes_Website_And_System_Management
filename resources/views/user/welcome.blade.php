@@ -46,7 +46,7 @@
             <div class="swiper-wrapper">
                 @foreach ($brands as $brand)
                 <a class="swiper-slide flex justify-center"
-                    href="{{ route('productSort', ['type' => 'Brand :','brand'=>$brand['id'],'value'=>$brand['brand_name']]) }}">
+                    href="{{ route('productSort', ['type' => 'Brand','brand'=>$brand['id'],'value'=>$brand['brand_name']]) }}">
                     <div
                         class="bg-white flex flex-col justify-center items-center py-3 shadow-lg hover:shadow-2xl transition duration-300">
                         <img src="{{ 'https://my-app-files3.sgp1.digitaloceanspaces.com/' . ltrim($brand['image'], '/') }}"
@@ -144,9 +144,6 @@
             :discount="$productVariant['discount']['discount'] ?? null" />
         @endif
         @endforeach
-    </div>
-    <div class="mt-16 flex justify-center">
-        {{ $products->links('pagination::tailwind') }}
     </div>
     <script src="{{ asset('js/slider.js') }}"></script>
 
