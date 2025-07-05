@@ -85,10 +85,10 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
     Route::get('/discount', [AdminController::class, 'PageDiscount'])->name('admin.discount');
     //delete discount route
     Route::delete("/discount/{id}", [DiscountController::class, 'destroy'])->name('deleteOneDiscount');
-    Route::get('/report', function (Request $request) {
-        $product = new ProductController()->index($request)->getData(true);
-        return view('admin.report');
-    })->name('admin.report');
+    // Route::get('/report', function (Request $request) {
+    //     $product = new ProductController()->index($request)->getData(true);
+    //     return view('admin.report');
+    // })->name('admin.report');
     Route::post('/logout', [LoginController::class, 'adminLogout'])->name('adminLogout');
     // add product route
     Route::post('/add-product', [ProductController::class, 'store'])->name('add-product');
@@ -105,9 +105,10 @@ Route::prefix('/admin')->middleware('auth:admin')->group(function () {
 
         $categorys = (new CategoryController())->show()->getData(true);
 
-        $productTypes = (new ProductTypeController()->show()->getData(true));
+        $productTypes = (new ProductTypeController())->show()->getData(true);
 
-        $discounts = (new DiscountController()->index()->getData(true));
+
+        $discounts = (new DiscountController())->index()->getData(true);
 
         // dd($discounts);
         return view('admin.product-detail', ['product' => $product, 'brands' => $brands, 'categorys' => $categorys, 'productTypes' => $productTypes, 'discounts' => $discounts]);
